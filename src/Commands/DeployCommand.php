@@ -29,7 +29,27 @@ class DeployCommand extends Tasks
         $this->cloudapi = $cloudapi;
     }
 
-    protected function acquiaDeployEnv($site, $environment) {
+    protected function isTaskComplete($site, $taskId) {
+        $task = $this->cloudapi->task($site, $taskId);
+        if ($task->completed()) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    protected function acquiaDeployEnv($site, $environment, $branch)
+    {
+        $task = $this->cloudapi->pushCode($site, $environment, $branch);
+        $taskId = $task->id();
+        while (!$this->isTaskComplete($site, $taskId)) {
+            $this->say('Waiting for code deployment...');
+            sleep(1);
+        }
+        $this->acquiaReDeployEnv($site, $environment);
+    }
+
+
+    protected function acquiaReDeployEnv($site, $environment) {
         $site = $this->cloudapi->site($site);
         $siteName = $site->unixUsername();
 
@@ -43,6 +63,9 @@ class DeployCommand extends Tasks
             ->drush(['config-import', 'sync'])
             ->drush("cache-rebuild")
             ->run();
+
+        // @TODO add domains
+        //$this->cloudapi->purgeVarnishCache($site, $environment);
     }
 
     /**
@@ -50,18 +73,18 @@ class DeployCommand extends Tasks
      *
      * @command acquia:deploy:preprod:env
      */
-    public function acquiaDeployPreProdEnv($site, $environment) {
+    public function acquiaDeployPreProdEnv($site, $environment, $branch) {
         if ($environment == 'prod') {
             throw new \Exception('Use the acquia:proddeploy command for the production environment.');
         }
 
-        $this->acquiaDeployEnv($site, $environment);
+        $this->acquiaDeployEnv($site, $environment, $branch);
     }
 
     /**
-     * This is the acquia:preproddeploy command
+     * This is the acquia:deploy:preprod command
      *
-     * @command acquia:deploy:preprod
+     * @command acquia:redeploy:preprod:all
      */
     public function acquiaDeployPreProd($site) {
         $environments = $this->cloudapi->environments($site);
@@ -72,66 +95,20 @@ class DeployCommand extends Tasks
                 continue;
             }
 
-            $this->acquiaDeployEnv($site, $env);
+            $this->acquiaReDeployEnv($site, $env);
         }
     }
 
     /**
-     * This is the acquia:proddeploy command
+     * This is the acquia:deploy:prod command
      *
      * @command acquia:deploy:prod
      */
-    public function acquiaDeployProd($site) {
+    public function acquiaDeployProd($site, $branch) {
         $this->yell('WARNING: DEPLOYING TO PROD');
         if ($this->confirm('Are you sure you want to deploy to prod?')) {
-            $this->acquiaDeployEnv($site, 'prod');
+            $this->acquiaDeployEnv($site, 'prod', $branch);
         }
-    }
-
-    /**
-     * This is the acquia:sites command
-     *
-     * @command acquia:site:list
-     */
-    public function acquiaSites()
-    {
-        $sites = $this->cloudapi->sites();
-        foreach ($sites as $site) {
-            $this->say($site->name());
-        }
-    }
-
-    /**
-     * This is the acquia:siteinfo command
-     *
-     * @command acquia:site:info
-     */
-    public function acquiaSiteInfo($site)
-    {
-        $site = $this->cloudapi->site($site);
-        $environments = $this->cloudapi->environments($site);
-        
-        $this->say('Name: ' . $site->title());
-        $this->say('VCS URL: ' . $site->vcsUrl());
-
-        $output = $this->output();
-        $table = new Table($output);
-        $table->setHeaders(array('Environment', 'Branch/Tag', 'Domain', 'Database(s)'));
-
-        foreach ($environments as $environment) {
-            $databases = $this->cloudapi->environmentDatabases($site, $environment);
-            $dbs = [];
-            foreach ($databases as $database) {
-                $dbs[] = $database->name();
-            }
-            $dbString = implode(', ', $dbs);
-            $table
-                ->addRows(array(
-                    array($environment->name(), $environment->vcsPath(), $environment->defaultDomain(), $dbString),
-                ));
-        }
-        $table->render();
-
     }
 
     /**
@@ -215,5 +192,102 @@ class DeployCommand extends Tasks
         $this->say('Logs: ' . $task->logs());
     }
 
+    /**
+     * This is the acquia:sites command
+     *
+     * @command acquia:site:list
+     */
+    public function acquiaSites()
+    {
+        $sites = $this->cloudapi->sites();
+        foreach ($sites as $site) {
+            $this->say($site->name());
+        }
+    }
+
+    /**
+     * This is the acquia:siteinfo command
+     *
+     * @command acquia:site:info
+     */
+    public function acquiaSiteInfo($site)
+    {
+        $site = $this->cloudapi->site($site);
+        $environments = $this->cloudapi->environments($site);
+
+        $this->say('Name: ' . $site->title());
+        $this->say('VCS URL: ' . $site->vcsUrl());
+
+        $output = $this->output();
+        $table = new Table($output);
+        $table->setHeaders(array('Environment', 'Branch/Tag', 'Domain', 'Database(s)'));
+
+        foreach ($environments as $environment) {
+            $databases = $this->cloudapi->environmentDatabases($site, $environment);
+            $dbs = [];
+            foreach ($databases as $database) {
+                $dbs[] = $database->name();
+            }
+            $dbString = implode(', ', $dbs);
+            $table
+                ->addRows(array(
+                    array($environment->name(), $environment->vcsPath(), $environment->defaultDomain(), $dbString),
+                ));
+        }
+        $table->render();
+
+    }
+
+    /**
+     * This is the acquia:environment:info command
+     *
+     * @command acquia:environment:info
+     */
+    public function acquiaEnvironmentInfo($site, $environment)
+    {
+
+        $output = $this->output();
+        $table = new Table($output);
+        $table->setHeaders(array('Type', 'Name', 'FQDN', 'AMI', 'Region', 'AZ', 'Details'));
+
+
+        $servers = $this->cloudapi->servers($site, $environment);
+        foreach ($servers as $server) {
+            $type = 'Files';
+            $extra = '';
+
+            $services = $server->services();
+            if (array_key_exists('web', $services)) {
+                $type = 'Web';
+                $extra = 'Procs: ' . $services['web']['php_max_procs'];
+                if ($services['web']['status'] != 'online') {
+                    $type = '* Web';
+                }
+            }
+            elseif (array_key_exists('vcs', $services)) {
+                $type = 'Git';
+            }
+            elseif (array_key_exists('database', $services)) {
+                $type = 'DB';
+            }
+            elseif (array_key_exists('varnish', $services)) {
+                $type = 'LB';
+                if (isset($services['external_ip'])) {
+                    $extra = 'External IP: ' . $services['external_ip'];
+                }
+                if ($services['varnish']['status'] != 'active') {
+                    $type = '* LB';
+                }
+            }
+
+            $table
+                ->addRows(array(
+                    array($type, $server->name(), $server->fqdn(), $server->amiType(), $server->region(), $server->availabilityZone(), $extra),
+                ));
+        }
+
+        $table->render();
+
+    }
 }
 
