@@ -1,4 +1,14 @@
 {
+    "name": "typhonius/acquia_cli",
+    "description": "A Robo based tool for integrating with Acquia CloudAPI",
+    "version": "0.0.0-alpha1",
+    "authors": [
+        {
+            "name": "Adam Malone",
+            "email": "adam@adammalone.net"
+        }
+    ],
+    "license": "MIT",
     "require": {
         "acquia/acquia-sdk-php-cloud-api": "^0.10.7",
         "consolidation/robo": "^1.0",
