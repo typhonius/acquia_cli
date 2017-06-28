@@ -29,6 +29,155 @@ class DeployCommand extends Tasks
         $this->cloudapi = $cloudapi;
     }
 
+    /**
+     * This is the acquia:deploy:prod command
+     *
+     * @command acquia:deploy:prod
+     */
+    public function acquiaDeployProd($site, $branch) {
+        $this->yell('WARNING: DEPLOYING TO PROD');
+        if ($this->confirm('Are you sure you want to deploy to prod?')) {
+            $this->acquiaDeployEnv($site, 'prod', $branch);
+        }
+    }
+
+    /**
+     * This is the acquia:deploy:preprod command
+     *
+     * @command acquia:deploy:preprod
+     */
+    public function acquiaDeployPreProd($site, $environment, $branch) {
+        if ($environment == 'prod') {
+            throw new \Exception('Use the acquia:deploy:prod command for the production environment.');
+        }
+
+        $this->acquiaDeployEnv($site, $environment, $branch);
+    }
+
+    /**
+     * This is the acquia:config-update:prod command
+     *
+     * @command acquia:config-update:prod
+     */
+    public function acquiaConfigUpdateProd($site) {
+        $this->yell('WARNING: UPDATING CONFIG ON PROD');
+        if ($this->confirm('Are you sure you want to update prod config? This will overwrite your prod configuration.')) {
+            $this->acquiaConfigUpdate($site, 'prod');
+        }
+    }
+
+    /**
+     * This is the acquia:config-update:preprod command
+     *
+     * @command acquia:config-update:preprod
+     */
+    public function acquiaConfigUpdatePreProd($site, $environment) {
+
+        if ($environment == 'prod') {
+            throw new \Exception('Use the acquia:prepare:prod command for the production environment.');
+        }
+
+        $this->acquiaConfigUpdate($site, $environment);
+    }
+
+    /**
+     * This is the acquia:config-update:preprod:all command
+     *
+     * @command acquia:config-update:preprod:all
+     */
+    public function acquiaConfigUpdatePreProdAll($site) {
+        $environments = $this->cloudapi->environments($site);
+
+        foreach ($environments as $environment) {
+            $env = $environment->name();
+            if ($env == 'prod') {
+                continue;
+            }
+
+            $this->acquiaConfigUpdate($site, $env);
+        }
+    }
+
+    /**
+     * This is the acquia:prepare:prod command
+     *
+     * @command acquia:prepare:prod
+     */
+    public function acquiaPrepareProd($site)
+    {
+        $databases = $this->cloudapi->environmentDatabases($site, 'prod');
+        foreach ($databases as $database) {
+
+            $db = $database->name();
+            $this->backupDb($site, 'prod', $db);
+        }
+    }
+
+    /**
+     * This is the acquia:prepare:preprod command
+     *
+     * @command acquia:prepare:preprod
+     */
+    public function acquiaPreparePreProd($site, $environment)
+    {
+
+        if ($environment == 'prod') {
+            throw new \Exception('Use the acquia:prepare:prod command for the production environment.');
+        }
+
+        $this->backupAndMoveDbs($site, $environment);
+        $this->backupFiles($site, $environment);
+    }
+
+    /**
+     * This is the acquia:prepare:preprod:all command
+     *
+     * @command acquia:prepare:preprod:all
+     */
+    public function acquiaPreparePreProdAll($site)
+    {
+        $environments = $this->cloudapi->environments($site);
+        foreach ($environments as $environment) {
+            $env = $environment->name();
+            if ($env == 'prod') {
+                continue;
+            }
+
+            $this->backupAndMoveDbs($site, $env);
+            $this->backupFiles($site, $env);
+        }
+    }
+
+
+    /*************************************************************************/
+    /*                         INTERNAL FUNCTIONS                            */
+    /*************************************************************************/
+
+    protected function backupAndMoveDbs($site, $environment) {
+        $databases = $this->cloudapi->environmentDatabases($site, $environment);
+        foreach ($databases as $database) {
+
+            $db = $database->name();
+            $this->backupDb($site, $environment, $db);
+
+            // Copy DB from prod to non-prod.
+            $this->say("Moving DB (${db}) from prod to ${environment}");
+            $this->cloudapi->copyDatabase($site, $db, 'prod', $environment);
+        }
+    }
+
+    protected function backupDb($site, $environment, $database) {
+        // Run database backups.
+        $this->say("Backing up DB (${database}) on ${environment}");
+        $this->cloudapi->createDatabaseBackup($site, $environment, $database);
+    }
+
+    protected function backupFiles($site, $environment) {
+        // Copy files from prod to non-prod.
+        $this->say("Moving files from prod to ${environment}");
+        $this->cloudapi->copyFiles($site, 'prod', $environment);
+    }
+
     protected function isTaskComplete($site, $taskId) {
         $task = $this->cloudapi->task($site, $taskId);
         if ($task->completed()) {
@@ -45,11 +194,10 @@ class DeployCommand extends Tasks
             $this->say('Waiting for code deployment...');
             sleep(1);
         }
-        $this->acquiaReDeployEnv($site, $environment);
+        $this->acquiaConfigUpdate($site, $environment);
     }
 
-
-    protected function acquiaReDeployEnv($site, $environment) {
+    protected function acquiaConfigUpdate($site, $environment) {
         $site = $this->cloudapi->site($site);
         $siteName = $site->unixUsername();
 
@@ -67,80 +215,7 @@ class DeployCommand extends Tasks
         // @TODO add domains
         //$this->cloudapi->purgeVarnishCache($site, $environment);
     }
-
-    /**
-     * This is the acquia:preproddeployenv command
-     *
-     * @command acquia:deploy:preprod:env
-     */
-    public function acquiaDeployPreProdEnv($site, $environment, $branch) {
-        if ($environment == 'prod') {
-            throw new \Exception('Use the acquia:proddeploy command for the production environment.');
-        }
-
-        $this->acquiaDeployEnv($site, $environment, $branch);
-    }
-
-    /**
-     * This is the acquia:deploy:preprod command
-     *
-     * @command acquia:redeploy:preprod:all
-     */
-    public function acquiaDeployPreProd($site) {
-        $environments = $this->cloudapi->environments($site);
-
-        foreach ($environments as $environment) {
-            $env = $environment->name();
-            if ($env == 'prod') {
-                continue;
-            }
-
-            $this->acquiaReDeployEnv($site, $env);
-        }
-    }
-
-    /**
-     * This is the acquia:deploy:prod command
-     *
-     * @command acquia:deploy:prod
-     */
-    public function acquiaDeployProd($site, $branch) {
-        $this->yell('WARNING: DEPLOYING TO PROD');
-        if ($this->confirm('Are you sure you want to deploy to prod?')) {
-            $this->acquiaDeployEnv($site, 'prod', $branch);
-        }
-    }
-
-    /**
-     * This is the acquia:preprodprep command
-     *
-     * @command acquia:prepare:preprod
-     */
-    public function acquiaPreparePreProd($site)
-    {
-        $environments = $this->cloudapi->environments($site);
-        foreach ($environments as $environment) {
-            $env = $environment->name();
-            if ($env == 'prod') {
-                continue;
-            }
-            $databases = $this->cloudapi->environmentDatabases($site, $environment);
-            foreach ($databases as $database) {
-
-                // Run database backups.
-                $db = $database->name();
-                $this->say("Backing up DB (${db}) on ${environment}");
-                $this->cloudapi->createDatabaseBackup($site, $environment, $db);
-
-                // Copy DB from prod to non-prod.
-                $this->say("Moving DB (${db}) from prod to ${env}");
-                $this->cloudapi->copyDatabase($site, $db, 'prod', $env);
-            }
-
-            // Copy files from prod to non-prod.
-            $this->say("Moving files from prod to ${env}");
-            $this->cloudapi->copyFiles($site, 'prod', $env);
-        }
-    }
 }
+
+
 
