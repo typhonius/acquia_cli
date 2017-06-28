@@ -220,7 +220,7 @@ class DeployCommand extends Tasks
 
         $output = $this->output();
         $table = new Table($output);
-        $table->setHeaders(array('Environment', 'Branch/Tag', 'Domain', 'Database(s)'));
+        $table->setHeaders(array('Environment', 'Branch/Tag', 'Domain(s)', 'Database(s)'));
 
         foreach ($environments as $environment) {
             $databases = $this->cloudapi->environmentDatabases($site, $environment);
@@ -229,9 +229,16 @@ class DeployCommand extends Tasks
                 $dbs[] = $database->name();
             }
             $dbString = implode(', ', $dbs);
+
+            $domains = $this->cloudapi->domains($site, $environment);
+            $dm = [];
+            foreach ($domains as $domain) {
+                $dm[] = $domain->name();
+            }
+            $dmString = implode("\n", $dm);
             $table
                 ->addRows(array(
-                    array($environment->name(), $environment->vcsPath(), $environment->defaultDomain(), $dbString),
+                    array($environment->name(), $environment->vcsPath(), $dmString, $dbString),
                 ));
         }
         $table->render();
@@ -248,7 +255,7 @@ class DeployCommand extends Tasks
 
         $output = $this->output();
         $table = new Table($output);
-        $table->setHeaders(array('Type', 'Name', 'FQDN', 'AMI', 'Region', 'AZ', 'Details'));
+        $table->setHeaders(array('Type', 'Name', 'FQDN', 'AMI', 'Region', 'AZ', 'IP', 'Details'));
 
 
         $servers = $this->cloudapi->servers($site, $environment);
@@ -282,7 +289,7 @@ class DeployCommand extends Tasks
 
             $table
                 ->addRows(array(
-                    array($type, $server->name(), $server->fqdn(), $server->amiType(), $server->region(), $server->availabilityZone(), $extra),
+                    array($type, $server->name(), $server->fqdn(), $server->amiType(), $server->region(), $server->availabilityZone(), gethostbyname($server->fqdn()), $extra),
                 ));
         }
 
