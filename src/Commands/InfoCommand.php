@@ -29,7 +29,7 @@ class InfoCommand extends Tasks
     }
 
     /**
-     * This is the acquia:task:list command
+     * Gets all tasks associated with a site.
      *
      * @command acquia:task:list
      */
@@ -51,7 +51,7 @@ class InfoCommand extends Tasks
     }
 
     /**
-     * This is the acquia:task:info command
+     * Gets detailed information about a specific task
      *
      * @command acquia:task:info
      */
@@ -78,7 +78,7 @@ class InfoCommand extends Tasks
     }
 
     /**
-     * This is the acquia:sites command
+     * Shows all sites a user has access to.
      *
      * @command acquia:site:list
      */
@@ -91,7 +91,7 @@ class InfoCommand extends Tasks
     }
 
     /**
-     * This is the acquia:siteinfo command
+     * Shows detailed information about a site.
      *
      * @command acquia:site:info
      */
@@ -131,7 +131,7 @@ class InfoCommand extends Tasks
     }
 
     /**
-     * This is the acquia:environment:info command
+     * Shows detailed information about servers in an environment.
      *
      * @command acquia:environment:info
      */

@@ -30,9 +30,9 @@ class DeployCommand extends Tasks
     }
 
     /**
-     * This is the acquia:deploy:prod command
+     * Runs a deployment of a branch/tag and config/db update to the production environment.
      *
-     * @command acquia:deploy:prod
+     * @command prod:acquia:deploy
      */
     public function acquiaDeployProd($site, $branch) {
         $this->yell('WARNING: DEPLOYING TO PROD');
@@ -42,22 +42,22 @@ class DeployCommand extends Tasks
     }
 
     /**
-     * This is the acquia:deploy:preprod command
+     * Runs a deployment of a branch/tag and config/db update to a non-production environment.
      *
      * @command acquia:deploy:preprod
      */
     public function acquiaDeployPreProd($site, $environment, $branch) {
         if ($environment == 'prod') {
-            throw new \Exception('Use the acquia:deploy:prod command for the production environment.');
+            throw new \Exception('Use the prod:acquia:deploy command for the production environment.');
         }
 
         $this->acquiaDeployEnv($site, $environment, $branch);
     }
 
     /**
-     * This is the acquia:config-update:prod command
+     * Updates configuration and db in production.
      *
-     * @command acquia:config-update:prod
+     * @command prod:acquia:config-update
      */
     public function acquiaConfigUpdateProd($site) {
         $this->yell('WARNING: UPDATING CONFIG ON PROD');
@@ -67,21 +67,21 @@ class DeployCommand extends Tasks
     }
 
     /**
-     * This is the acquia:config-update:preprod command
+     * Updates configuration and db in a non-production environment.
      *
      * @command acquia:config-update:preprod
      */
     public function acquiaConfigUpdatePreProd($site, $environment) {
 
         if ($environment == 'prod') {
-            throw new \Exception('Use the acquia:prepare:prod command for the production environment.');
+            throw new \Exception('Use the prod:acquia:prepare command for the production environment.');
         }
 
         $this->acquiaConfigUpdate($site, $environment);
     }
 
     /**
-     * This is the acquia:config-update:preprod:all command
+     * Updates configuration and db in all non-production environments.
      *
      * @command acquia:config-update:preprod:all
      */
@@ -99,9 +99,9 @@ class DeployCommand extends Tasks
     }
 
     /**
-     * This is the acquia:prepare:prod command
+     * Prepares the production environment for a deployment.
      *
-     * @command acquia:prepare:prod
+     * @command prod:acquia:prepare
      */
     public function acquiaPrepareProd($site)
     {
@@ -114,7 +114,7 @@ class DeployCommand extends Tasks
     }
 
     /**
-     * This is the acquia:prepare:preprod command
+     * Prepares a non-production environment for a deployment.
      *
      * @command acquia:prepare:preprod
      */
@@ -130,7 +130,7 @@ class DeployCommand extends Tasks
     }
 
     /**
-     * This is the acquia:prepare:preprod:all command
+     * Prepares all non-production environments for a deployment.
      *
      * @command acquia:prepare:preprod:all
      */
