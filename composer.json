@@ -1,0 +1,12 @@
+{
+    "require": {
+        "acquia/acquia-sdk-php-cloud-api": "^0.10.7",
+        "consolidation/robo": "^1.0",
+        "boedah/robo-drush": "^3.0"
+    },
+    "autoload":{
+        "psr-4":{
+            "AcquiaCli\\":"src"
+        }
+    }
+}
