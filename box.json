@@ -1,0 +1,21 @@
+{
+    "chmod": "0755",
+    "directories": [
+        "src"
+    ],
+    "files": [
+        "vendor/guzzle/http/Guzzle/Http/Resources/cacert.pem",
+        "robo.yml"
+    ],
+    "finder": [
+        {
+            "name": "*.php",
+            "exclude": ["Tests"],
+            "in": "vendor"
+        }
+    ],
+    "git-version": "package_version",
+    "main": "bin/cli.php",
+    "output": "acquiacli.phar",
+    "stub": true
+}
