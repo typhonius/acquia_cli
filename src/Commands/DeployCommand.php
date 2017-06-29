@@ -2,6 +2,7 @@
 
 namespace AcquiaCli\Commands;
 
+use Acquia\Cloud\Api\Response\Task;
 use Robo\Tasks;
 use Robo\Robo;
 use Acquia\Cloud\Api\CloudApiClient;
@@ -164,7 +165,8 @@ class DeployCommand extends Tasks
 
             // Copy DB from prod to non-prod.
             $this->say("Moving DB (${db}) from ${environmentFrom} to ${environmentTo}");
-            $this->cloudapi->copyDatabase($site, $db, $environmentFrom, $environmentTo);
+            $task = $this->cloudapi->copyDatabase($site, $db, $environmentFrom, $environmentTo);
+            $this->waitForTask($site, $task);
         }
     }
 
@@ -172,40 +174,42 @@ class DeployCommand extends Tasks
         // Run database backups.
         $this->say("Backing up DB (${database}) on ${environment}");
         $task = $this->cloudapi->createDatabaseBackup($site, $environment, $database);
-        $taskId = $task->id();
-        while (!$this->isTaskComplete($site, $taskId)) {
-            $this->say('Waiting for DB backup...');
-            sleep(1);
-        }
+        $this->waitForTask($site, $task);
     }
 
     protected function backupFiles($site, $environmentFrom, $environmentTo) {
         // Copy files from prod to non-prod.
         $this->say("Moving files from ${environmentFrom} to ${environmentTo}");
         $task = $this->cloudapi->copyFiles($site, $environmentFrom, $environmentTo);
-        $taskId = $task->id();
-        while (!$this->isTaskComplete($site, $taskId)) {
-            $this->say('Waiting for files move...');
-            sleep(1);
-        }
+        $this->waitForTask($site, $task);
     }
 
-    protected function isTaskComplete($site, $taskId) {
-        $task = $this->cloudapi->task($site, $taskId);
-        if ($task->completed()) {
-            return TRUE;
+    protected function waitForTask($site, Task $task) {
+        $taskId = $task->id();
+        $complete = FALSE;
+
+        while ($complete === FALSE) {
+            $this->say('Waiting for task to complete...');
+            $task = $this->cloudapi->task($site, $taskId);
+            if ($task->completed()) {
+                if ($task->state() !== 'done') {
+                    throw new \Exception('Acquia task failed.');
+                }
+                $complete = TRUE;
+                break;
+            }
+            sleep(1);
+
+            // @TODO add a timeout here?
         }
-        return FALSE;
+        return TRUE;
     }
 
     protected function acquiaDeployEnv($site, $environment, $branch)
     {
         $task = $this->cloudapi->pushCode($site, $environment, $branch);
         $taskId = $task->id();
-        while (!$this->isTaskComplete($site, $taskId)) {
-            $this->say('Waiting for code deployment...');
-            sleep(1);
-        }
+        $this->waitForTask($site, $task);
         $this->acquiaConfigUpdate($site, $environment);
     }
 
