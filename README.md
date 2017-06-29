@@ -11,15 +11,18 @@
 ````
 # Show which sites you have access to.
 ./bin/cli.php acquia:site:list
-  
+
 # Show detailed information about servers in the prod environment (assuming sitename of prod:acquia obtained from acquia:site:list command)
 ./bin/cli.php acquia:environment:info prod:acquia prod
 
+# Copy the files and db from alpha to dev for testing new code
+./bin/cli.php acquia:prepare:preprod prod:acquia alpha dev
+
 # Deploy the develop-build branch to the test environment and run all config update steps
 ./bin/cli.php acquia:deploy:preprod prod:acquia test develop-build
-  
+
 # Copy the database and files from production to all non-production environments.
-./bin/cli.php acquia:prepare:preprod:all prod:acquia 
+./bin/cli.php acquia:prepare:preprod:all prod:acquia
 ````
 
 ## Creating a Phar

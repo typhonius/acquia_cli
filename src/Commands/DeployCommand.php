@@ -118,19 +118,19 @@ class DeployCommand extends Tasks
      *
      * @command acquia:prepare:preprod
      */
-    public function acquiaPreparePreProd($site, $environment)
+    public function acquiaPreparePreProd($site, $environmentFrom, $environmentTo)
     {
 
-        if ($environment == 'prod') {
+        if ($environmentTo == 'prod') {
             throw new \Exception('Use the acquia:prepare:prod command for the production environment.');
         }
 
-        $this->backupAndMoveDbs($site, $environment);
-        $this->backupFiles($site, $environment);
+        $this->backupAndMoveDbs($site, $environmentFrom, $environmentTo);
+        $this->backupFiles($site, $environmentFrom, $environmentTo);
     }
 
     /**
-     * Prepares all non-production environments for a deployment.
+     * Prepares all non-production environments for a deployment using prod as a source.
      *
      * @command acquia:prepare:preprod:all
      */
@@ -143,8 +143,8 @@ class DeployCommand extends Tasks
                 continue;
             }
 
-            $this->backupAndMoveDbs($site, $env);
-            $this->backupFiles($site, $env);
+            $this->backupAndMoveDbs($site, 'prod', $env);
+            $this->backupFiles($site, 'prod', $env);
         }
     }
 
@@ -153,29 +153,41 @@ class DeployCommand extends Tasks
     /*                         INTERNAL FUNCTIONS                            */
     /*************************************************************************/
 
-    protected function backupAndMoveDbs($site, $environment) {
-        $databases = $this->cloudapi->environmentDatabases($site, $environment);
+    protected function backupAndMoveDbs($site, $environmentFrom, $environmentTo) {
+        $databases = $this->cloudapi->environmentDatabases($site, $environmentFrom);
         foreach ($databases as $database) {
 
             $db = $database->name();
-            $this->backupDb($site, $environment, $db);
+
+            $this->backupDb($site, $environmentFrom, $db);
+            $this->backupDb($site, $environmentTo, $db);
 
             // Copy DB from prod to non-prod.
-            $this->say("Moving DB (${db}) from prod to ${environment}");
-            $this->cloudapi->copyDatabase($site, $db, 'prod', $environment);
+            $this->say("Moving DB (${db}) from ${environmentFrom} to ${environmentTo}");
+            $this->cloudapi->copyDatabase($site, $db, $environmentFrom, $environmentTo);
         }
     }
 
     protected function backupDb($site, $environment, $database) {
         // Run database backups.
         $this->say("Backing up DB (${database}) on ${environment}");
-        $this->cloudapi->createDatabaseBackup($site, $environment, $database);
+        $task = $this->cloudapi->createDatabaseBackup($site, $environment, $database);
+        $taskId = $task->id();
+        while (!$this->isTaskComplete($site, $taskId)) {
+            $this->say('Waiting for DB backup...');
+            sleep(1);
+        }
     }
 
-    protected function backupFiles($site, $environment) {
+    protected function backupFiles($site, $environmentFrom, $environmentTo) {
         // Copy files from prod to non-prod.
-        $this->say("Moving files from prod to ${environment}");
-        $this->cloudapi->copyFiles($site, 'prod', $environment);
+        $this->say("Moving files from ${environmentFrom} to ${environmentTo}");
+        $task = $this->cloudapi->copyFiles($site, $environmentFrom, $environmentTo);
+        $taskId = $task->id();
+        while (!$this->isTaskComplete($site, $taskId)) {
+            $this->say('Waiting for files move...');
+            sleep(1);
+        }
     }
 
     protected function isTaskComplete($site, $taskId) {
