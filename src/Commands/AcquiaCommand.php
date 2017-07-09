@@ -11,6 +11,9 @@ abstract class AcquiaCommand extends Tasks
     /** @var CloudApiClient $cloudapi */
     protected $cloudapi;
 
+    /** Additional configuration */
+    protected $extraConfig;
+
     /**
      * This hook will fire for all commands extending this class.
      *
@@ -18,6 +21,9 @@ abstract class AcquiaCommand extends Tasks
      */
     public function construct()
     {
+        $extraConfig = Robo::Config()->get('extraconfig');
+        $this->extraConfig = $extraConfig;
+
         $acquia = Robo::Config()->get('acquia');
         $cloudapi = CloudApiClient::factory(array(
             'username' => $acquia['mail'],

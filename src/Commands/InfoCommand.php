@@ -35,7 +35,8 @@ class InfoCommand extends AcquiaCommand
      * @command task:info
      */
     public function acquiaTask($site, $taskId) {
-        $tz = 'Australia/Sydney';
+
+        $tz = $this->extraConfig['timezone'];
 
         $task = $this->cloudapi->task($site, $taskId);
         $startedDate = new \DateTime();

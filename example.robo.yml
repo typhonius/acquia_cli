@@ -1,3 +1,5 @@
 acquia:
   mail: 'admalone@deloitte.com.au'
   pass: 'password here'
+extraconfig:
+  timezone: 'Australia/Sydney'
