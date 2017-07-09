@@ -10,7 +10,7 @@ class InfoCommand extends AcquiaCommand
     /**
      * Gets all tasks associated with a site.
      *
-     * @command acquia:task:list
+     * @command task:list
      */
     public function acquiaTasks($site) {
 
@@ -32,7 +32,7 @@ class InfoCommand extends AcquiaCommand
     /**
      * Gets detailed information about a specific task
      *
-     * @command acquia:task:info
+     * @command task:info
      */
     public function acquiaTask($site, $taskId) {
         $tz = 'Australia/Sydney';
@@ -59,7 +59,7 @@ class InfoCommand extends AcquiaCommand
     /**
      * Shows all sites a user has access to.
      *
-     * @command acquia:site:list
+     * @command site:list
      */
     public function acquiaSites()
     {
@@ -72,7 +72,7 @@ class InfoCommand extends AcquiaCommand
     /**
      * Shows detailed information about a site.
      *
-     * @command acquia:site:info
+     * @command site:info
      */
     public function acquiaSiteInfo($site)
     {
@@ -112,7 +112,7 @@ class InfoCommand extends AcquiaCommand
     /**
      * Shows detailed information about servers in an environment.
      *
-     * @command acquia:environment:info
+     * @command environment:info
      */
     public function acquiaEnvironmentInfo($site, $environment)
     {

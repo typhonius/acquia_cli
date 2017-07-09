@@ -12,7 +12,7 @@ class DeployCommand extends AcquiaCommand
     /**
      * Runs a deployment of a branch/tag and config/db update to the production environment.
      *
-     * @command prod:acquia:deploy
+     * @command prod:deploy
      */
     public function acquiaDeployProd($site, $branch) {
         $this->yell('WARNING: DEPLOYING TO PROD');
@@ -24,7 +24,7 @@ class DeployCommand extends AcquiaCommand
     /**
      * Runs a deployment of a branch/tag and config/db update to a non-production environment.
      *
-     * @command acquia:deploy:preprod
+     * @command preprod:deploy
      */
     public function acquiaDeployPreProd($site, $environment, $branch) {
         if ($environment == 'prod') {
@@ -37,7 +37,7 @@ class DeployCommand extends AcquiaCommand
     /**
      * Updates configuration and db in production.
      *
-     * @command prod:acquia:config-update
+     * @command prod:config-update
      */
     public function acquiaConfigUpdateProd($site) {
         $this->yell('WARNING: UPDATING CONFIG ON PROD');
@@ -49,7 +49,7 @@ class DeployCommand extends AcquiaCommand
     /**
      * Updates configuration and db in a non-production environment.
      *
-     * @command acquia:config-update:preprod
+     * @command preprod:config-update
      */
     public function acquiaConfigUpdatePreProd($site, $environment) {
 
@@ -63,7 +63,7 @@ class DeployCommand extends AcquiaCommand
     /**
      * Updates configuration and db in all non-production environments.
      *
-     * @command acquia:config-update:preprod:all
+     * @command preprod:config-update:all
      */
     public function acquiaConfigUpdatePreProdAll($site) {
         $environments = $this->cloudapi->environments($site);
@@ -81,7 +81,7 @@ class DeployCommand extends AcquiaCommand
     /**
      * Prepares the production environment for a deployment.
      *
-     * @command prod:acquia:prepare
+     * @command prod:prepare
      */
     public function acquiaPrepareProd($site)
     {
@@ -96,7 +96,7 @@ class DeployCommand extends AcquiaCommand
     /**
      * Prepares a non-production environment for a deployment.
      *
-     * @command acquia:prepare:preprod
+     * @command preprod:prepare
      */
     public function acquiaPreparePreProd($site, $environmentFrom, $environmentTo)
     {
@@ -112,7 +112,7 @@ class DeployCommand extends AcquiaCommand
     /**
      * Prepares all non-production environments for a deployment using prod as a source.
      *
-     * @command acquia:prepare:preprod:all
+     * @command preprod:prepare:all
      */
     public function acquiaPreparePreProdAll($site)
     {
@@ -128,6 +128,32 @@ class DeployCommand extends AcquiaCommand
         }
     }
 
+    /**
+     * Clears varnish cache for all domains in specific a specific pre-production environment.
+     *
+     * @command preprod:purgevarnish
+     */
+    public function acquiaPurgeVarnish($site, $environment) {
+
+        if ($environment == 'prod') {
+            throw new \Exception('Use the prod:acquia:purgevarnish command for the production environment.');
+        }
+
+        $this->acquiaPurgeVarnishForEnvironment($site, $environment);
+    }
+
+    /**
+     * Clears varnish cache for all domains the production environment.
+     *
+     * @command prod:purgevarnish
+     */
+    public function acquiaPurgeVarnishProd($site) {
+
+        $this->yell('WARNING: CLEARNING PROD VARNISH CACHE CAN RESULT IN REDUCTION IN PERFORMANCE');
+        if ($this->confirm('Are you sure you want to clear prod varnish cache?')) {
+            $this->acquiaPurgeVarnishForEnvironment($site, 'prod');
+        }
+    }
 
     /*************************************************************************/
     /*                         INTERNAL FUNCTIONS                            */
@@ -146,6 +172,14 @@ class DeployCommand extends AcquiaCommand
             $this->say("Moving DB (${db}) from ${environmentFrom} to ${environmentTo}");
             $task = $this->cloudapi->copyDatabase($site, $db, $environmentFrom, $environmentTo);
             $this->waitForTask($site, $task);
+        }
+    }
+
+    protected function backupAllEnvironmentDbs($site, $environment) {
+        $databases = $this->cloudapi->environmentDatabases($site, $environment);
+        foreach ($databases as $database) {
+            $db = $database->name();
+            $this->backupDb($site, $environment, $db);
         }
     }
 
@@ -186,10 +220,11 @@ class DeployCommand extends AcquiaCommand
 
     protected function acquiaDeployEnv($site, $environment, $branch)
     {
-        $task = $this->cloudapi->pushCode($site, $environment, $branch);
-        $taskId = $task->id();
-        $this->waitForTask($site, $task);
+        $this->backupAllEnvironmentDbs($site, $environment);
+        $deployTask = $this->cloudapi->pushCode($site, $environment, $branch);
+        $this->waitForTask($site, $deployTask);
         $this->acquiaConfigUpdate($site, $environment);
+        $this->acquiaPurgeVarnishForEnvironment($site, $environment);
     }
 
     protected function acquiaConfigUpdate($site, $environment) {
@@ -207,8 +242,18 @@ class DeployCommand extends AcquiaCommand
             ->drush("cache-rebuild")
             ->run();
 
-        // @TODO add domains
-        //$this->cloudapi->purgeVarnishCache($site, $environment);
+    }
+
+    protected function acquiaPurgeVarnishForEnvironment($site, $environment) {
+        var_dump("now got here");
+
+        $domains = $this->cloudapi->domains($site, $environment);
+        foreach ($domains as $domain) {
+            $domainName = $domain->name();
+            $this->say("Purging varnish cache for ${domainName} in ${environment} environment");
+            $task = $this->cloudapi->purgeVarnishCache($site, $environment, $domainName);
+            $this->waitForTask($site, $task);
+        }
     }
 }
 
