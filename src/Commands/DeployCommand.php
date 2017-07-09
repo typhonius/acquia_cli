@@ -3,32 +3,11 @@
 namespace AcquiaCli\Commands;
 
 use Acquia\Cloud\Api\Response\Task;
-use Robo\Tasks;
-use Robo\Robo;
-use Acquia\Cloud\Api\CloudApiClient;
-use Symfony\Component\Console\Helper\Table;
 
-class DeployCommand extends Tasks
+class DeployCommand extends AcquiaCommand
 {
-    /** @var CloudApiClient $cloudapi */
-    protected $cloudapi;
 
     use \Boedah\Robo\Task\Drush\loadTasks;
-
-    /**
-     * This hook will fire for all commands in this command file.
-     *
-     * @hook init
-     */
-    public function construct() {
-        $acquia = Robo::Config()->get('acquia');
-        $cloudapi = CloudApiClient::factory(array(
-            'username' => $acquia['mail'],
-            'password' => $acquia['pass'],
-        ));
-
-        $this->cloudapi = $cloudapi;
-    }
 
     /**
      * Runs a deployment of a branch/tag and config/db update to the production environment.

@@ -2,31 +2,10 @@
 
 namespace AcquiaCli\Commands;
 
-use Robo\Tasks;
-use Robo\Robo;
-use Acquia\Cloud\Api\CloudApiClient;
 use Symfony\Component\Console\Helper\Table;
 
-class InfoCommand extends Tasks
+class InfoCommand extends AcquiaCommand
 {
-    /** @var CloudApiClient $cloudapi */
-    protected $cloudapi;
-
-    /**
-     * This hook will fire for all commands in this command file.
-     *
-     * @hook init
-     */
-    public function construct()
-    {
-        $acquia = Robo::Config()->get('acquia');
-        $cloudapi = CloudApiClient::factory(array(
-            'username' => $acquia['mail'],
-            'password' => $acquia['pass'],
-        ));
-
-        $this->cloudapi = $cloudapi;
-    }
 
     /**
      * Gets all tasks associated with a site.
@@ -182,4 +161,3 @@ class InfoCommand extends Tasks
 
     }
 }
-
