@@ -12,6 +12,6 @@ $statusCode = \Robo\Robo::run(
     $_SERVER['argv'],
     $commandClasses,
     'AcquiaCli',
-    '0.0.0-alpha1'
+    '0.0.2'
 );
 exit($statusCode);

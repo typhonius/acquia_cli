@@ -13,6 +13,7 @@
         "consolidation/robo": "^1.0",
         "boedah/robo-drush": "^3.0"
     },
+    "bin": ["bin/acquiacli"],
     "autoload":{
         "psr-4":{
             "AcquiaCli\\":"src"

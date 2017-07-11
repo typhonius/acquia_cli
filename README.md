@@ -10,19 +10,19 @@
 ## Usage/Examples
 ````
 # Show which sites you have access to.
-./bin/cli.php site:list
+./bin/acquiacli site:list
 
 # Show detailed information about servers in the prod environment (assuming sitename of prod:acquia obtained from site:list command)
-./bin/cli.php environment:info prod:acquia prod
+./bin/acquiacli environment:info prod:acquia prod
 
 # Copy the files and db from alpha to dev for testing new code
-./bin/cli.php preprod:prepare prod:acquia alpha dev
+./bin/acquiacli preprod:prepare prod:acquia alpha dev
 
 # Deploy the develop-build branch to the test environment and run all config update steps
-./bin/cli.php preprod:deploy prod:acquia test develop-build
+./bin/acquiacli preprod:deploy prod:acquia test develop-build
 
 # Copy the database and files from production to all non-production environments.
-./bin/cli.php preprod:prepare:all prod:acquia
+./bin/acquiacli preprod:prepare:all prod:acquia
 ````
 
 ## Creating a Phar

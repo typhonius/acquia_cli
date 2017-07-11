@@ -15,7 +15,7 @@
         }
     ],
     "git-version": "package_version",
-    "main": "bin/cli.php",
+    "main": "bin/acquiacli",
     "output": "acquiacli.phar",
     "stub": true
 }
