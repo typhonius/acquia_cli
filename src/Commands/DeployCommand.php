@@ -245,7 +245,6 @@ class DeployCommand extends AcquiaCommand
     }
 
     protected function acquiaPurgeVarnishForEnvironment($site, $environment) {
-        var_dump("now got here");
 
         $domains = $this->cloudapi->domains($site, $environment);
         foreach ($domains as $domain) {
