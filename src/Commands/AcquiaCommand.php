@@ -14,12 +14,7 @@ abstract class AcquiaCommand extends Tasks
     /** Additional configuration */
     protected $extraConfig;
 
-    /**
-     * This hook will fire for all commands extending this class.
-     *
-     * @hook init
-     */
-    public function construct()
+    public function __construct()
     {
         $extraConfig = Robo::Config()->get('extraconfig');
         $this->extraConfig = $extraConfig;
