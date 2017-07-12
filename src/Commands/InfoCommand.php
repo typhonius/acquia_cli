@@ -160,6 +160,9 @@ class InfoCommand extends AcquiaCommand
             }
             elseif (array_key_exists('vcs', $services)) {
                 $type = 'Git';
+                if (isset($services['vcs']['vcs_path'])) {
+                    $extra = 'Revision: ' . $services['vcs']['vcs_path'];
+                }
             }
             elseif (array_key_exists('database', $services)) {
                 $type = 'DB';
