@@ -197,27 +197,6 @@ class DeployCommand extends AcquiaCommand
         $this->waitForTask($site, $task);
     }
 
-    protected function waitForTask($site, Task $task) {
-        $taskId = $task->id();
-        $complete = FALSE;
-
-        while ($complete === FALSE) {
-            $this->say('Waiting for task to complete...');
-            $task = $this->cloudapi->task($site, $taskId);
-            if ($task->completed()) {
-                if ($task->state() !== 'done') {
-                    throw new \Exception('Acquia task failed.');
-                }
-                $complete = TRUE;
-                break;
-            }
-            sleep(1);
-
-            // @TODO add a timeout here?
-        }
-        return TRUE;
-    }
-
     protected function acquiaDeployEnv($site, $environment, $branch)
     {
         $this->backupAllEnvironmentDbs($site, $environment);
