@@ -221,6 +221,7 @@ class DeployCommand extends AcquiaCommand
     protected function acquiaDeployEnv($site, $environment, $branch)
     {
         $this->backupAllEnvironmentDbs($site, $environment);
+        $this->say("Deploying ${branch} to the ${environment} environment");
         $deployTask = $this->cloudapi->pushCode($site, $environment, $branch);
         $this->waitForTask($site, $deployTask);
         $this->acquiaConfigUpdate($site, $environment);
