@@ -114,14 +114,31 @@ class InfoCommand extends AcquiaCommand
      * Shows detailed information about servers in an environment.
      *
      * @command environment:info
+     * @alias env:info
      */
-    public function acquiaEnvironmentInfo($site, $environment)
+    public function acquiaEnvironmentInfo($site, $environment = null)
     {
+        if (null === $environment) {
+            $site = $this->cloudapi->site($site);
+            $environments = $this->cloudapi->environments($site);
+            /* @var $e \Acquia\Cloud\Api\Response\Environment; */
+            foreach ($environments as $e) {
+                $this->renderEnvironmentInfo($site, $e->name());
+            }
+
+            return;
+        }
+
+        $this->renderEnvironmentInfo($site, $environment);
+    }
+
+    protected function renderEnvironmentInfo($site, $environment) {
+
+        $this->yell("${environment} environment");
 
         $output = $this->output();
         $table = new Table($output);
         $table->setHeaders(array('Type', 'Name', 'FQDN', 'AMI', 'Region', 'AZ', 'IP', 'Details'));
-
 
         $servers = $this->cloudapi->servers($site, $environment);
         foreach ($servers as $server) {
@@ -159,6 +176,5 @@ class InfoCommand extends AcquiaCommand
         }
 
         $table->render();
-
     }
 }
