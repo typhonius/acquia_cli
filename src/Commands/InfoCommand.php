@@ -11,6 +11,7 @@ class InfoCommand extends AcquiaCommand
      * Gets all tasks associated with a site.
      *
      * @command task:list
+     * @alias t:l
      */
     public function acquiaTasks($site) {
 
@@ -33,6 +34,7 @@ class InfoCommand extends AcquiaCommand
      * Gets detailed information about a specific task
      *
      * @command task:info
+     * @alias t:i
      */
     public function acquiaTask($site, $taskId) {
 
@@ -61,6 +63,7 @@ class InfoCommand extends AcquiaCommand
      * Shows all sites a user has access to.
      *
      * @command site:list
+     * @alias s:l
      */
     public function acquiaSites()
     {
@@ -74,6 +77,7 @@ class InfoCommand extends AcquiaCommand
      * Shows detailed information about a site.
      *
      * @command site:info
+     * @alias s:i
      */
     public function acquiaSiteInfo($site)
     {
@@ -115,6 +119,7 @@ class InfoCommand extends AcquiaCommand
      *
      * @command environment:info
      * @alias env:info
+     * @alias e:i
      */
     public function acquiaEnvironmentInfo($site, $environment = null)
     {
