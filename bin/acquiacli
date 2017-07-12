@@ -1,17 +1,11 @@
 #!/usr/bin/env php
 <?php
+/**
+ * @file This file is a simply shell wrapper for running Acquia Cli Robo commands.
+ *
+ * Having a wrapper permits other non-shell files to directly require
+ * acquiacli-robo.php.
+ */
 
-define('ROOT_DIR', dirname(__DIR__));
-require_once dirname(__DIR__).'/vendor/autoload.php';
-
-$discovery = new \Consolidation\AnnotatedCommand\CommandFileDiscovery();
-$discovery->setSearchPattern('*Command.php');
-$commandClasses = $discovery->discover('src/Commands', '\AcquiaCli\Commands');
-
-$statusCode = \Robo\Robo::run(
-    $_SERVER['argv'],
-    $commandClasses,
-    'AcquiaCli',
-    '0.0.2'
-);
-exit($statusCode);
+// Shell wrapper for Acquia Cli.
+require_once __DIR__ . '/acquiacli-robo.php';
