@@ -3,8 +3,8 @@
 
 ## Pre-installation
 1. Ensure that you have downloaded the Drush site aliases for Acquia.
-1. Copy the `example.robo.yml` file to your project root and name it `robo.yml`
-1. Add your Acquia email address and password to the `robo.yml` file.
+1. Copy the `example.acquiacli.yml` file to your project root and name it `acquiacli.yml`
+1. Add your Acquia email address and password to the `acquiacli.yml` file.
 
 ## Installation
 1. Run `composer install`

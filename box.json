@@ -5,13 +5,13 @@
     ],
     "files": [
         "vendor/guzzle/http/Guzzle/Http/Resources/cacert.pem",
-        "robo.yml"
+        "acquiacli.yml"
     ],
     "finder": [
         {
             "name": "*.php",
             "exclude": ["Tests"],
-            "in": "vendor"
+            "in": ["vendor", "bin"]
         }
     ],
     "git-version": "package_version",

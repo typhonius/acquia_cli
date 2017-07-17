@@ -19,7 +19,7 @@ if (strpos(basename(__FILE__), 'phar')) {
 
 $input = new ArgvInput($argv);
 $output = new ConsoleOutput();
-$config = Robo::createConfiguration(['robo.yml']);
+$config = Robo::createConfiguration(['acquiacli.yml']);
 $app = new AcquiaCli($config, $input, $output);
 $status_code = $app->run($input, $output);
 exit($status_code);
