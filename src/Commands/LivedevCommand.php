@@ -12,7 +12,7 @@ class LivedevCommand extends AcquiaCommand
      *
      * @command livedev:enable
      */
-    public function acquiaLivedevEnable($site, $environment)
+    public function acquiaLivedevEnable($site, $environment = 'dev')
     {
         $this->say("Enabling livedev for the ${environment} environment");
         $task = $this->cloudapi->enableLiveDev($site, $environment);
@@ -24,7 +24,7 @@ class LivedevCommand extends AcquiaCommand
      *
      * @command livedev:disable
      */
-    public function acquiaRemoveDomain($site, $environment)
+    public function acquiaRemoveDomain($site, $environment = 'dev')
     {
         if ($this->confirm('Are you sure you want to disable livedev? Uncommitted work will be lost.')) {
             $this->say("Disabling livedev for the ${environment} environment");
