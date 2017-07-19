@@ -36,7 +36,7 @@ class LivedevCommand extends AcquiaCommand
     {
         if ($this->confirm('Are you sure you want to disable livedev? Uncommitted work will be lost.')) {
             $this->say("Disabling livedev for the ${environment} environment");
-            $task = $this->cloudapi->disableLiveDev($site, $environment);
+            $task = $this->cloudapi->disableLiveDev($site, $environment, true);
             $this->waitForTask($site, $task);
         }
     }
