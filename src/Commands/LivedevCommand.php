@@ -2,13 +2,18 @@
 
 namespace AcquiaCli\Commands;
 
-use Symfony\Component\Console\Helper\Table;
-
+/**
+ * Class LivedevCommand
+ * @package AcquiaCli\Commands
+ */
 class LivedevCommand extends AcquiaCommand
 {
 
     /**
      * Enable livedev for an environment.
+     *
+     * @param string $site
+     * @param string $environment
      *
      * @command livedev:enable
      */
@@ -21,6 +26,9 @@ class LivedevCommand extends AcquiaCommand
 
     /**
      * Disable livedev for an environment.
+     *
+     * @param string $site
+     * @param string $environment
      *
      * @command livedev:disable
      */

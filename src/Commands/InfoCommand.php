@@ -2,25 +2,38 @@
 
 namespace AcquiaCli\Commands;
 
+use Acquia\Cloud\Api\Response\Database;
+use Acquia\Cloud\Api\Response\Domain;
 use Acquia\Cloud\Api\Response\Environment;
+use Acquia\Cloud\Api\Response\Server;
+use Acquia\Cloud\Api\Response\Site;
+use Acquia\Cloud\Api\Response\Task;
 use Symfony\Component\Console\Helper\Table;
 
+/**
+ * Class InfoCommand
+ * @package AcquiaCli\Commands
+ */
 class InfoCommand extends AcquiaCommand
 {
 
     /**
      * Gets all tasks associated with a site.
      *
+     * @param string $site
+     *
      * @command task:list
      * @alias t:l
      */
-    public function acquiaTasks($site) {
+    public function acquiaTasks($site)
+    {
 
         $output = $this->output();
         $table = new Table($output);
         $table->setHeaders(array('ID', 'User', 'State', 'Description'));
 
         $tasks = $this->cloudapi->tasks($site);
+        /** @var Task $task */
         foreach ($tasks as $task) {
             $table
                 ->addRows(array(
@@ -34,10 +47,14 @@ class InfoCommand extends AcquiaCommand
     /**
      * Gets detailed information about a specific task
      *
+     * @param string $site
+     * @param string $taskId
+     *
      * @command task:info
      * @alias t:i
      */
-    public function acquiaTask($site, $taskId) {
+    public function acquiaTask($site, $taskId)
+    {
 
         $tz = $this->extraConfig['timezone'];
 
@@ -69,6 +86,7 @@ class InfoCommand extends AcquiaCommand
     public function acquiaSites()
     {
         $sites = $this->cloudapi->sites();
+        /** @var Site $site */
         foreach ($sites as $site) {
             $this->say($site->name());
         }
@@ -76,6 +94,8 @@ class InfoCommand extends AcquiaCommand
 
     /**
      * Shows detailed information about a site.
+     *
+     * @param string $site
      *
      * @command site:info
      * @alias s:i
@@ -92,9 +112,11 @@ class InfoCommand extends AcquiaCommand
         $table = new Table($output);
         $table->setHeaders(array('Environment', 'Branch/Tag', 'Domain(s)', 'Database(s)'));
 
+        /** @var Environment $environment */
         foreach ($environments as $environment) {
             $databases = $this->cloudapi->environmentDatabases($site, $environment);
             $dbs = [];
+            /** @var Database $database */
             foreach ($databases as $database) {
                 $dbs[] = $database->name();
             }
@@ -102,6 +124,7 @@ class InfoCommand extends AcquiaCommand
 
             $domains = $this->cloudapi->domains($site, $environment);
             $dm = [];
+            /** @var Domain $domain */
             foreach ($domains as $domain) {
                 $dm[] = $domain->name();
             }
@@ -125,6 +148,9 @@ class InfoCommand extends AcquiaCommand
     /**
      * Shows detailed information about servers in an environment.
      *
+     * @param string      $site
+     * @param string|null $environment
+     *
      * @command environment:info
      * @alias env:info
      * @alias e:i
@@ -146,7 +172,12 @@ class InfoCommand extends AcquiaCommand
         $this->renderEnvironmentInfo($site, $environment);
     }
 
-    protected function renderEnvironmentInfo($site, Environment $environment) {
+    /**
+     * @param $site
+     * @param Environment $environment
+     */
+    protected function renderEnvironmentInfo($site, Environment $environment)
+    {
 
         $environmentName = $environment->name();
 
@@ -157,6 +188,7 @@ class InfoCommand extends AcquiaCommand
         $table->setHeaders(array('Type', 'Name', 'FQDN', 'AMI', 'Region', 'AZ', 'IP', 'Details'));
 
         $servers = $this->cloudapi->servers($site, $environmentName);
+        /** @var Server $server */
         foreach ($servers as $server) {
             $type = 'Files';
             $extra = '';
@@ -168,17 +200,14 @@ class InfoCommand extends AcquiaCommand
                 if ($services['web']['status'] != 'online') {
                     $type = '* Web';
                 }
-            }
-            elseif (array_key_exists('vcs', $services)) {
+            } elseif (array_key_exists('vcs', $services)) {
                 $type = 'Git';
                 if (isset($services['vcs']['vcs_path'])) {
                     $extra = 'Revision: ' . $services['vcs']['vcs_path'];
                 }
-            }
-            elseif (array_key_exists('database', $services)) {
+            } elseif (array_key_exists('database', $services)) {
                 $type = 'DB';
-            }
-            elseif (array_key_exists('varnish', $services)) {
+            } elseif (array_key_exists('varnish', $services)) {
                 $type = 'LB';
                 if (isset($services['external_ip'])) {
                     $extra = 'External IP: ' . $services['external_ip'];
@@ -197,7 +226,7 @@ class InfoCommand extends AcquiaCommand
         $table->render();
         $this->say('* indicates server out of rotation.');
         if ($environment->liveDev()) {
-            $this->say("Livedev mode enabled.");
+            $this->say('Livedev mode enabled.');
         }
 
     }

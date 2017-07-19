@@ -11,17 +11,25 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Consolidation\AnnotatedCommand\CommandFileDiscovery;
 
-class AcquiaCli {
+/**
+ * Class AcquiaCli
+ * @package AcquiaCli
+ */
+class AcquiaCli
+{
 
     use ConfigAwareTrait;
 
     private $runner;
 
-    public function __construct(
-        Config $config,
-        InputInterface $input = NULL,
-        OutputInterface $output = NULL
-    ) {
+    /**
+     * AcquiaCli constructor.
+     * @param Config               $config
+     * @param InputInterface|null  $input
+     * @param OutputInterface|null $output
+     */
+    public function __construct(Config $config, InputInterface $input = null, OutputInterface $output = null)
+    {
 
         // Create application.
         $this->setConfig($config);
@@ -40,9 +48,15 @@ class AcquiaCli {
         $this->runner->registerCommandClasses($application, $commandClasses);
     }
 
-    public function run(InputInterface $input, OutputInterface $output) {
-        $status_code = $this->runner->run($input, $output);
+    /**
+     * @param InputInterface  $input
+     * @param OutputInterface $output
+     * @return int
+     */
+    public function run(InputInterface $input, OutputInterface $output)
+    {
+        $statusCode = $this->runner->run($input, $output);
 
-        return $status_code;
+        return $statusCode;
     }
 }

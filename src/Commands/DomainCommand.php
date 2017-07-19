@@ -2,13 +2,19 @@
 
 namespace AcquiaCli\Commands;
 
-use Symfony\Component\Console\Helper\Table;
-
+/**
+ * Class DomainCommand
+ * @package AcquiaCli\Commands
+ */
 class DomainCommand extends AcquiaCommand
 {
 
     /**
      * Add a domain to an environment.
+     *
+     * @param string $site
+     * @param string $environment
+     * @param string $domain
      *
      * @command domain:add
      */
@@ -21,6 +27,10 @@ class DomainCommand extends AcquiaCommand
 
     /**
      * Remove a domain to an environment.
+     *
+     * @param string $site
+     * @param string $environment
+     * @param string $domain
      *
      * @command domain:remove
      */
@@ -35,6 +45,12 @@ class DomainCommand extends AcquiaCommand
 
     /**
      * List all domains.
+     *
+     *
+     * @param string $site
+     * @param string $domain
+     * @param string $environmentFrom
+     * @param string $environmentTo
      *
      * @command domain:move
      */
