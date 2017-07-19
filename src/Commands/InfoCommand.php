@@ -2,6 +2,7 @@
 
 namespace AcquiaCli\Commands;
 
+use Acquia\Cloud\Api\Response\Environment;
 use Symfony\Component\Console\Helper\Table;
 
 class InfoCommand extends AcquiaCommand
@@ -105,12 +106,19 @@ class InfoCommand extends AcquiaCommand
                 $dm[] = $domain->name();
             }
             $dmString = implode("\n", $dm);
+
+            $environmentName = $environment->name();
+            if ($environment->liveDev()) {
+                $environmentName = '* ' . $environmentName;
+            }
+
             $table
                 ->addRows(array(
-                    array($environment->name(), $environment->vcsPath(), $dmString, $dbString),
+                    array($environmentName, $environment->vcsPath(), $dmString, $dbString),
                 ));
         }
         $table->render();
+        $this->say('* indicates environment in livedev mode.');
 
     }
 
@@ -128,24 +136,27 @@ class InfoCommand extends AcquiaCommand
             $environments = $this->cloudapi->environments($site);
             /* @var $e \Acquia\Cloud\Api\Response\Environment; */
             foreach ($environments as $e) {
-                $this->renderEnvironmentInfo($site, $e->name());
+                $this->renderEnvironmentInfo($site, $e);
             }
 
             return;
         }
 
+        $environment = $this->cloudapi->environment($site, $environment);
         $this->renderEnvironmentInfo($site, $environment);
     }
 
-    protected function renderEnvironmentInfo($site, $environment) {
+    protected function renderEnvironmentInfo($site, Environment $environment) {
 
-        $this->yell("${environment} environment");
+        $environmentName = $environment->name();
+
+        $this->yell("${environmentName} environment");
 
         $output = $this->output();
         $table = new Table($output);
         $table->setHeaders(array('Type', 'Name', 'FQDN', 'AMI', 'Region', 'AZ', 'IP', 'Details'));
 
-        $servers = $this->cloudapi->servers($site, $environment);
+        $servers = $this->cloudapi->servers($site, $environmentName);
         foreach ($servers as $server) {
             $type = 'Files';
             $extra = '';
@@ -184,5 +195,10 @@ class InfoCommand extends AcquiaCommand
         }
 
         $table->render();
+        $this->say('* indicates server out of rotation.');
+        if ($environment->liveDev()) {
+            $this->say("Livedev mode enabled.");
+        }
+
     }
 }
