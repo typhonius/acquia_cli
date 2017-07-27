@@ -251,7 +251,6 @@ class DeployCommand extends AcquiaCommand
         $deployTask = $this->cloudapi->pushCode($site, $environment, $branch);
         $this->waitForTask($site, $deployTask);
         $this->acquiaConfigUpdate($site, $environment);
-        $this->acquiaPurgeVarnishForEnvironment($site, $environment);
     }
 
     protected function acquiaConfigUpdate($site, $environment)
