@@ -3,9 +3,11 @@
 namespace AcquiaCli\Commands;
 
 use Acquia\Cloud\Api\Response\Task;
+use Guzzle\Http\Exception\ServerErrorResponseException;
 use Robo\Tasks;
 use Robo\Robo;
 use Acquia\Cloud\Api\CloudApiClient;
+use Exception;
 
 /**
  * Class AcquiaCommand
@@ -24,10 +26,10 @@ abstract class AcquiaCommand extends Tasks
      */
     public function __construct()
     {
-        $extraConfig = Robo::Config()->get('extraconfig');
+        $extraConfig = Robo::config()->get('extraconfig');
         $this->extraConfig = $extraConfig;
 
-        $acquia = Robo::Config()->get('acquia');
+        $acquia = Robo::config()->get('acquia');
         $cloudapi = CloudApiClient::factory(array(
             'username' => $acquia['mail'],
             'password' => $acquia['pass'],
@@ -40,26 +42,42 @@ abstract class AcquiaCommand extends Tasks
      * @string $site
      * @param Task $task
      * @return bool
-     * @throws \Exception
+     * @throws Exception
+     * @throws ServerErrorResponseException
      */
     protected function waitForTask($site, Task $task)
     {
         $taskId = $task->id();
         $complete = false;
+        $cloudApiFailures = 0;
 
         while ($complete === false) {
-            $this->say('Waiting for task to complete...');
-            $task = $this->cloudapi->task($site, $taskId);
-            if ($task->completed()) {
-                if ($task->state() !== 'done') {
-                    throw new \Exception('Acquia task failed.');
+            try {
+                $this->say('Waiting for task to complete...');
+                $task = $this->cloudapi->task($site, $taskId);
+                if ($task->completed()) {
+                    if ($task->state() !== 'done') {
+                        throw new Exception('Acquia task failed.');
+                    }
+                    $complete = true;
+                    break;
+                } else {
+                    sleep(5);
                 }
-                $complete = true;
-                break;
+            } catch (Exception $e) {
+                if ($e instanceof ServerErrorResponseException) {
+                    if ($e->getCode() == 503) {
+                        $cloudApiFailures++;
+                        if ($cloudApiFailures >= 5) {
+                            echo 'Caught exception: ',  $e->getMessage(), "\n";
+                            exit(1);
+                        }
+                    }
+                } else {
+                    echo 'Caught exception: ',  $e->getMessage(), "\n";
+                    exit(1);
+                }
             }
-            sleep(1);
-
-            // @TODO add a timeout here?
         }
 
         return true;

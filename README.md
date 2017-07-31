@@ -3,8 +3,10 @@
 
 ## Pre-installation
 1. Ensure that you have downloaded the Drush site aliases for Acquia.
-1. Copy the `example.acquiacli.yml` file to your project root and name it `acquiacli.yml`
+1. Copy the `example.acquiacli.yml` file to your project root and name it `acquiacli.yml`.
 1. Add your Acquia email address and password to the `acquiacli.yml` file.
+
+Alternatively, run `./bin/acquiacli setup` (or `./vendor/bin/acquiacli setup` when used as a dependency in another project) which will ask for your credentials and automatically create this file.
 
 ## Installation
 1. Run `composer install`
