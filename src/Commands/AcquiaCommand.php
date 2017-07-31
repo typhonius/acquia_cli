@@ -49,35 +49,19 @@ abstract class AcquiaCommand extends Tasks
     {
         $taskId = $task->id();
         $complete = false;
-        $cloudApiFailures = 0;
 
         while ($complete === false) {
-            try {
-                $this->say('Waiting for task to complete...');
-                $task = $this->cloudapi->task($site, $taskId);
-                if ($task->completed()) {
-                    if ($task->state() !== 'done') {
-                        throw new Exception('Acquia task failed.');
-                    }
-                    $complete = true;
-                    break;
-                } else {
-                    sleep(5);
+            $this->say('Waiting for task to complete...');
+            $task = $this->cloudapi->task($site, $taskId);
+            if ($task->completed()) {
+                if ($task->state() !== 'done') {
+                    throw new \Exception('Acquia task failed.');
                 }
-            } catch (Exception $e) {
-                if ($e instanceof ServerErrorResponseException) {
-                    if ($e->getCode() == 503) {
-                        $cloudApiFailures++;
-                        if ($cloudApiFailures >= 5) {
-                            echo 'Caught exception: ',  $e->getMessage(), "\n";
-                            exit(1);
-                        }
-                    }
-                } else {
-                    echo 'Caught exception: ',  $e->getMessage(), "\n";
-                    exit(1);
-                }
+                $complete = true;
+                break;
             }
+            sleep(1);
+            // @TODO add a timeout here?
         }
 
         return true;
