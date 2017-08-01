@@ -37,7 +37,7 @@ class SetupCommand extends Tasks
         if (!file_exists($this->projectConfigLocation)) {
             $this->say('No acquiacli.yml file exists. Creating new file from template now.');
             $mail = $this->ask('What is your Acquia email address?');
-            $pass = $this->askHidden('What is your Acquia password or key?');
+            $pass = $this->askHidden('What is your CloudAPI key or Acquia password?');
             $config = [
                 'acquia' => [
                     'mail' => $mail,
@@ -55,7 +55,8 @@ class SetupCommand extends Tasks
             $yaml = Yaml::dump($config, 3, 2);
             file_put_contents($this->projectConfigLocation, $yaml);
         } else {
-            $this->say('acquiacli.yml already exists. Aborting without change.');
+            $this->yell('acquiacli.yml already exists.', 20, 'red');
+            $this->say('Delete the acquiacli.yml file in your project root and run the setup command again to regenerate it.');
         }
     }
 }
