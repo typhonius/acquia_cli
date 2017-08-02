@@ -2,6 +2,8 @@
 
 namespace AcquiaCli\Commands;
 
+use Acquia\Cloud\Api\Response\Database;
+use Acquia\Cloud\Api\Response\Domain;
 use Acquia\Cloud\Api\Response\Task;
 use Guzzle\Http\Exception\ServerErrorResponseException;
 use Robo\Tasks;
@@ -15,6 +17,8 @@ use Exception;
  */
 abstract class AcquiaCommand extends Tasks
 {
+    use \Boedah\Robo\Task\Drush\loadTasks;
+
     /** @var CloudApiClient $cloudapi */
     protected $cloudapi;
 
@@ -26,8 +30,13 @@ abstract class AcquiaCommand extends Tasks
      */
     public function __construct()
     {
+        $defaultConfig = [
+            'timezone' => 'Australia/Sydney',
+            'format' => 'Y-m-d H:i:s',
+        ];
+
         $extraConfig = Robo::config()->get('extraconfig');
-        $this->extraConfig = $extraConfig;
+        $this->extraConfig = $extraConfig + $defaultConfig;
 
         $acquia = Robo::config()->get('acquia');
         $cloudapi = CloudApiClient::factory(array(
@@ -65,6 +74,118 @@ abstract class AcquiaCommand extends Tasks
         }
 
         return true;
+    }
+
+    /**
+     * @param $site
+     * @param $environmentFrom
+     * @param $environmentTo
+     */
+    protected function backupAndMoveDbs($site, $environmentFrom, $environmentTo)
+    {
+        $databases = $this->cloudapi->environmentDatabases($site, $environmentFrom);
+        foreach ($databases as $database) {
+            /** @var Database $database */
+            $db = $database->name();
+
+            $this->backupDb($site, $environmentFrom, $database);
+            $this->backupDb($site, $environmentTo, $database);
+
+            // Copy DB from prod to non-prod.
+            $this->say("Moving DB (${db}) from ${environmentFrom} to ${environmentTo}");
+            $task = $this->cloudapi->copyDatabase($site, $db, $environmentFrom, $environmentTo);
+            $this->waitForTask($site, $task);
+        }
+    }
+
+    /**
+     * @param $site
+     * @param $environment
+     */
+    protected function backupAllEnvironmentDbs($site, $environment)
+    {
+        $databases = $this->cloudapi->environmentDatabases($site, $environment);
+        foreach ($databases as $database) {
+            $this->backupDb($site, $environment, $database);
+        }
+    }
+
+    /**
+     * @param $site
+     * @param $environment
+     * @param Database $database
+     */
+    protected function backupDb($site, $environment, Database $database)
+    {
+        // Run database backups.
+        $dbName = $database->name();
+        $this->say("Backing up DB (${dbName}) on ${environment}");
+        $task = $this->cloudapi->createDatabaseBackup($site, $environment, $dbName);
+        $this->waitForTask($site, $task);
+    }
+
+    /**
+     * @param $site
+     * @param $environmentFrom
+     * @param $environmentTo
+     */
+    protected function backupFiles($site, $environmentFrom, $environmentTo)
+    {
+        // Copy files from prod to non-prod.
+        $this->say("Moving files from ${environmentFrom} to ${environmentTo}");
+        $task = $this->cloudapi->copyFiles($site, $environmentFrom, $environmentTo);
+        $this->waitForTask($site, $task);
+    }
+
+    /**
+     * @param $site
+     * @param $environment
+     * @param $branch
+     */
+    protected function acquiaDeployEnv($site, $environment, $branch)
+    {
+        $this->backupAllEnvironmentDbs($site, $environment);
+        $this->say("Deploying ${branch} to the ${environment} environment");
+        $deployTask = $this->cloudapi->pushCode($site, $environment, $branch);
+        $this->waitForTask($site, $deployTask);
+        $this->acquiaConfigUpdate($site, $environment);
+    }
+
+    /**
+     * @param $site
+     * @param $environment
+     */
+    protected function acquiaConfigUpdate($site, $environment)
+    {
+        $site = $this->cloudapi->site($site);
+        $siteName = $site->unixUsername();
+
+        $this->taskDrushStack()
+            ->stopOnFail()
+            ->siteAlias("@${siteName}.${environment}")
+            ->clearCache('drush')
+            ->drush('cache-rebuild')
+            ->updateDb()
+            ->drush(['pm-enable', 'config_split'])
+            ->drush(['config-import', 'sync'])
+            ->drush('cache-rebuild')
+            ->run();
+    }
+
+    /**
+     * @param $site
+     * @param $environment
+     */
+    protected function acquiaPurgeVarnishForEnvironment($site, $environment)
+    {
+        $domains = $this->cloudapi->domains($site, $environment);
+        /** @var Domain $domain */
+        foreach ($domains as $domain) {
+            $domainName = $domain->name();
+            $this->say("Purging varnish cache for ${domainName} in ${environment} environment");
+            $task = $this->cloudapi->purgeVarnishCache($site, $environment, $domainName);
+            $this->waitForTask($site, $task);
+        }
     }
 }
 

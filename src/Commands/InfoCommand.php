@@ -57,6 +57,7 @@ class InfoCommand extends AcquiaCommand
     {
 
         $tz = $this->extraConfig['timezone'];
+        $format = $this->extraConfig['format'];
 
         $task = $this->cloudapi->task($site, $taskId);
         $startedDate = new \DateTime();
@@ -71,9 +72,9 @@ class InfoCommand extends AcquiaCommand
         $this->say('Sender: ' . $task->sender());
         $this->say('Description: ' . $task->description());
         $this->say('State: ' . $task->state());
-        $this->say('Created: ' . $task->created()->format('Y-m-d H:i:s'));
-        $this->say('Started: ' . $startedDate->format('Y-m-d H:i:s'));
-        $this->say('Completed: ' . $completedDate->format('Y-m-d H:i:s'));
+        $this->say('Created: ' . $task->created()->format($format));
+        $this->say('Started: ' . $startedDate->format($format));
+        $this->say('Completed: ' . $completedDate->format($format));
         $this->say('Logs: ' . $task->logs());
     }
 
