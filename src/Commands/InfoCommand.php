@@ -178,7 +178,6 @@ class InfoCommand extends AcquiaCommand
      */
     protected function renderEnvironmentInfo($site, Environment $environment)
     {
-
         $environmentName = $environment->name();
 
         $this->yell("${environmentName} environment");
@@ -228,6 +227,37 @@ class InfoCommand extends AcquiaCommand
         if ($environment->liveDev()) {
             $this->say('Livedev mode enabled.');
         }
+    }
 
+    /**
+     * Shows SSH connection strings for specified environments.
+     *
+     * @param string      $site
+     * @param string|null $environment
+     *
+     * @command ssh:info
+     */
+    public function acquiaSshInfo($site, $environment = null)
+    {
+        if (null === $environment) {
+            $site = $this->cloudapi->site($site);
+            $environments = $this->cloudapi->environments($site);
+            foreach ($environments as $e) {
+                $this->renderSshInfo($e);
+            }
+
+            return;
+        }
+
+        $environment = $this->cloudapi->environment($site, $environment);
+        $this->renderSshInfo($environment);
+    }
+
+    private function renderSshInfo(Environment $environment)
+    {
+        $environmentName = $environment->name();
+        $unixName = $environment['unix_username'];
+        $host = $environment->sshHost();
+        $this->say("${environmentName}: ssh ${unixName}@${host}");
     }
 }
