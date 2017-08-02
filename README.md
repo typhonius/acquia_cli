@@ -25,9 +25,6 @@ Alternatively, run `./bin/acquiacli setup` (or `./vendor/bin/acquiacli setup` wh
 
 # Deploy the develop-build branch to the test environment and run all config update steps
 ./bin/acquiacli preprod:deploy prod:acquia test develop-build
-
-# Copy the database and files from production to all non-production environments.
-./bin/acquiacli preprod:prepare:all prod:acquia
 ````
 
 ## Creating a Phar
