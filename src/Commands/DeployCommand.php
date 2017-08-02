@@ -84,42 +84,16 @@ class DeployCommand extends AcquiaCommand
     }
 
     /**
-     * Updates configuration and db in all non-production environments.
-     *
-     * @param string $site
-     *
-     * @command preprod:config-update:all
-     */
-    public function acquiaConfigUpdatePreProdAll($site)
-    {
-        $environments = $this->cloudapi->environments($site);
-
-        foreach ($environments as $environment) {
-            /** @var Environment $environment */
-            $env = $environment->name();
-            if ($env == 'prod') {
-                continue;
-            }
-
-            $this->acquiaConfigUpdate($site, $env);
-        }
-    }
-
-    /**
      * Prepares the production environment for a deployment.
      *
      * @param string $site
+     * @param string $environment
      *
-     * @command prod:prepare
+     * @command db:backup
      */
-    public function acquiaPrepareProd($site)
+    public function acquiaBackupDb($site, $environment)
     {
-        $databases = $this->cloudapi->environmentDatabases($site, 'prod');
-        foreach ($databases as $database) {
-            /** @var Database $database */
-            $db = $database->name();
-            $this->backupDb($site, 'prod', $db);
-        }
+        $this->backupAllEnvironmentDbs($site, $environment);
     }
 
     /**
@@ -140,28 +114,6 @@ class DeployCommand extends AcquiaCommand
 
         $this->backupAndMoveDbs($site, $environmentFrom, $environmentTo);
         $this->backupFiles($site, $environmentFrom, $environmentTo);
-    }
-
-    /**
-     * Prepares all non-production environments for a deployment using prod as a source.
-     *
-     * @param string $site
-     *
-     * @command preprod:prepare:all
-     */
-    public function acquiaPreparePreProdAll($site)
-    {
-        $environments = $this->cloudapi->environments($site);
-        foreach ($environments as $environment) {
-            /** @var Environment $environment */
-            $env = $environment->name();
-            if ($env == 'prod') {
-                continue;
-            }
-
-            $this->backupAndMoveDbs($site, 'prod', $env);
-            $this->backupFiles($site, 'prod', $env);
-        }
     }
 
     /**
