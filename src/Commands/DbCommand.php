@@ -12,7 +12,7 @@ use Symfony\Component\Console\Helper\Table;
 class DbCommand extends AcquiaCommand
 {
     /**
-     * Prepares the production environment for a deployment.
+     * Backs up all DBs in an environment.
      *
      * @param string $site
      * @param string $environment
@@ -42,6 +42,7 @@ class DbCommand extends AcquiaCommand
         $databases = $this->cloudapi->environmentDatabases($site, $environment);
         foreach ($databases as $database) {
             /** @var Database $database */
+
             $dbName = $database->name();
             $this->yell($dbName);
             $backups = $this->cloudapi->databaseBackups($site, $environment, $dbName);

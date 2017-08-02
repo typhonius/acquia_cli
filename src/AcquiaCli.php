@@ -6,7 +6,7 @@ use Robo\Robo;
 use Robo\Config\Config;
 use Robo\Common\ConfigAwareTrait;
 use Robo\Runner as RoboRunner;
-use Symfony\Component\Console\Application;
+use \Robo\Application;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Consolidation\AnnotatedCommand\CommandFileDiscovery;

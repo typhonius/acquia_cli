@@ -77,7 +77,7 @@ class DeployCommand extends AcquiaCommand
     }
 
     /**
-     * Prepares a non-production environment for a deployment.
+     * Prepares a non-production environment for a deployment by copying the database and files from another environment.
      *
      * @param string $site
      * @param string $environmentFrom
