@@ -2,7 +2,9 @@
 
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
-use Robo\Robo;
+use Robo\Config\Config;
+use Robo\Config\YamlConfigLoader;
+use Robo\Config\ConfigProcessor;
 use AcquiaCli\AcquiaCli;
 
 if (strpos(basename(__FILE__), 'phar')) {
@@ -21,11 +23,27 @@ if (strpos(basename(__FILE__), 'phar')) {
     }
 }
 
+$config = new Config();
+$loader = new YamlConfigLoader();
+$processor = new ConfigProcessor();
+
+$globalConfig = getenv('HOME') . '/.acquiacli/acquiacli.yml';
+$paths = [
+    dirname(__DIR__) . 'default.acquiacli.yml',
+    $globalConfig,
+    'acquiacli.yml',
+];
+
+foreach ($paths as $path) {
+    $processor->extend($loader->load($path));
+}
+
+$config->import($processor->export());
+$config->set('config.project', $root . '/acquiacli.yml');
+$config->set('config.global', $globalConfig);
+
 $input = new ArgvInput($argv);
 $output = new ConsoleOutput();
-$config = Robo::createConfiguration(['acquiacli.yml']);
-$config->set('config-file.project', $root);
-$config->set('config-file.default', dirname(__DIR__));
 $app = new AcquiaCli($config, $input, $output);
-$status_code = $app->run($input, $output);
-exit($status_code);
+$statusCode = $app->run($input, $output);
+exit($statusCode);

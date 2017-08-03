@@ -30,13 +30,8 @@ abstract class AcquiaCommand extends Tasks
      */
     public function __construct()
     {
-        $defaultConfig = [
-            'timezone' => 'Australia/Sydney',
-            'format' => 'Y-m-d H:i:s',
-        ];
-
         $extraConfig = Robo::config()->get('extraconfig');
-        $this->extraConfig = $extraConfig + $defaultConfig;
+        $this->extraConfig = $extraConfig;
 
         $acquia = Robo::config()->get('acquia');
         $cloudapi = CloudApiClient::factory(array(
