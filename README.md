@@ -3,14 +3,25 @@
 
 ## Pre-installation
 1. Ensure that you have downloaded the Drush site aliases for Acquia.
-1. Copy the `example.acquiacli.yml` file to your project root and name it `acquiacli.yml`.
+1. Run `composer install`
+
+## Installation/setup
+1. Copy the `default.acquiacli.yml` file to your project root and name it `acquiacli.yml`.
 1. Add your Acquia email address to the `acquiacli.yml` file.
 1. Add either your [CloudAPI private key](https://accounts.acquia.com/account/security) (preferred) or Acquia password to the `acquiacli.yml` file.
 
 Alternatively, run `./bin/acquiacli setup` (or `./vendor/bin/acquiacli setup` when used as a dependency in another project) which will ask for your credentials and automatically create this file.
 
-## Installation
-1. Run `composer install`
+## Configuration
+The Acquia Cli tool users cascading configuration on the users own machine to allow both global and per project credentials and overrides as needed.
+
+Acquia Cli will load configuration in the following order with each step overriding matching array keys in the step prior:
+
+1. Firstly, default configuration from `default.acquiacli.yml` in the project root is loaded.
+1. Next, if it exists, global configuration from `~/.acquiacli/acquiacli.yml` is loaded.
+1. Finally, if it exists, an `acquiacli.yml` file in the project root will be loaded.
+
+The global and per project files may be deleted (manually) and recreated with `./bin/acquiacli setup` whenever a user wishes to do so.
 
 ## Usage/Examples
 ````
