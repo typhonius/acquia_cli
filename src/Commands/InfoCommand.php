@@ -196,7 +196,9 @@ class InfoCommand extends AcquiaCommand
             $services = $server->services();
             if (array_key_exists('web', $services)) {
                 $type = 'Web';
-                $extra = 'Procs: ' . $services['web']['php_max_procs'];
+                if (isset($services['web']['php_max_procs'])) {
+                    $extra = 'Procs: ' . $services['web']['php_max_procs'];
+                }
                 if ($services['web']['status'] != 'online') {
                     $type = '* Web';
                 }
