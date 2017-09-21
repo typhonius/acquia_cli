@@ -64,7 +64,8 @@ abstract class AcquiaCommand extends Tasks
                 $complete = true;
                 break;
             }
-            sleep(1);
+            $sleep = $this->extraConfig['taskwait'];
+            sleep($sleep);
             // @TODO add a timeout here?
         }
 
