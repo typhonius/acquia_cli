@@ -29,7 +29,7 @@ $processor = new ConfigProcessor();
 
 $globalConfig = getenv('HOME') . '/.acquiacli/acquiacli.yml';
 $paths = [
-    dirname(__DIR__) . 'default.acquiacli.yml',
+    dirname(__DIR__) . '/default.acquiacli.yml',
     $globalConfig,
     'acquiacli.yml',
 ];

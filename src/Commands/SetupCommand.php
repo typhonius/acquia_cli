@@ -72,6 +72,7 @@ class SetupCommand extends Tasks
             'extraconfig' => [
                 'timezone' => 'Australia/Sydney',
                 'format' => 'Y-m-d H:i:s',
+                'taskwait' => 5,
             ],
         ];
 
