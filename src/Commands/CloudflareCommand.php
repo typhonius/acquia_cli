@@ -47,7 +47,7 @@ class CloudflareCommand extends AcquiaCommand
      * @param string $name
      * @param int $page
      */
-    private function buildCloudFlareDnsRecordList($zoneId, $type = '', $name = '', $page = 1)
+    private function buildCloudflareDnsRecordList($zoneId, $type = '', $name = '', $page = 1)
     {
         static $records;
 
@@ -62,7 +62,7 @@ class CloudflareCommand extends AcquiaCommand
 
         if ($records[$page]->result_info->page != $records[$page]->result_info->total_pages) {
             $page++;
-            $this->buildCloudFlareDnsRecordList($zoneId, $type, $name, $page);
+            $this->buildCloudflareDnsRecordList($zoneId, $type, $name, $page);
         } else {
             foreach ($records as $record) {
                 $this->records = array_merge($this->records, $record->result);
@@ -86,7 +86,7 @@ class CloudflareCommand extends AcquiaCommand
         $table->setHeaders(array('ID', 'Type', 'Name', 'Content', 'TTL', 'Priority', 'Proxiable', 'Proxied'));
 
         $zoneId = $this->getCloudflareZoneId($domain);
-        $this->buildCloudFlareDnsRecordList($zoneId, $type, $name, 1);
+        $this->buildCloudflareDnsRecordList($zoneId, $type, $name, 1);
 
         if (!empty($this->records)) {
             foreach ($this->records as $record) {
@@ -105,7 +105,7 @@ class CloudflareCommand extends AcquiaCommand
     }
 
     /**
-     * Updates an existing record in CloudFlare.
+     * Updates an existing record in Cloudflare.
      *
      * @command cf:update
      *
@@ -133,7 +133,7 @@ class CloudflareCommand extends AcquiaCommand
     }
 
     /**
-     * Creates a new DNS record in CloudFlare.
+     * Creates a new DNS record in Cloudflare.
      *
      * @command cf:add
      *
@@ -153,7 +153,7 @@ class CloudflareCommand extends AcquiaCommand
     }
 
     /**
-     * Gets a zone ID matching a domain stored in CloudFlare.
+     * Gets a zone ID matching a domain stored in Cloudflare.
      *
      * @command cf:zone
      *
@@ -166,7 +166,7 @@ class CloudflareCommand extends AcquiaCommand
     }
 
     /**
-     * Lists zones stored in CloudFlare.
+     * Lists zones stored in Cloudflare.
      *
      * @command cf:zones
      *
