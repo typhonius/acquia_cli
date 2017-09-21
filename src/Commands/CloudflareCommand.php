@@ -99,6 +99,8 @@ class CloudflareCommand extends AcquiaCommand
                     ));
             }
             $table->render();
+            $total = count($this->records);
+            $this->yell("Total records: ${total}");
         }
     }
 
@@ -182,14 +184,16 @@ class CloudflareCommand extends AcquiaCommand
         }
 
         foreach ($zones->result as $zone) {
+            $ns = !empty($zone->name_servers) ? implode(', ', $zone->name_servers) : '';
+            $vanityNs = !empty($zone->vanity_name_servers) ? implode(', ', $zone->vanity_name_servers) : '';
             $table
                 ->addRows(array(
                     array(
                         $zone->id,
                         $zone->name,
                         $zone->status,
-                        implode(', ', $zone->name_servers),
-                        implode(', ', $zone->vanity_name_servers),
+                        $ns,
+                        $vanityNs,
                     ),
                 ));
         }
