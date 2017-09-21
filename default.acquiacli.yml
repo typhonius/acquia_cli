@@ -1,6 +1,9 @@
 acquia:
   mail: 'username@email'
-  pass: 'password here'
+  pass: 'CloudAPI key here'
+cloudflare:
+  mail: 'username@email'
+  key: 'CloudFlare key here'
 extraconfig:
   timezone: 'Australia/Sydney'
   format: 'Y-m-d H:i:s'

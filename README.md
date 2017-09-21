@@ -6,11 +6,14 @@
 1. Run `composer install`
 
 ## Installation/setup
+Run `./bin/acquiacli setup` (or `./vendor/bin/acquiacli setup` when used as a dependency in another project) which will ask for your credentials and automatically create this file.
+
+Alternatively, follow the below steps for a manual installation.
 1. Copy the `default.acquiacli.yml` file to your project root and name it `acquiacli.yml`.
 1. Add your Acquia email address to the `acquiacli.yml` file.
 1. Add either your [CloudAPI private key](https://accounts.acquia.com/account/security) (preferred) or Acquia password to the `acquiacli.yml` file.
+1. Optionally add your CloudFlare email address and API key to the `acquiacli.yml` file.
 
-Alternatively, run `./bin/acquiacli setup` (or `./vendor/bin/acquiacli setup` when used as a dependency in another project) which will ask for your credentials and automatically create this file.
 
 ## Configuration
 The Acquia Cli tool users cascading configuration on the users own machine to allow both global and per project credentials and overrides as needed.
@@ -36,6 +39,12 @@ The global and per project files may be deleted (manually) and recreated with `.
 
 # Deploy the develop-build branch to the test environment and run all config update steps
 ./bin/acquiacli preprod:deploy prod:acquia test develop-build
+
+# Get a list of DNS records for the foobar.com domain in CloudFlare
+./bin/acquiacli cf:list foobar.com
+
+# Add a record for www.foobar.com to point to 127.0.0.1 in CloudFlare.
+./bin/acquiacli cf:add foobar.com A www 127.0.0.1
 ````
 
 ## Creating a Phar
