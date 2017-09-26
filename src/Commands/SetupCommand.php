@@ -12,54 +12,52 @@ use Symfony\Component\Yaml\Yaml;
  */
 class SetupCommand extends Tasks
 {
-    protected $projectConfigLocation;
 
-    protected $globalConfigLocation;
+    protected $configFiles;
 
     /**
      * AcquiaCommand constructor.
      */
     public function __construct()
     {
-        $project = Robo::config()->get('config.project');
-        $global = Robo::config()->get('config.global');
-        $this->projectConfigLocation = $project;
-        $this->globalConfigLocation = $global;
+        $this->configFiles = [
+            'global' => Robo::config()->get('config.global'),
+            'project' => Robo::config()->get('config.project'),
+        ];
     }
 
     /**
-     * Creates the AcquiaCli config file with CloudAPI parameters.
+     *  Performs a check of the config files and provides a view of the parameters provided. Allows the user to create
+     * new config files with correct parameters.
      *
      * @command setup
      */
     public function setup()
     {
-        $globalConfig = $this->globalConfigLocation;
-        $projectConfig = $this->projectConfigLocation;
-        if (file_exists($globalConfig)) {
-            $this->say("Global configuration file found at ${globalConfig}");
-            $this->say('Delete the acquiacli.yml file in your global config directory and run the setup command again to regenerate it.');
-        } elseif ($this->confirm('Would you like to add a global config file?')) {
-            $yaml = $this->createConfigYaml();
-            if (!is_dir(dirname($globalConfig))) {
-                mkdir(dirname($globalConfig));
+        foreach ($this->configFiles as $type => $location) {
+            $this->say("Checking ${type} configuration at ${location}");
+            if (file_exists($location)) {
+                $this->yell("${type} configuration file found");
+                if (!is_readable($location) && !@chmod($location, 0644)) {
+                    $this->yell("${type} configuration is not readable", 40, 'red');
+                    continue;
+                }
+                if ($this->confirm('Would you like to view the contents of this file?')) {
+                    $this->say(file_get_contents($location));
+                }
+                if ($this->confirm("Would you like to delete the acquiacli.yml file at ${location} and regenerate it?")) {
+                    $this->createConfigYaml($location);
+                }
+            } elseif ($this->confirm("No file found. Would you like to add a file at ${location}?")) {
+                $this->createConfigYaml($location);
             }
-            file_put_contents($globalConfig, $yaml);
-        }
-
-        if (file_exists($projectConfig)) {
-            $this->say("Local configuration file found at ${projectConfig}");
-            $this->say('Delete the acquiacli.yml file in your project root and run the setup command again to regenerate it.');
-        } elseif ($this->confirm('Would you like to add a local config file? This will override any global config file.')) {
-            $yaml = $this->createConfigYaml();
-            file_put_contents($projectConfig, $yaml);
         }
     }
 
     /**
-     * @return string
+     *
      */
-    private function createConfigYaml()
+    private function createConfigYaml($location)
     {
         $mail = $this->ask('What is your Acquia email address?');
         $pass = $this->askHidden('What is your CloudAPI key or Acquia password?');
@@ -76,7 +74,25 @@ class SetupCommand extends Tasks
             ],
         ];
 
-        return Yaml::dump($config, 3, 2);
+
+        if ($this->confirm('Do you want to enter Cloudflare information?')) {
+            $cfmail = $this->ask('What is your Cloudflare email address?');
+            $cfkey = $this->askHidden('What is your Cloudflare API key?');
+
+            $config = $config + [
+                'cloudflare' => [
+                    'mail' => $cfmail,
+                    'key' => $cfkey,
+                ],
+            ];
+        }
+
+        $yaml = Yaml::dump($config, 3, 2);
+
+        if (!is_dir(dirname($location))) {
+            mkdir(dirname($location));
+        }
+        file_put_contents($location, $yaml);
     }
 }
 
