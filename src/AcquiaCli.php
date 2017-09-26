@@ -33,7 +33,7 @@ class AcquiaCli
 
         // Create application.
         $this->setConfig($config);
-        $application = new Application('Acquia Cli', '0.0.7');
+        $application = new Application('Acquia Cli', '0.0.8');
 
         // Create and configure container.
         $container = Robo::createDefaultContainer($input, $output, $application, $config);
