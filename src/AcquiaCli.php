@@ -22,6 +22,10 @@ class AcquiaCli
 
     private $runner;
 
+    const NAME = 'AcquiaCli';
+
+    const VERSION = '0.0.9-dev';
+
     /**
      * AcquiaCli constructor.
      * @param Config               $config
@@ -33,7 +37,7 @@ class AcquiaCli
 
         // Create application.
         $this->setConfig($config);
-        $application = new Application('Acquia Cli', '0.0.9-dev');
+        $application = new Application(self::NAME, self::VERSION);
 
         // Create and configure container.
         $container = Robo::createDefaultContainer($input, $output, $application, $config);

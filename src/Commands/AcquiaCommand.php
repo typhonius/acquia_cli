@@ -84,7 +84,6 @@ abstract class AcquiaCommand extends Tasks
             /** @var Database $database */
             $db = $database->name();
 
-            $this->backupDb($site, $environmentFrom, $database);
             $this->backupDb($site, $environmentTo, $database);
 
             // Copy DB from prod to non-prod.
@@ -160,11 +159,13 @@ abstract class AcquiaCommand extends Tasks
             ->stopOnFail()
             ->siteAlias("@${siteName}.${environment}")
             ->clearCache('drush')
+            ->drush('state-set system.maintenance_mode 1')
             ->drush('cache-rebuild')
             ->updateDb()
             ->drush(['pm-enable', 'config_split'])
             ->drush(['config-import', 'sync'])
             ->drush('cache-rebuild')
+            ->drush('state-set system.maintenance_mode 0')
             ->run();
     }
 
