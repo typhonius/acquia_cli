@@ -2,13 +2,9 @@
 
 namespace AcquiaCli\Commands;
 
-use Acquia\Cloud\Api\Response\Database;
-use Acquia\Cloud\Api\Response\Domain;
-use Acquia\Cloud\Api\Response\Task;
-use Guzzle\Http\Exception\ServerErrorResponseException;
+use AcquiaCloudApi\CloudApi\Client;
 use Robo\Tasks;
 use Robo\Robo;
-use Acquia\Cloud\Api\CloudApiClient;
 use Exception;
 
 /**
@@ -19,7 +15,7 @@ abstract class AcquiaCommand extends Tasks
 {
     use \Boedah\Robo\Task\Drush\loadTasks;
 
-    /** @var CloudApiClient $cloudapi */
+    /** @var \AcquiaCloudApi\CloudApi\Client $cloudapi */
     protected $cloudapi;
 
     /** Additional configuration */
@@ -34,12 +30,30 @@ abstract class AcquiaCommand extends Tasks
         $this->extraConfig = $extraConfig;
 
         $acquia = Robo::config()->get('acquia');
-        $cloudapi = CloudApiClient::factory(array(
-            'username' => $acquia['mail'],
-            'password' => $acquia['pass'],
+        $cloudapi = Client::factory(array(
+            'key' => $acquia['key'],
+            'secret' => $acquia['secret'],
         ));
 
+        /** @var \AcquiaCloudApi\CloudApi\Client $cloudapi */
         $this->cloudapi = $cloudapi;
+    }
+
+    /**
+     * @param $uuid
+     * @param $environment
+     * @return mixed
+     * @throws Exception
+     */
+    protected function getIdFromEnvironmentName($uuid, $environment)
+    {
+        $environments = $this->cloudapi->environments($uuid);
+        foreach ($environments as $e) {
+            if ($environment === $e->name) {
+                return $e->id;
+            }
+        }
+        throw new Exception('Unable to find ID for environment');
     }
 
     /**

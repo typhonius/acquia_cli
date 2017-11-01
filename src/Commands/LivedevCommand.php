@@ -12,32 +12,31 @@ class LivedevCommand extends AcquiaCommand
     /**
      * Enable livedev for an environment.
      *
-     * @param string $site
+     * @param string $uuid
      * @param string $environment
      *
      * @command livedev:enable
      */
-    public function acquiaLivedevEnable($site, $environment = 'dev')
+    public function acquiaLivedevEnable($uuid, $environment)
     {
-        $this->say("Enabling livedev for the ${environment} environment");
-        $task = $this->cloudapi->enableLiveDev($site, $environment);
-        $this->waitForTask($site, $task);
+        $this->say("Enabling livedev for ${environment} environment");
+        $id = $this->getIdFromEnvironmentName($uuid, $environment);
+
+        $this->cloudapi->enableLiveDev($id);
     }
 
     /**
      * Disable livedev for an environment.
      *
-     * @param string $site
-     * @param string $environment
+     * @param string $id
      *
      * @command livedev:disable
      */
-    public function acquiaRemoveDomain($site, $environment = 'dev')
+    public function acquiaRemoveDomain($id)
     {
         if ($this->confirm('Are you sure you want to disable livedev? Uncommitted work will be lost.')) {
-            $this->say("Disabling livedev for the ${environment} environment");
-            $task = $this->cloudapi->disableLiveDev($site, $environment, true);
-            $this->waitForTask($site, $task);
+            $this->say("Disabling livedev for the environment ${id}");
+            $this->cloudapi->disableLiveDev($id);
         }
     }
 }
