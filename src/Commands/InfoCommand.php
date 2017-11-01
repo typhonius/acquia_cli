@@ -2,12 +2,8 @@
 
 namespace AcquiaCli\Commands;
 
-use Acquia\Cloud\Api\Response\Database;
-use Acquia\Cloud\Api\Response\Domain;
-use Acquia\Cloud\Api\Response\Environment;
-use Acquia\Cloud\Api\Response\Server;
-use Acquia\Cloud\Api\Response\Site;
-use Acquia\Cloud\Api\Response\Task;
+use AcquiaCloudApi\CloudApi\Client;
+use AcquiaCloudApi\Response\CloudApiResponse;
 use Symfony\Component\Console\Helper\Table;
 
 /**
@@ -81,192 +77,174 @@ class InfoCommand extends AcquiaCommand
     /**
      * Shows all sites a user has access to.
      *
-     * @command site:list
-     * @alias s:l
+     * @command application:list
+     * @alias app:list
+     * @alias a:l
      */
-    public function acquiaSites()
+    public function acquiaApplications()
     {
-        $sites = $this->cloudapi->sites();
-        /** @var Site $site */
+        $sites = $this->cloudapi->applications();
+
+        $output = $this->output();
+        $table = new Table($output);
+        $table->setHeaders(array('Name', 'UUID'));
         foreach ($sites as $site) {
-            $this->say($site->name());
+            $table
+                ->addRows(array(
+                    array($site->name, $site->uuid),
+                ));
         }
+        $table->render();
     }
 
     /**
      * Shows detailed information about a site.
      *
-     * @param string $site
+     * @param string $uuid
      *
-     * @command site:info
-     * @alias s:i
+     * @command application:info
+     * @alias app:info
+     * @alias a:i
      */
-    public function acquiaSiteInfo($site)
+    public function acquiaApplicationInfo($uuid)
     {
-        $site = $this->cloudapi->site($site);
-        $environments = $this->cloudapi->environments($site);
-
-        $this->say('Name: ' . $site->title());
-        $this->say('VCS URL: ' . $site->vcsUrl());
+        $environments = $this->cloudapi->environments($uuid);
 
         $output = $this->output();
         $table = new Table($output);
-        $table->setHeaders(array('Environment', 'Branch/Tag', 'Domain(s)', 'Database(s)'));
+        $table->setHeaders(array('Environment', 'ID', 'Branch/Tag', 'Domain(s)', 'Database(s)'));
 
-        /** @var Environment $environment */
         foreach ($environments as $environment) {
-            $databases = $this->cloudapi->environmentDatabases($site, $environment);
+            $vcs = $environment->vcs->path;
+
+            $databases = $this->cloudapi->environmentDatabases($environment->id);
+
             $dbs = [];
-            /** @var Database $database */
             foreach ($databases as $database) {
-                $dbs[] = $database->name();
+                $dbs[] = $database->name;
             }
             $dbString = implode(', ', $dbs);
 
-            $domains = $this->cloudapi->domains($site, $environment);
-            $dm = [];
-            /** @var Domain $domain */
-            foreach ($domains as $domain) {
-                $dm[] = $domain->name();
+            $environmentName = $environment->label . ' (' . $environment->name . ')' ;
+            if ($environment->flags->livedev) {
+                $environmentName = '💻  ' . $environmentName;
             }
-            $dmString = implode("\n", $dm);
 
-            $environmentName = $environment->name();
-            if ($environment->liveDev()) {
-                $environmentName = '* ' . $environmentName;
+            if ($environment->flags->production_mode) {
+                $environmentName = '🔒  ' . $environmentName;
             }
 
             $table
                 ->addRows(array(
-                    array($environmentName, $environment->vcsPath(), $dmString, $dbString),
+                    array($environmentName, $environment->id, $vcs, implode("\n", $environment->domains), $dbString),
                 ));
         }
         $table->render();
-        $this->say('* indicates environment in livedev mode.');
+        $this->say('💻  indicates environment in livedev mode.');
+        $this->say('🔒  indicates environment in production mode.');
+
     }
 
     /**
      * Shows detailed information about servers in an environment.
      *
-     * @param string      $site
+     * @param string      $uuid
      * @param string|null $environment
      *
      * @command environment:info
      * @alias env:info
      * @alias e:i
      */
-    public function acquiaEnvironmentInfo($site, $environment = null)
+    public function acquiaEnvironmentInfo($uuid, $environment = null)
     {
-        if (null === $environment) {
-            $site = $this->cloudapi->site($site);
-            $environments = $this->cloudapi->environments($site);
-            /* @var $e \Acquia\Cloud\Api\Response\Environment; */
-            foreach ($environments as $e) {
-                $this->renderEnvironmentInfo($site, $e);
-            }
 
-            return;
+        if (null !== $environment) {
+            $this->cloudapi->addFilter('name', '=', $environment);
         }
 
-        $environment = $this->cloudapi->environment($site, $environment);
-        $this->renderEnvironmentInfo($site, $environment);
+        $environments = $this->cloudapi->environments($uuid);
+
+        $this->cloudapi->clearQuery();
+
+        foreach ($environments as $e) {
+            $this->renderEnvironmentInfo($e);
+        }
+
+        $this->say("Web servers not marked 'Active' are out of rotation.");
+        $this->say("Load balancer servers not marked 'Active' are hot spares");
+        $this->say("Database servers not marked 'Primary' are the passive master");
     }
 
     /**
      * @param $site
-     * @param Environment $environment
+     * @param $environment
      */
-    protected function renderEnvironmentInfo($site, Environment $environment)
+    protected function renderEnvironmentInfo($environment)
     {
-        $environmentName = $environment->name();
+
+        $environmentName = $environment->label;
+        $environmentId = $environment->id;
 
         $this->yell("${environmentName} environment");
+        $this->say("Environment ID: ${environmentId}");
+        if ($environment->flags->livedev) {
+            $this->say('💻  Livedev mode enabled.');
+        }
+        if ($environment->flags->production_mode) {
+            $this->say('🔒  Production mode enabled.');
+        }
 
         $output = $this->output();
         $table = new Table($output);
-        $table->setHeaders(array('Type', 'Name', 'FQDN', 'AMI', 'Region', 'AZ', 'IP', 'Details'));
+        // needs AZ?
+        $table->setHeaders(array('Role(s)', 'Name', 'FQDN', 'AMI', 'Region', 'IP', 'Memcache', 'Active', 'Primary', 'EIP'));
 
-        $servers = $this->cloudapi->servers($site, $environmentName);
-        /** @var Server $server */
+        $servers = $this->cloudapi->servers($environment->id);
+
         foreach ($servers as $server) {
-            $type = 'Files';
-            $extra = '';
 
-            $services = $server->services();
-            if (array_key_exists('web', $services)) {
-                $type = 'Web';
-                if (isset($services['web']['php_max_procs'])) {
-                    $extra = 'Procs: ' . $services['web']['php_max_procs'];
-                }
-                if ($services['web']['status'] != 'online') {
-                    $type = '* Web';
-                }
-            } elseif (array_key_exists('vcs', $services)) {
-                $type = 'Git';
-                if (isset($services['vcs']['vcs_path'])) {
-                    $extra = 'Revision: ' . $services['vcs']['vcs_path'];
-                }
-            } elseif (array_key_exists('database', $services)) {
-                $type = 'DB';
-            } elseif (array_key_exists('varnish', $services)) {
-                $type = 'LB';
-                if (isset($services['external_ip'])) {
-                    $extra = 'External IP: ' . $services['external_ip'];
-                }
-                if ($services['varnish']['status'] != 'active') {
-                    $type = '* LB';
-                }
-            }
+            $memcache = $server->flags->memcache ? '✅' : '';
+            $active = $server->flags->active_web || $server->flags->active_bal ? '✅' : '';
+            $primaryDb = $server->flags->primary_db ? '✅' : '';
+            $eip = $server->flags->elastic_ip ? '✅' : '';
 
             $table
                 ->addRows(array(
-                    array($type,
-                        $server->name(),
-                        $server->fqdn(),
-                        $server->amiType(),
-                        $server->region(),
-                        $server->availabilityZone(),
-                        gethostbyname($server->fqdn()),
-                        $extra),
+                    array(implode(', ', $server->roles), $server->name, $server->hostname, $server->ami_type, $server->region, $server->ip, $memcache, $active, $primaryDb, $eip),
                 ));
         }
 
         $table->render();
-        $this->say('* indicates server out of rotation.');
-        if ($environment->liveDev()) {
-            $this->say('Livedev mode enabled.');
-        }
+
     }
 
     /**
      * Shows SSH connection strings for specified environments.
      *
-     * @param string      $site
+     * @param string      $uuid
      * @param string|null $environment
      *
      * @command ssh:info
      */
-    public function acquiaSshInfo($site, $environment = null)
+    public function acquiaSshInfo($uuid, $environment = null)
     {
-        if (null === $environment) {
-            $site = $this->cloudapi->site($site);
-            $environments = $this->cloudapi->environments($site);
-            foreach ($environments as $e) {
-                $this->renderSshInfo($e);
-            }
-
-            return;
+        if (null !== $environment) {
+            $this->cloudapi->addFilter('name', '=', $environment);
         }
 
-        $environment = $this->cloudapi->environment($site, $environment);
-        $this->renderSshInfo($environment);
+        $environments = $this->cloudapi->environments($uuid);
+
+        $this->cloudapi->clearQuery();
+
+        foreach ($environments as $e) {
+            $this->renderSshInfo($e);
+        }
     }
 
-    private function renderSshInfo(Environment $environment)
+    private function renderSshInfo($environment)
     {
-        $environmentName = $environment->name();
-        $unixName = $environment['unix_username'];
-        $host = $environment->sshHost();
-        $this->say("${environmentName}: ssh ${unixName}@${host}");
+        $environmentName = $environment->name;
+        $ssh = $environment->ssh_url;
+        $this->say("${environmentName}: ssh ${ssh}");
     }
 }

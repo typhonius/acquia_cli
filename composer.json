@@ -9,7 +9,7 @@
     ],
     "license": "MIT",
     "require": {
-        "acquia/acquia-sdk-php-cloud-api": "^0.10.7",
+        "typhonius/acquia-php-sdk-v2": "dev-master",
         "consolidation/robo": "^1.0",
         "boedah/robo-drush": "^3.0",
         "cloudflare/sdk": "dev-master#1658f4abcca7410f104f2f72dd9b63a31201a332"

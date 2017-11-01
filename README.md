@@ -10,8 +10,7 @@ Run `./bin/acquiacli setup` (or `./vendor/bin/acquiacli setup` when used as a de
 
 Alternatively, follow the below steps for a manual installation.
 1. Copy the `default.acquiacli.yml` file to your project root and name it `acquiacli.yml`.
-1. Add your Acquia email address to the `acquiacli.yml` file.
-1. Add either your [CloudAPI private key](https://accounts.acquia.com/account/security) (preferred) or Acquia password to the `acquiacli.yml` file.
+1. Add your Acquia key and secret to the `acquiacli.yml` file.
 1. Optionally add your Cloudflare email address and API key to the `acquiacli.yml` file.
 
 
@@ -28,17 +27,17 @@ The global and per project files may be deleted (manually) and recreated with `.
 
 ## Usage/Examples
 ````
-# Show which sites you have access to.
-./bin/acquiacli site:list
+# Show which applications you have access to.
+./bin/acquiacli application:list
 
 # Show detailed information about servers in the prod environment (assuming sitename of prod:acquia obtained from site:list command)
 ./bin/acquiacli environment:info prod:acquia prod
 
 # Copy the files and db from alpha to dev for testing new code
-./bin/acquiacli preprod:prepare prod:acquia alpha dev
+./bin/acquiacli preprod:prepare 6fb6adfd-5827-4f88-8e7a-3f577fe08ace alpha dev
 
 # Deploy the develop-build branch to the test environment and run all config update steps
-./bin/acquiacli preprod:deploy prod:acquia test develop-build
+./bin/acquiacli preprod:deploy 6fb6adfd-5827-4f88-8e7a-3f577fe08ace test develop-build
 
 # Get a list of DNS records for the foobar.com domain in Cloudflare
 ./bin/acquiacli cf:list foobar.com
