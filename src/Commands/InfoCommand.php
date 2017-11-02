@@ -16,24 +16,28 @@ class InfoCommand extends AcquiaCommand
     /**
      * Gets all tasks associated with a site.
      *
-     * @param string $site
+     * @param string $uuid
      *
      * @command task:list
      * @alias t:l
      */
-    public function acquiaTasks($site)
+    public function acquiaTasks($uuid)
     {
+
+        if (!preg_match(self::UUIDv4, $uuid)) {
+            $uuid = $this->getUuidFromHostingName($uuid);
+        }
+
+        $tasks = $this->cloudapi->tasks($uuid);
 
         $output = $this->output();
         $table = new Table($output);
-        $table->setHeaders(array('ID', 'User', 'State', 'Description'));
+        $table->setHeaders(array('ID', 'Name', 'Status', 'User'));
 
-        $tasks = $this->cloudapi->tasks($site);
-        /** @var Task $task */
         foreach ($tasks as $task) {
             $table
                 ->addRows(array(
-                    array($task->id(), $task->sender(), $task->state(), $task->description()),
+                    array($task->uuid, $task->name, $task->status, $task->user->mail),
                 ));
         }
 
@@ -43,35 +47,50 @@ class InfoCommand extends AcquiaCommand
     /**
      * Gets detailed information about a specific task
      *
-     * @param string $site
-     * @param string $taskId
+     * @param string $uuid
+     * @param string $taskUuid
      *
      * @command task:info
      * @alias t:i
+     * @throws \Exception
      */
-    public function acquiaTask($site, $taskId)
+    public function acquiaTask($uuid, $taskUuid)
     {
+
+        if (!preg_match(self::UUIDv4, $uuid)) {
+            $uuid = $this->getUuidFromHostingName($uuid);
+        }
 
         $tz = $this->extraConfig['timezone'];
         $format = $this->extraConfig['format'];
 
-        $task = $this->cloudapi->task($site, $taskId);
-        $startedDate = new \DateTime();
-        $startedDate->setTimestamp($task->startTime());
-        $startedDate->setTimezone(new \DateTimeZone($tz));
-        $completedDate = new \DateTime();
-        $completedDate->setTimestamp($task->startTime());
-        $completedDate->setTimezone(new \DateTimeZone($tz));
-        $task->created()->setTimezone(new \DateTimeZone($tz));
+        $tasks = $this->cloudapi->tasks($uuid);
 
-        $this->say('ID: ' . $task->id());
-        $this->say('Sender: ' . $task->sender());
-        $this->say('Description: ' . $task->description());
-        $this->say('State: ' . $task->state());
-        $this->say('Created: ' . $task->created()->format($format));
-        $this->say('Started: ' . $startedDate->format($format));
-        $this->say('Completed: ' . $completedDate->format($format));
-        $this->say('Logs: ' . $task->logs());
+        foreach ($tasks as $task) {
+            if ($taskUuid === $task->uuid) {
+
+                $timezone = new \DateTimeZone($tz);
+
+                $createdDate = new \DateTime($task->created_at);
+                $startedDate = new \DateTime($task->started_at);
+                $completedDate = new \DateTime($task->completed_at);
+
+                $createdDate->setTimezone($timezone);
+                $startedDate->setTimezone($timezone);
+                $completedDate->setTimezone($timezone);
+
+                $this->say('ID: ' . $task->uuid);
+                $this->say('Sender: ' . $task->user->mail);
+                $this->say('Description: ' . htmlspecialchars_decode($task->description));
+                $this->say('Status: ' . $task->status);
+                $this->say('Created: ' . $createdDate->format($format));
+                $this->say('Started: ' . $startedDate->format($format));
+                $this->say('Completed: ' . $completedDate->format($format));
+
+                return;
+            }
+        }
+        throw new \Exception('Unable to find Task ID');
     }
 
     /**
@@ -83,15 +102,15 @@ class InfoCommand extends AcquiaCommand
      */
     public function acquiaApplications()
     {
-        $sites = $this->cloudapi->applications();
+        $applications = $this->cloudapi->applications();
 
         $output = $this->output();
         $table = new Table($output);
-        $table->setHeaders(array('Name', 'UUID'));
-        foreach ($sites as $site) {
+        $table->setHeaders(array('Name', 'UUID', 'Hosting ID'));
+        foreach ($applications as $application) {
             $table
                 ->addRows(array(
-                    array($site->name, $site->uuid),
+                    array($application->name, $application->uuid, $application->hosting->id),
                 ));
         }
         $table->render();
@@ -108,6 +127,10 @@ class InfoCommand extends AcquiaCommand
      */
     public function acquiaApplicationInfo($uuid)
     {
+        if (!preg_match(self::UUIDv4, $uuid)) {
+            $uuid = $this->getUuidFromHostingName($uuid);
+        }
+
         $environments = $this->cloudapi->environments($uuid);
 
         $output = $this->output();
@@ -158,8 +181,12 @@ class InfoCommand extends AcquiaCommand
     public function acquiaEnvironmentInfo($uuid, $environment = null)
     {
 
+        if (!preg_match(self::UUIDv4, $uuid)) {
+            $uuid = $this->getUuidFromHostingName($uuid);
+        }
+
         if (null !== $environment) {
-            $this->cloudapi->addFilter('name', '=', $environment);
+            $this->cloudapi->addQuery('filter', "name=${environment}");
         }
 
         $environments = $this->cloudapi->environments($uuid);
@@ -228,8 +255,13 @@ class InfoCommand extends AcquiaCommand
      */
     public function acquiaSshInfo($uuid, $environment = null)
     {
+
+        if (!preg_match(self::UUIDv4, $uuid)) {
+            $uuid = $this->getUuidFromHostingName($uuid);
+        }
+
         if (null !== $environment) {
-            $this->cloudapi->addFilter('name', '=', $environment);
+            $this->cloudapi->addFilter('filter', "name=${environment}");
         }
 
         $environments = $this->cloudapi->environments($uuid);

@@ -21,6 +21,16 @@ abstract class AcquiaCommand extends Tasks
     /** Additional configuration */
     protected $extraConfig;
 
+    const UUIDv4 = '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i';
+
+    const taskFailed = 'failed';
+
+    const taskCompleted = 'completed';
+
+    const taskStarted = 'started';
+
+    const taskInProgress = 'in-progress';
+
     /**
      * AcquiaCommand constructor.
      */
@@ -56,31 +66,95 @@ abstract class AcquiaCommand extends Tasks
         throw new Exception('Unable to find ID for environment');
     }
 
+    protected function getUuidFromHostingName($name)
+    {
+        $applications = $this->cloudapi->applications();
+        foreach ($applications as $application) {
+            if ($name === $application->hosting->id) {
+                return $application->uuid;
+            }
+        }
+        throw new Exception('Unable to find UUID for application');
+    }
+
     /**
-     * @string $site
-     * @param Task $task
+     *
+     * Since Acquia API v2 doesn't return the task ID when a task is created,
+     * we must instead check the task list for tasks of a particular type
+     * and ensure that they are all completed before assuming our task is done.
+     *
+     * It's a bit of a hack but there's not really another choice.
+     *
+     * @string $uuid
+     * @param  $taskUuid
      * @return bool
      * @throws Exception
-     * @throws ServerErrorResponseException
      */
-    protected function waitForTask($site, Task $task)
+    protected function waitForTask($uuid, $name)
     {
-        $taskId = $task->id();
-        $complete = false;
 
-        while ($complete === false) {
+        $sleep = $this->extraConfig['taskwait'];
+        $timeout = $this->extraConfig['timeout'];
+
+        // Create a date 30 seconds prior to this function being called to
+        // ensure we capture our task in the filter.
+        $buffer = 30;
+
+        $timezone = new \DateTimeZone('UTC');
+
+        $start = new \DateTime(date('c'));
+        $start->setTimezone($timezone);
+        $start->sub(new \DateInterval('PT' . $buffer . 'S'));
+
+        while (true) {
             $this->say('Waiting for task to complete...');
-            $task = $this->cloudapi->task($site, $taskId);
-            if ($task->completed()) {
-                if ($task->state() !== 'done') {
-                    throw new \Exception('Acquia task failed.');
+            // Sleep initially to ensure that the task gets registered.
+            sleep($sleep);
+            $this->cloudapi->addQuery('from', $start->format(\DateTime::ATOM));
+            $tasks = $this->cloudapi->tasks($uuid);
+            $this->cloudapi->clearQuery();
+
+            if (!$count = count($tasks)) {
+                throw new \Exception('No tasks registered.');
+            }
+            $started = 0;
+            $completed = 0;
+
+            foreach ($tasks as $task) {
+                switch ($task->status) {
+                    case self::taskFailed:
+                        // If there's one failure we should throw an exception
+                        // although it may not be for our task.
+                        throw new \Exception('Acquia task failed.');
+                        break;
+                    case self::taskStarted:
+                    case self::taskInProgress:
+                        // If tasks are started, we should continue back to the
+                        // top of the loop and wait until tasks are complete.
+                        ++$started;
+                        continue;
+                    case self::taskCompleted:
+                        // Completed tasks should break and continue execution.
+                        ++$completed;
+                        break;
+                    default:
+                        throw new \Exception('Unknown task status.');
+                        break;
                 }
-                $complete = true;
+            }
+            // Break here if all tasks are completed.
+            if ($count === $completed) {
                 break;
             }
-            $sleep = $this->extraConfig['taskwait'];
-            sleep($sleep);
-            // @TODO add a timeout here?
+
+            // Create a new DateTime for now.
+            $current = new \DateTime(date('c'));
+            $current->setTimezone($timezone);
+            // Remove our buffer from earlier that we took away from the original start date.
+            $current->sub(new \DateInterval('PT' . $buffer . 'S'));
+            if ($timeout <= ($current->getTimestamp() - $start->getTimestamp())) {
+                throw new \Exception("Task timeout of ${timeout} seconds exceeded.");
+            }
         }
 
         return true;
