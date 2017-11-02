@@ -2,8 +2,6 @@
 
 namespace AcquiaCli\Commands;
 
-use AcquiaCloudApi\CloudApi\Client;
-use AcquiaCloudApi\Response\CloudApiResponse;
 use Symfony\Component\Console\Helper\Table;
 
 /**
@@ -12,6 +10,40 @@ use Symfony\Component\Console\Helper\Table;
  */
 class InfoCommand extends AcquiaCommand
 {
+
+    /**
+     * Gets all code branches and tags associated with an application.
+     *
+     * @param string $uuid
+     * @param string $match
+     *
+     * @command code:list
+     */
+    public function code($uuid, $match = null)
+    {
+        if (!preg_match(self::UUIDv4, $uuid)) {
+            $uuid = $this->getUuidFromHostingName($uuid);
+        }
+        if (null !== $match) {
+            $this->cloudapi->addQuery('filter', "name=@*${match}*");
+        }
+        $code = $this->cloudapi->code($uuid);
+        $this->cloudapi->clearQuery();
+
+        $output = $this->output();
+        $table = new Table($output);
+        $table->setHeaders(array('Name', 'Tag'));
+
+        foreach ($code as $branch) {
+            $tag = $branch->flags->tag ? '✅' : '';
+            $table
+                ->addRows(array(
+                    array($branch->name, $tag),
+                ));
+        }
+
+        $table->render();
+    }
 
     /**
      * Gets all tasks associated with a site.
@@ -203,7 +235,6 @@ class InfoCommand extends AcquiaCommand
     }
 
     /**
-     * @param $site
      * @param $environment
      */
     protected function renderEnvironmentInfo($environment)

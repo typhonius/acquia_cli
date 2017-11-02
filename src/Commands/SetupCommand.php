@@ -71,6 +71,7 @@ class SetupCommand extends Tasks
                 'timezone' => 'Australia/Sydney',
                 'format' => 'Y-m-d H:i:s',
                 'taskwait' => 5,
+                'timeout' => 120,
             ],
         ];
 

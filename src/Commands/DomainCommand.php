@@ -12,34 +12,46 @@ class DomainCommand extends AcquiaCommand
     /**
      * Add a domain to an environment.
      *
-     * @param string $site
+     * @param string $uuid
      * @param string $environment
      * @param string $domain
      *
      * @command domain:add
      */
-    public function acquiaAddDomain($site, $environment, $domain)
+    public function acquiaAddDomain($uuid, $environment, $domain)
     {
+
+        if (!preg_match(self::UUIDv4, $uuid)) {
+            $uuid = $this->getUuidFromHostingName($uuid);
+        }
+        $id = $this->getIdFromEnvironmentName($uuid, $environment);
+
+
         $this->say("Adding ${domain} to ${environment} environment");
-        $task = $this->cloudapi->addDomain($site, $environment, $domain);
-        $this->waitForTask($site, $task);
+        $task = $this->cloudapi->addDomain($id, $domain);
+        $this->waitForTask($uuid, 'DomainAdded');
     }
 
     /**
      * Remove a domain to an environment.
      *
-     * @param string $site
+     * @param string $uuid
      * @param string $environment
      * @param string $domain
      *
      * @command domain:remove
      */
-    public function acquiaRemoveDomain($site, $environment, $domain)
+    public function acquiaRemoveDomain($uuid, $environment, $domain)
     {
+        if (!preg_match(self::UUIDv4, $uuid)) {
+            $uuid = $this->getUuidFromHostingName($uuid);
+        }
+        $id = $this->getIdFromEnvironmentName($uuid, $environment);
+
         if ($this->confirm('Are you sure you want to remove this domain?')) {
             $this->say("Removing ${domain} from ${environment} environment");
-            $task = $this->cloudapi->deleteDomain($site, $environment, $domain);
-            $this->waitForTask($site, $task);
+            $task = $this->cloudapi->deleteDomain($id, $domain);
+            $this->waitForTask($uuid, 'DomainRemoved');
         }
     }
 
