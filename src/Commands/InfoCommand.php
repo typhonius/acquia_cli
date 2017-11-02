@@ -56,6 +56,7 @@ class InfoCommand extends AcquiaCommand
     public function acquiaTasks($uuid)
     {
 
+        // @TODO sort by most recent to least
         if (!preg_match(self::UUIDv4, $uuid)) {
             $uuid = $this->getUuidFromHostingName($uuid);
         }
@@ -292,7 +293,7 @@ class InfoCommand extends AcquiaCommand
         }
 
         if (null !== $environment) {
-            $this->cloudapi->addFilter('filter', "name=${environment}");
+            $this->cloudapi->addQuery('filter', "name=${environment}");
         }
 
         $environments = $this->cloudapi->environments($uuid);

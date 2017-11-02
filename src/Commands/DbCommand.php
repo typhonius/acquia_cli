@@ -2,8 +2,6 @@
 
 namespace AcquiaCli\Commands;
 
-use Acquia\Cloud\Api\Response\Database;
-use Acquia\Cloud\Api\Response\DatabaseBackup;
 use Symfony\Component\Console\Helper\Table;
 
 /**
@@ -15,48 +13,48 @@ class DbCommand extends AcquiaCommand
     /**
      * Backs up all DBs in an environment.
      *
-     * @param string $site
+     * @param string $uuid
      * @param string $environment
      *
      * @command db:backup
      */
-    public function acquiaBackupDb($site, $environment)
+    public function acquiaBackupDb($uuid, $environment)
     {
-        $this->backupAllEnvironmentDbs($site, $environment);
+        if (!preg_match(self::UUIDv4, $uuid)) {
+            $uuid = $this->getUuidFromHostingName($uuid);
+        }
+
+        $id = $this->getIdFromEnvironmentName($uuid, $environment);
+        $this->backupAllEnvironmentDbs($uuid, $id);
     }
 
     /**
      * Shows a list of database backups for all databases in an environment.
      *
-     * @param string $site
+     * @param string $uuid
      * @param string $environment
      *
      * @command db:backup:list
      */
-    public function acquiaDbBackupList($site, $environment)
+    public function acquiaDbBackupList($uuid, $environment)
     {
-        $tz = $this->extraConfig['timezone'];
-        $format = $this->extraConfig['format'];
+        if (!preg_match(self::UUIDv4, $uuid)) {
+            $uuid = $this->getUuidFromHostingName($uuid);
+        }
+        $id = $this->getIdFromEnvironmentName($uuid, $environment);
+        $databases = $this->cloudapi->environmentDatabases($id);
+
         $table = new Table($this->output());
         $table->setHeaders(array('ID', 'Type', 'Timestamp'));
 
-        $databases = $this->cloudapi->environmentDatabases($site, $environment);
         foreach ($databases as $database) {
-            /** @var Database $database */
-
-            $dbName = $database->name();
+            $dbName = $database->name;
             $this->yell($dbName);
-            $backups = $this->cloudapi->databaseBackups($site, $environment, $dbName);
+            $backups = $this->cloudapi->databaseBackups($id, $dbName);
             foreach ($backups as $backup) {
-                /** @var DatabaseBackup $backup */
-
-                $backupDateTime = $backup->completed();
-                $backupDateTime->setTimezone(new \DateTimeZone($tz));
-                $backupTime = $backupDateTime->format($format);
-
                 $table
                     ->addRows(array(
-                        array($backup->id(), ucfirst($backup->type()), $backupTime),
+                        array($backup->id, ucfirst($backup->type), $backup->completed_at),
                     ));
             }
         }
@@ -64,18 +62,21 @@ class DbCommand extends AcquiaCommand
     }
 
     /**
-     * Gets a direct download link to a database backup.
+     * Provides a database backup link.
      *
-     * @param string $site
+     * @param string $uuid
      * @param string $environment
-     * @param string $database
-     * @param int    $id
+     * @param int    $backupId
      *
      * @command db:backup:link
      */
-    public function acquiaDbBackupInfo($site, $environment, $database, $id)
+    public function acquiaDbBackupLink($uuid, $environment, $backupId)
     {
-        $database = $this->cloudapi->databaseBackup($site, $environment, $database, $id);
-        $this->say($database->link());
+        if (!preg_match(self::UUIDv4, $uuid)) {
+            $uuid = $this->getUuidFromHostingName($uuid);
+        }
+        $id = $this->getIdFromEnvironmentName($uuid, $environment);
+
+        $this->say($this->cloudapi::BASE_URI . "/environments/${id}/database-backups/${backupId}/actions/download");
     }
 }

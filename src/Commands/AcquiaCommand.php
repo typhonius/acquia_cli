@@ -93,6 +93,8 @@ abstract class AcquiaCommand extends Tasks
     protected function waitForTask($uuid, $name)
     {
 
+        // @TODO ensure tasks are sorted most recent first.
+
         $sleep = $this->extraConfig['taskwait'];
         $timeout = $this->extraConfig['timeout'];
 
@@ -182,42 +184,41 @@ abstract class AcquiaCommand extends Tasks
     }
 
     /**
-     * @param $site
-     * @param $environment
+     * @param $uuid
+     * @param $id
      */
-    protected function backupAllEnvironmentDbs($site, $environment)
+    protected function backupAllEnvironmentDbs($uuid, $id)
     {
-        $databases = $this->cloudapi->environmentDatabases($site, $environment);
+        $databases = $this->cloudapi->databases($uuid);
         foreach ($databases as $database) {
-            $this->backupDb($site, $environment, $database);
+            $this->backupDb($uuid, $id, $database->name);
         }
     }
 
     /**
-     * @param $site
-     * @param $environment
-     * @param Database $database
+     * @param $uuid
+     * @param $id
+     * @param $database
      */
-    protected function backupDb($site, $environment, Database $database)
+    protected function backupDb($uuid, $id, $database)
     {
         // Run database backups.
-        $dbName = $database->name();
-        $this->say("Backing up DB (${dbName}) on ${environment}");
-        $task = $this->cloudapi->createDatabaseBackup($site, $environment, $dbName);
-        $this->waitForTask($site, $task);
+        $this->say("Backing up DB (${database}) on ${id}");
+        $this->cloudapi->databaseBackup($id, $database);
+        $this->waitForTask($uuid, 'DatabaseBackupCreated');
     }
 
     /**
-     * @param $site
-     * @param $environmentFrom
-     * @param $environmentTo
+     * @param $uuid
+     * @param $idFrom
+     * @param $idTo
      */
-    protected function backupFiles($site, $environmentFrom, $environmentTo)
+    protected function backupFiles($uuid, $idFrom, $idTo)
     {
         // Copy files from prod to non-prod.
-        $this->say("Moving files from ${environmentFrom} to ${environmentTo}");
-        $task = $this->cloudapi->copyFiles($site, $environmentFrom, $environmentTo);
-        $this->waitForTask($site, $task);
+        $this->say("Moving files from ${idFrom} to ${idTo}");
+        $this->cloudapi->copyFiles($idFrom, $idTo);
+        $this->waitForTask($uuid, 'FilesCopied');
     }
 
     /**
