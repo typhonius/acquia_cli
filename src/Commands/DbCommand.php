@@ -13,19 +13,14 @@ class DbCommand extends AcquiaCommand
     /**
      * Backs up all DBs in an environment.
      *
-     * @param string $uuid
-     * @param string $environment
+     * @param string          $uuid
+     * @param StreamInterface $environment
      *
      * @command db:backup
      */
     public function acquiaBackupDb($uuid, $environment)
     {
-        if (!preg_match(self::UUIDv4, $uuid)) {
-            $uuid = $this->getUuidFromHostingName($uuid);
-        }
-
-        $id = $this->getIdFromEnvironmentName($uuid, $environment);
-        $this->backupAllEnvironmentDbs($uuid, $id);
+        $this->backupAllEnvironmentDbs($uuid, $environment);
     }
 
     /**
@@ -38,11 +33,8 @@ class DbCommand extends AcquiaCommand
      */
     public function acquiaDbBackupList($uuid, $environment)
     {
-        if (!preg_match(self::UUIDv4, $uuid)) {
-            $uuid = $this->getUuidFromHostingName($uuid);
-        }
-        $id = $this->getIdFromEnvironmentName($uuid, $environment);
-        $databases = $this->cloudapi->environmentDatabases($id);
+
+        $databases = $this->cloudapi->environmentDatabases($environment->id);
 
         $table = new Table($this->output());
         $table->setHeaders(array('ID', 'Type', 'Timestamp'));
@@ -50,7 +42,7 @@ class DbCommand extends AcquiaCommand
         foreach ($databases as $database) {
             $dbName = $database->name;
             $this->yell($dbName);
-            $backups = $this->cloudapi->databaseBackups($id, $dbName);
+            $backups = $this->cloudapi->databaseBackups($environment->id, $dbName);
             foreach ($backups as $backup) {
                 $table
                     ->addRows(array(
@@ -72,11 +64,7 @@ class DbCommand extends AcquiaCommand
      */
     public function acquiaDbBackupLink($uuid, $environment, $backupId)
     {
-        if (!preg_match(self::UUIDv4, $uuid)) {
-            $uuid = $this->getUuidFromHostingName($uuid);
-        }
-        $id = $this->getIdFromEnvironmentName($uuid, $environment);
-
+        $id = $environment->id;
         $this->say($this->cloudapi::BASE_URI . "/environments/${id}/database-backups/${backupId}/actions/download");
     }
 }
