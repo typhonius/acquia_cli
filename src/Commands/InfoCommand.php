@@ -21,9 +21,6 @@ class InfoCommand extends AcquiaCommand
      */
     public function code($uuid, $match = null)
     {
-        if (!preg_match(self::UUIDv4, $uuid)) {
-            $uuid = $this->getUuidFromHostingName($uuid);
-        }
         if (null !== $match) {
             $this->cloudapi->addQuery('filter', "name=@*${match}*");
         }
@@ -57,9 +54,6 @@ class InfoCommand extends AcquiaCommand
     {
 
         // @TODO sort by most recent to least
-        if (!preg_match(self::UUIDv4, $uuid)) {
-            $uuid = $this->getUuidFromHostingName($uuid);
-        }
 
         $tasks = $this->cloudapi->tasks($uuid);
 
@@ -89,10 +83,6 @@ class InfoCommand extends AcquiaCommand
      */
     public function acquiaTask($uuid, $taskUuid)
     {
-
-        if (!preg_match(self::UUIDv4, $uuid)) {
-            $uuid = $this->getUuidFromHostingName($uuid);
-        }
 
         $tz = $this->extraConfig['timezone'];
         $format = $this->extraConfig['format'];
@@ -160,10 +150,6 @@ class InfoCommand extends AcquiaCommand
      */
     public function acquiaApplicationInfo($uuid)
     {
-        if (!preg_match(self::UUIDv4, $uuid)) {
-            $uuid = $this->getUuidFromHostingName($uuid);
-        }
-
         $environments = $this->cloudapi->environments($uuid);
 
         $output = $this->output();
@@ -205,21 +191,17 @@ class InfoCommand extends AcquiaCommand
      * Shows detailed information about servers in an environment.
      *
      * @param string      $uuid
-     * @param string|null $environment
+     * @param string|null $env
      *
      * @command environment:info
      * @alias env:info
      * @alias e:i
      */
-    public function acquiaEnvironmentInfo($uuid, $environment = null)
+    public function acquiaEnvironmentInfo($uuid, $env = null)
     {
 
-        if (!preg_match(self::UUIDv4, $uuid)) {
-            $uuid = $this->getUuidFromHostingName($uuid);
-        }
-
-        if (null !== $environment) {
-            $this->cloudapi->addQuery('filter', "name=${environment}");
+        if (null !== $env) {
+            $this->cloudapi->addQuery('filter', "name=${env}");
         }
 
         $environments = $this->cloudapi->environments($uuid);
@@ -281,19 +263,15 @@ class InfoCommand extends AcquiaCommand
      * Shows SSH connection strings for specified environments.
      *
      * @param string      $uuid
-     * @param string|null $environment
+     * @param string|null $env
      *
      * @command ssh:info
      */
-    public function acquiaSshInfo($uuid, $environment = null)
+    public function acquiaSshInfo($uuid, $env = null)
     {
 
-        if (!preg_match(self::UUIDv4, $uuid)) {
-            $uuid = $this->getUuidFromHostingName($uuid);
-        }
-
-        if (null !== $environment) {
-            $this->cloudapi->addQuery('filter', "name=${environment}");
+        if (null !== $env) {
+            $this->cloudapi->addQuery('filter', "name=${env}");
         }
 
         $environments = $this->cloudapi->environments($uuid);
