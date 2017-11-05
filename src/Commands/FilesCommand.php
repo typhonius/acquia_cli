@@ -2,6 +2,7 @@
 
 namespace AcquiaCli\Commands;
 
+use AcquiaCloudApi\Response\EnvironmentResponse;
 use Psr\Http\Message\StreamInterface;
 
 /**
@@ -13,13 +14,13 @@ class FilesCommand extends AcquiaCommand
     /**
      * Backs up all DBs in an environment.
      *
-     * @param string          $uuid
-     * @param StreamInterface $environmentFrom
-     * @param StreamInterface $environmentTo
+     * @param string              $uuid
+     * @param EnvironmentResponse $environmentFrom
+     * @param EnvironmentResponse $environmentTo
      *
      * @command files:copy
      */
-    public function acquiaFilesCopy($uuid, $environmentFrom, $environmentTo)
+    public function acquiaFilesCopy($uuid, EnvironmentResponse $environmentFrom, EnvironmentResponse $environmentTo)
     {
         $this->backupFiles($uuid, $environmentFrom, $environmentTo);
     }

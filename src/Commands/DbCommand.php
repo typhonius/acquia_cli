@@ -13,8 +13,8 @@ class DbCommand extends AcquiaCommand
     /**
      * Backs up all DBs in an environment.
      *
-     * @param string          $uuid
-     * @param StreamInterface $environment
+     * @param string              $uuid
+     * @param EnvironmentResponse $environment
      *
      * @command db:backup
      */
@@ -26,15 +26,15 @@ class DbCommand extends AcquiaCommand
     /**
      * Shows a list of database backups for all databases in an environment.
      *
-     * @param string $uuid
-     * @param string $environment
+     * @param string              $uuid
+     * @param EnvironmentResponse $environment
      *
      * @command db:backup:list
      */
     public function acquiaDbBackupList($uuid, $environment)
     {
 
-        $databases = $this->cloudapi->environmentDatabases($environment->id);
+        $databases = $this->cloudapi->environmentDatabases($environment->uuid);
 
         $table = new Table($this->output());
         $table->setHeaders(array('ID', 'Type', 'Timestamp'));
@@ -42,12 +42,16 @@ class DbCommand extends AcquiaCommand
         foreach ($databases as $database) {
             $dbName = $database->name;
             $this->yell($dbName);
-            $backups = $this->cloudapi->databaseBackups($environment->id, $dbName);
+            $backups = $this->cloudapi->databaseBackups($environment->uuid, $dbName);
             foreach ($backups as $backup) {
                 $table
-                    ->addRows(array(
-                        array($backup->id, ucfirst($backup->type), $backup->completed_at),
-                    ));
+                    ->addRows([
+                        [
+                            $backup->id,
+                            ucfirst($backup->type),
+                            $backup->completedAt,
+                        ],
+                    ]);
             }
         }
         $table->render();
@@ -56,15 +60,15 @@ class DbCommand extends AcquiaCommand
     /**
      * Provides a database backup link.
      *
-     * @param string $uuid
-     * @param string $environment
-     * @param int    $backupId
+     * @param string              $uuid
+     * @param EnvironmentResponse $environment
+     * @param int                 $backupId
      *
      * @command db:backup:link
      */
     public function acquiaDbBackupLink($uuid, $environment, $backupId)
     {
-        $id = $environment->id;
+        $id = $environment->uuid;
         $this->say($this->cloudapi::BASE_URI . "/environments/${id}/database-backups/${backupId}/actions/download");
     }
 }
