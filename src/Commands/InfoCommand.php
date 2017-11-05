@@ -2,6 +2,8 @@
 
 namespace AcquiaCli\Commands;
 
+use AcquiaCloudApi\Response\EnvironmentResponse;
+use AcquiaCloudApi\Response\EnvironmentsResponse;
 use Symfony\Component\Console\Helper\Table;
 
 /**
@@ -29,14 +31,17 @@ class InfoCommand extends AcquiaCommand
 
         $output = $this->output();
         $table = new Table($output);
-        $table->setHeaders(array('Name', 'Tag'));
+        $table->setHeaders(['Name', 'Tag']);
 
         foreach ($code as $branch) {
             $tag = $branch->flags->tag ? '✅' : '';
             $table
-                ->addRows(array(
-                    array($branch->name, $tag),
-                ));
+                ->addRows([
+                    [
+                        $branch->name,
+                        $tag,
+                    ],
+                ]);
         }
 
         $table->render();
@@ -59,13 +64,18 @@ class InfoCommand extends AcquiaCommand
 
         $output = $this->output();
         $table = new Table($output);
-        $table->setHeaders(array('ID', 'Name', 'Status', 'User'));
+        $table->setHeaders(['ID', 'Name', 'Status', 'User']);
 
         foreach ($tasks as $task) {
             $table
-                ->addRows(array(
-                    array($task->uuid, $task->name, $task->status, $task->user->mail),
-                ));
+                ->addRows([
+                    [
+                        $task->uuid,
+                        $task->name,
+                        $task->status,
+                        $task->user->mail,
+                    ],
+                ]);
         }
 
         $table->render();
@@ -129,12 +139,16 @@ class InfoCommand extends AcquiaCommand
 
         $output = $this->output();
         $table = new Table($output);
-        $table->setHeaders(array('Name', 'UUID', 'Hosting ID'));
+        $table->setHeaders(['Name', 'UUID', 'Hosting ID']);
         foreach ($applications as $application) {
             $table
-                ->addRows(array(
-                    array($application->name, $application->uuid, $application->hosting->id),
-                ));
+                ->addRows([
+                    [
+                        $application->name,
+                        $application->uuid,
+                        $application->hosting->id,
+                    ],
+                ]);
         }
         $table->render();
     }
@@ -150,22 +164,21 @@ class InfoCommand extends AcquiaCommand
      */
     public function acquiaApplicationInfo($uuid)
     {
+        /** @var EnvironmentsResponse $environments */
         $environments = $this->cloudapi->environments($uuid);
 
         $output = $this->output();
         $table = new Table($output);
-        $table->setHeaders(array('Environment', 'ID', 'Branch/Tag', 'Domain(s)', 'Database(s)'));
+        $table->setHeaders(['Environment', 'ID', 'Branch/Tag', 'Domain(s)', 'Database(s)']);
 
         foreach ($environments as $environment) {
-            $vcs = $environment->vcs->path;
+            /** @var EnvironmentResponse $environment */
 
-            $databases = $this->cloudapi->environmentDatabases($environment->id);
+            $databases = $this->cloudapi->environmentDatabases($environment->uuid);
 
-            $dbs = [];
-            foreach ($databases as $database) {
-                $dbs[] = $database->name;
-            }
-            $dbString = implode(', ', $dbs);
+            $dbNames = array_map(function($database) {
+                return $database->name;
+            }, $databases->getArrayCopy());
 
             $environmentName = $environment->label . ' (' . $environment->name . ')' ;
             if ($environment->flags->livedev) {
@@ -177,9 +190,15 @@ class InfoCommand extends AcquiaCommand
             }
 
             $table
-                ->addRows(array(
-                    array($environmentName, $environment->id, $vcs, implode("\n", $environment->domains), $dbString),
-                ));
+                ->addRows([
+                    [
+                        $environmentName,
+                        $environment->uuid,
+                        $environment->vcs->path,
+                        implode("\n", $environment->domains),
+                        implode("\n", $dbNames)
+                    ],
+                ]);
         }
         $table->render();
         $this->say('💻  indicates environment in livedev mode.');
@@ -218,13 +237,13 @@ class InfoCommand extends AcquiaCommand
     }
 
     /**
-     * @param $environment
+     * @param EnvironmentResponse $environment
      */
-    protected function renderEnvironmentInfo($environment)
+    protected function renderEnvironmentInfo(EnvironmentResponse $environment)
     {
 
         $environmentName = $environment->label;
-        $environmentId = $environment->id;
+        $environmentId = $environment->uuid;
 
         $this->yell("${environmentName} environment");
         $this->say("Environment ID: ${environmentId}");
@@ -238,21 +257,31 @@ class InfoCommand extends AcquiaCommand
         $output = $this->output();
         $table = new Table($output);
         // needs AZ?
-        $table->setHeaders(array('Role(s)', 'Name', 'FQDN', 'AMI', 'Region', 'IP', 'Memcache', 'Active', 'Primary', 'EIP'));
+        $table->setHeaders(['Role(s)', 'Name', 'FQDN', 'AMI', 'Region', 'IP', 'Memcache', 'Active', 'Primary', 'EIP']);
 
-        $servers = $this->cloudapi->servers($environment->id);
+        $servers = $this->cloudapi->servers($environment->uuid);
 
         foreach ($servers as $server) {
-
             $memcache = $server->flags->memcache ? '✅' : '';
             $active = $server->flags->active_web || $server->flags->active_bal ? '✅' : '';
             $primaryDb = $server->flags->primary_db ? '✅' : '';
             $eip = $server->flags->elastic_ip ? '✅' : '';
 
             $table
-                ->addRows(array(
-                    array(implode(', ', $server->roles), $server->name, $server->hostname, $server->ami_type, $server->region, $server->ip, $memcache, $active, $primaryDb, $eip),
-                ));
+                ->addRows([
+                    [
+                        implode(', ', $server->roles),
+                        $server->name,
+                        $server->hostname,
+                        $server->amiType,
+                        $server->region,
+                        $server->ip,
+                        $memcache,
+                        $active,
+                        $primaryDb,
+                        $eip
+                    ],
+                ]);
         }
 
         $table->render();
@@ -283,10 +312,10 @@ class InfoCommand extends AcquiaCommand
         }
     }
 
-    private function renderSshInfo($environment)
+    private function renderSshInfo(EnvironmentResponse $environment)
     {
         $environmentName = $environment->name;
-        $ssh = $environment->ssh_url;
+        $ssh = $environment->sshUrl;
         $this->say("${environmentName}: ssh ${ssh}");
     }
 }

@@ -3,6 +3,8 @@
 namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\CloudApi\Client;
+use AcquiaCloudApi\Response\DatabaseResponse;
+use AcquiaCloudApi\Response\EnvironmentResponse;
 use Consolidation\AnnotatedCommand\CommandData;
 use Psr\Http\Message\StreamInterface;
 use Robo\Tasks;
@@ -208,9 +210,9 @@ abstract class AcquiaCommand extends Tasks
     }
 
     /**
-     * @param string          $uuid
-     * @param StreamInterface $environmentFrom
-     * @param StreamInterface $environmentTo
+     * @param string              $uuid
+     * @param EnvironmentResponse $environmentFrom
+     * @param EnvironmentResponse $environmentTo
      */
     protected function backupAndMoveDbs($uuid, $environmentFrom, $environmentTo)
     {
@@ -227,69 +229,70 @@ abstract class AcquiaCommand extends Tasks
     }
 
     /**
-     * @param string          $uuid
-     * @param StreamInterface $environment
+     * @param string              $uuid
+     * @param EnvironmentResponse $environment
      */
-    protected function backupAllEnvironmentDbs($uuid, $environment)
+    protected function backupAllEnvironmentDbs($uuid, EnvironmentResponse $environment)
     {
         $databases = $this->cloudapi->databases($uuid);
         foreach ($databases as $database) {
-            $this->backupDb($uuid, $environment, $database->name);
+            $this->backupDb($uuid, $environment, $database);
         }
     }
 
     /**
-     * @param string          $uuid
-     * @param StreamInterface $environment
-     * @param StreamInterface $database
+     * @param string              $uuid
+     * @param EnvironmentResponse $environment
+     * @param DatabaseResponse    $database
      */
-    protected function backupDb($uuid, $environment, $database)
+    protected function backupDb($uuid, EnvironmentResponse $environment, DatabaseResponse $database)
     {
         // Run database backups.
         $label = $environment->label;
-        $this->say("Backing up DB (${database}) on ${label}");
-        $this->cloudapi->databaseBackup($environment->id, $database->name);
+        $dbName = $database->name;
+        $this->say("Backing up DB (${dbName}) on ${label}");
+        $this->cloudapi->databaseBackup($environment->uuid, $database->name);
         $this->waitForTask($uuid, 'DatabaseBackupCreated');
     }
 
     /**
-     * @param string          $uuid
-     * @param StreamInterface $environmentFrom
-     * @param StreamInterface $environmentTo
+     * @param string              $uuid
+     * @param EnvironmentResponse $environmentFrom
+     * @param EnvironmentResponse $environmentTo
      */
-    protected function backupFiles($uuid, $environmentFrom, $environmentTo)
+    protected function backupFiles($uuid, EnvironmentResponse $environmentFrom, EnvironmentResponse $environmentTo)
     {
         // Copy files from prod to non-prod.
         $labelFrom = $environmentFrom->label;
         $labelTo = $environmentTo->label;
         $this->say("Moving files from ${labelFrom} to ${labelTo}");
-        $this->cloudapi->copyFiles($environmentFrom->id, $environmentTo->id);
+        $this->cloudapi->copyFiles($environmentFrom->uuid, $environmentTo->uuid);
         $this->waitForTask($uuid, 'FilesCopied');
     }
 
     /**
-     * @param string          $uuid
-     * @param StreamInterface $environment
-     * @param string          $branch
+     * @param string              $uuid
+     * @param EnvironmentResponse $environment
+     * @param string              $branch
      */
-    protected function acquiaDeployEnv($uuid, $environment, $branch)
+    protected function acquiaDeployEnv($uuid, EnvironmentResponse $environment, $branch)
     {
         $this->backupAllEnvironmentDbs($uuid, $environment);
         $label = $environment->label;
         $this->say("Deploying ${branch} to the ${label} environment");
 
-        $this->cloudapi->switchCode($environment->id, $branch);
+        $this->cloudapi->switchCode($environment->uuid, $branch);
 
         $this->waitForTask($uuid, 'CodeSwitched');
         $this->acquiaConfigUpdate($environment);
     }
 
     /**
-     * @param StreamInterface $id
+     * @param EnvironmentResponse $environment
      */
     protected function acquiaConfigUpdate($environment)
     {
-        $sshUrl = $environment->ssh_url;
+        $sshUrl = $environment->sshUrl;
         $drushAlias = strtok($sshUrl, '@');
 
         $this->taskDrushStack()
@@ -307,22 +310,21 @@ abstract class AcquiaCommand extends Tasks
     }
 
     /**
-     * @param string          $uuid
-     * @param StreamInterface $environment
+     * @param string              $uuid
+     * @param EnvironmentResponse $environment
      */
-    protected function acquiaPurgeVarnishForEnvironment($uuid, $environment)
+    protected function acquiaPurgeVarnishForEnvironment($uuid, EnvironmentResponse $environment)
     {
-        $domains = $this->cloudapi->domains($environment->id);
+        $domains = $this->cloudapi->domains($environment->uuid);
 
-        $domainsList = [];
-        foreach ($domains as $domain) {
-            $domainName = $domain->hostname;
-            $domainsList[] = $domainName;
-            $environmentName = $environment->name;
-            $this->say("Purging varnish cache for ${domainName} in ${environmentName} environment");
-        }
+        $domainsList = array_map(function($domain) {
+            $hostname = $domain->hostname;
+            $this->say("Purging varnish cache for ${hostname}");
 
-        $this->cloudapi->purgeVarnishCache($environment->id, $domainsList);
+            return $hostname;
+        }, $domains->getArrayCopy());
+
+        $this->cloudapi->purgeVarnishCache($environment->uuid, $domainsList);
         $this->waitForTask($uuid, 'VarnishCleared');
     }
 }
