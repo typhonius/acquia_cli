@@ -94,7 +94,7 @@ abstract class AcquiaCommand extends Tasks
     /**
      * @param string $uuid
      * @param string $environment
-     * @return mixed
+     * @return EnvironmentResponse
      * @throws Exception
      */
     protected function getEnvironmentFromEnvironmentName($uuid, $environment)
@@ -282,7 +282,6 @@ abstract class AcquiaCommand extends Tasks
         $this->say("Deploying ${branch} to the ${label} environment");
 
         $this->cloudapi->switchCode($environment->uuid, $branch);
-
         $this->waitForTask($uuid, 'CodeSwitched');
         $this->acquiaConfigUpdate($environment);
     }

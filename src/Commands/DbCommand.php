@@ -58,6 +58,21 @@ class DbCommand extends AcquiaCommand
     }
 
     /**
+     * Restores a database from a saved backup.
+     *
+     * @param string              $uuid
+     * @param EnvironmentResponse $environment
+     * @param string              $backupId
+     *
+     * @command db:backup:restore
+     */
+    public function acquiaDbBackupRestore($uuid, $environment, $backupId)
+    {
+        $this->cloudapi->databaseBackupRestore($environment->uuid, $backupId);
+        $this->waitForTask($uuid, 'DatabaseBackupRestored');
+    }
+
+    /**
      * Provides a database backup link.
      *
      * @param string              $uuid
