@@ -2,7 +2,7 @@
 
 namespace AcquiaCli\Commands;
 
-use Psr\Http\Message\StreamInterface;
+use AcquiaCloudApi\Response\EnvironmentResponse;
 
 /**
  * Class DeployCommand
@@ -22,16 +22,17 @@ class DeployCommand extends AcquiaCommand
     {
         $this->yell('WARNING: DEPLOYING TO PROD');
         if ($this->confirm('Are you sure you want to deploy to prod?')) {
-            $this->acquiaDeployEnv($uuid, 'prod', $branch);
+            $environment = $this->getEnvironmentFromEnvironmentName($uuid, 'prod');
+            $this->acquiaDeployEnv($uuid, $environment, $branch);
         }
     }
 
     /**
      * Runs a deployment of a branch/tag and config/db update to a non-production environment.
      *
-     * @param string          $uuid
-     * @param StreamInterface $environment
-     * @param string          $branch
+     * @param string              $uuid
+     * @param EnvironmentResponse $environment
+     * @param string              $branch
      * @throws \Exception
      *
      * @command preprod:deploy
@@ -39,7 +40,7 @@ class DeployCommand extends AcquiaCommand
     public function acquiaDeployPreProd($uuid, $environment, $branch)
     {
         if ($environment->name == 'prod') {
-            throw new \Exception('Use the prod:acquia:deploy command for the production environment.');
+            throw new \Exception('Use the prod:deploy command for the production environment.');
         }
 
         $this->acquiaDeployEnv($uuid, $environment, $branch);
@@ -66,8 +67,8 @@ class DeployCommand extends AcquiaCommand
     /**
      * Updates configuration and db in a non-production environment.
      *
-     * @param string          $uuid
-     * @param StreamInterface $environment
+     * @param string              $uuid
+     * @param EnvironmentResponse $environment
      * @throws \Exception
      *
      * @command preprod:config-update
@@ -75,7 +76,7 @@ class DeployCommand extends AcquiaCommand
     public function acquiaConfigUpdatePreProd($uuid, $environment)
     {
         if ($environment->name == 'prod') {
-            throw new \Exception('Use the prod:acquia:prepare command for the production environment.');
+            throw new \Exception('Use the prod:config-update command for the production environment.');
         }
 
         $this->acquiaConfigUpdate($environment);
@@ -84,9 +85,9 @@ class DeployCommand extends AcquiaCommand
     /**
      * Prepares a non-production environment for deployment by copying the database and files from another environment.
      *
-     * @param string          $uuid
-     * @param StreamInterface $environmentFrom
-     * @param StreamInterface $environmentTo
+     * @param string              $uuid
+     * @param EnvironmentResponse $environmentFrom
+     * @param EnvironmentResponse $environmentTo
      * @throws \Exception
      *
      * @command preprod:prepare
@@ -94,7 +95,7 @@ class DeployCommand extends AcquiaCommand
     public function acquiaPreparePreProd($uuid, $environmentFrom, $environmentTo)
     {
         if ($environmentTo->name == 'prod') {
-            throw new \Exception('Use the acquia:prepare:prod command for the production environment.');
+            throw new \Exception('Use the db:backup and files:copy commands for the production environment.');
         }
 
         $this->backupAndMoveDbs($uuid, $environmentFrom, $environmentTo);
@@ -104,8 +105,8 @@ class DeployCommand extends AcquiaCommand
     /**
      * Clears varnish cache for all domains in specific a specific pre-production environment.
      *
-     * @param string          $uuid
-     * @param StreamInterface $environment
+     * @param string              $uuid
+     * @param EnvironmentResponse $environment
      * @throws \Exception
      *
      * @command preprod:purgevarnish
@@ -113,7 +114,7 @@ class DeployCommand extends AcquiaCommand
     public function acquiaPurgeVarnish($uuid, $environment)
     {
         if ($environment->name == 'prod') {
-            throw new \Exception('Use the prod:acquia:purgevarnish command for the production environment.');
+            throw new \Exception('Use the prod:purgevarnish command for the production environment.');
         }
 
         $this->acquiaPurgeVarnishForEnvironment($uuid, $environment);
