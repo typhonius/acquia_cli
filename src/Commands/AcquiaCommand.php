@@ -44,10 +44,10 @@ abstract class AcquiaCommand extends Tasks
         $this->extraConfig = $extraConfig;
 
         $acquia = Robo::config()->get('acquia');
-        $cloudapi = Client::factory(array(
+        $cloudapi = Client::factory([
             'key' => $acquia['key'],
             'secret' => $acquia['secret'],
-        ));
+        ]);
 
         /** @var \AcquiaCloudApi\CloudApi\Client $cloudapi */
         $this->cloudapi = $cloudapi;
@@ -223,7 +223,7 @@ abstract class AcquiaCommand extends Tasks
 
             // Copy DB from prod to non-prod.
             $this->say("Moving DB (${dbName}) from ${environmentFrom} to ${environmentTo}");
-            $this->cloudapi->databaseCopy($environmentTo->id, $dbName, $environmentFrom->id);
+            $this->cloudapi->databaseCopy($environmentTo->uuid, $dbName, $environmentFrom->uuid);
             $this->waitForTask($uuid, 'DatabaseCopied');
         }
     }
