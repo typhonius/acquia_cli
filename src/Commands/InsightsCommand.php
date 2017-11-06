@@ -2,8 +2,6 @@
 
 namespace AcquiaCli\Commands;
 
-use AcquiaCloudApi\Response\EnvironmentResponse;
-use AcquiaCloudApi\Response\EnvironmentsResponse;
 use AcquiaCloudApi\Response\InsightCountResponse;
 use AcquiaCloudApi\Response\InsightResponse;
 use Symfony\Component\Console\Helper\Table;

@@ -3,7 +3,6 @@
 namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\Response\EnvironmentResponse;
-use Psr\Http\Message\StreamInterface;
 
 /**
  * Class FilesCommand

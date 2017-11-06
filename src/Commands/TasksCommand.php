@@ -2,8 +2,6 @@
 
 namespace AcquiaCli\Commands;
 
-use AcquiaCloudApi\Response\EnvironmentResponse;
-use AcquiaCloudApi\Response\EnvironmentsResponse;
 use Symfony\Component\Console\Helper\Table;
 
 /**
@@ -90,7 +88,7 @@ class TasksCommand extends AcquiaCommand
 
                 $createdDate = new \DateTime($task->createdAt);
                 $startedDate = new \DateTime($task->startedAt);
-                $completedDate = new \DateTime($task->completed_at);
+                $completedDate = new \DateTime($task->completedAt);
 
                 $createdDate->setTimezone($timezone);
                 $startedDate->setTimezone($timezone);
