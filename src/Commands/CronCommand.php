@@ -3,7 +3,6 @@
 namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\Response\CronResponse;
-use AcquiaCloudApi\Response\CronsResponse;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use Symfony\Component\Console\Helper\Table;
 

@@ -3,8 +3,6 @@
 namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\Response\EnvironmentResponse;
-use AcquiaCloudApi\Response\EnvironmentsResponse;
-use Symfony\Component\Console\Helper\Table;
 
 /**
  * Class SshCommand

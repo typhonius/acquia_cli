@@ -6,7 +6,6 @@ use AcquiaCloudApi\CloudApi\Client;
 use AcquiaCloudApi\Response\DatabaseResponse;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use Consolidation\AnnotatedCommand\CommandData;
-use Psr\Http\Message\StreamInterface;
 use Robo\Tasks;
 use Robo\Robo;
 use Exception;

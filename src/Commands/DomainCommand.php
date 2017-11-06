@@ -2,7 +2,7 @@
 
 namespace AcquiaCli\Commands;
 
-use Psr\Http\Message\StreamInterface;
+use AcquiaCloudApi\Response\EnvironmentResponse;
 
 /**
  * Class DomainCommand
@@ -14,9 +14,9 @@ class DomainCommand extends AcquiaCommand
     /**
      * Add a domain to an environment.
      *
-     * @param string          $uuid
-     * @param StreamInterface $environment
-     * @param string          $domain
+     * @param string              $uuid
+     * @param EnvironmentResponse $environment
+     * @param string              $domain
      *
      * @command domain:add
      */
@@ -24,16 +24,16 @@ class DomainCommand extends AcquiaCommand
     {
         $label = $environment->label;
         $this->say("Adding ${domain} to ${label} environment");
-        $this->cloudapi->addDomain($environment->id, $domain);
+        $this->cloudapi->addDomain($environment->uuid, $domain);
         $this->waitForTask($uuid, 'DomainAdded');
     }
 
     /**
      * Remove a domain to an environment.
      *
-     * @param string          $uuid
-     * @param StreamInterface $environment
-     * @param string          $domain
+     * @param string              $uuid
+     * @param EnvironmentResponse $environment
+     * @param string              $domain
      *
      * @command domain:remove
      */
@@ -42,7 +42,7 @@ class DomainCommand extends AcquiaCommand
         if ($this->confirm('Are you sure you want to remove this domain?')) {
             $label = $environment->label;
             $this->say("Removing ${domain} from environment ${label}");
-            $this->cloudapi->deleteDomain($environment->id, $domain);
+            $this->cloudapi->deleteDomain($environment->uuid, $domain);
             $this->waitForTask($uuid, 'DomainRemoved');
         }
     }
