@@ -16,13 +16,16 @@ class ProductionModeCommand extends AcquiaCommand
      *
      * @param string              $uuid
      * @param EnvironmentResponse $environment
+     * @throws \Exception
      *
      * @command productionmode:enable
      * @alias pm:enable
      */
     public function acquiaProductionModeEnable($uuid, EnvironmentResponse $environment)
     {
-        // @TODO fail if not prod environment?
+        if ('prod' !== $environment->name) {
+            throw new \Exception('Production mode may only be enabled/disabled on the prod environment.');
+        }
         $label = $environment->label;
         $this->say("Enabling production mode for ${label} environment");
         $this->cloudapi->enableProductionMode($environment->uuid);
@@ -34,13 +37,16 @@ class ProductionModeCommand extends AcquiaCommand
      *
      * @param string              $uuid
      * @param EnvironmentResponse $environment
+     * @throws \Exception
      *
      * @command productionmode:disable
      * @alias pm:disable
      */
     public function acquiaRemoveDomain($uuid, EnvironmentResponse $environment)
     {
-        // @TODO fail if not prod environment?
+        if ('prod' !== $environment->name) {
+            throw new \Exception('Production mode may only be enabled/disabled on the prod environment.');
+        }
 
         if ($this->confirm('Are you sure you want to disable production mode?')) {
             $label = $environment->label;
