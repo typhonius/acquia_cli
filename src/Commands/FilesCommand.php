@@ -12,7 +12,7 @@ use Psr\Http\Message\StreamInterface;
 class FilesCommand extends AcquiaCommand
 {
     /**
-     * Backs up all DBs in an environment.
+     * Copies files from one environment to another.
      *
      * @param string              $uuid
      * @param EnvironmentResponse $environmentFrom
