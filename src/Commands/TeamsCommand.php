@@ -85,8 +85,10 @@ class TeamsCommand extends AcquiaCommand
      *
      * @param string      $organizationUuid
      * @param string      $name             A human readable role name e.g. 'Release Managers'
-     * @param string      $permissions      A comma separated list of permissions a role should have e.g. 'administer domain non-prod,administer ssh keys,deploy to non-prod'
-     * @param null|string $description      A human readable description of the role e.g. 'For non-technical users to create releases'
+     * @param string      $permissions      A comma separated list of permissions a role should have
+     * e.g. 'administer domain non-prod,administer ssh keys,deploy to non-prod'
+     * @param null|string $description      A human readable description of the role
+     * e.g. 'For non-technical users to create releases'
      *
      * @command role:add
      */
@@ -112,7 +114,8 @@ class TeamsCommand extends AcquiaCommand
      * Updates the permissions for a role.
      *
      * @param string $roleUuid
-     * @param string $permissions A comma separated list of permissions a role should have e.g. 'administer domain non-prod,administer ssh keys,deploy to non-prod'
+     * @param string $permissions A comma separated list of permissions a role should have
+     * e.g. 'administer domain non-prod,administer ssh keys,deploy to non-prod'
      *
      * @command role:update:permissions
      */
@@ -135,7 +138,7 @@ class TeamsCommand extends AcquiaCommand
         $roles = $this->cloudapi->organizationRoles($organizationUuid);
         $permissions = $this->cloudapi->permissions();
 
-        $roleList = array_map(function($role) {
+        $roleList = array_map(function ($role) {
             $this->say($role->name . ': ' . $role->uuid);
             return $role->name;
         }, $roles->getArrayCopy());

@@ -134,7 +134,6 @@ class CronCommand extends AcquiaCommand
         $this->say('Enabled: ' . $enabled);
         $this->say('System: ' . $system);
         $this->say('On any web: ' . $onAnyWeb);
-
     }
 
     protected function convertCronFrequencyToCrontab(CronResponse $cron)

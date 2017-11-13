@@ -61,7 +61,7 @@ class ApplicationsCommand extends AcquiaCommand
 
             $databases = $this->cloudapi->environmentDatabases($environment->uuid);
 
-            $dbNames = array_map(function($database) {
+            $dbNames = array_map(function ($database) {
                 return $database->name;
             }, $databases->getArrayCopy());
 
@@ -88,6 +88,5 @@ class ApplicationsCommand extends AcquiaCommand
         $table->render();
         $this->say('💻  indicates environment in livedev mode.');
         $this->say('🔒  indicates environment in production mode.');
-
     }
 }

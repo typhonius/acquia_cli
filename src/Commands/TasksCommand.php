@@ -83,7 +83,6 @@ class TasksCommand extends AcquiaCommand
 
         foreach ($tasks as $task) {
             if ($taskUuid === $task->uuid) {
-
                 $timezone = new \DateTimeZone($tz);
 
                 $createdDate = new \DateTime($task->createdAt);

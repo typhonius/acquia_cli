@@ -57,8 +57,6 @@ class DeployCommand extends AcquiaCommand
     {
         $this->yell('WARNING: UPDATING CONFIG ON PROD');
         if ($this->confirm('Are you sure you want to update prod config? This will overwrite your configuration.')) {
-            $this->acquiaConfigUpdate($site, 'prod');
-        if ($this->confirm('Are you sure you want to update prod config? This will overwrite your prod configuration.')) {
             $environment = $this->getEnvironmentFromEnvironmentName($uuid, 'prod');
             $this->acquiaConfigUpdate($environment);
         }

@@ -91,6 +91,5 @@ class EnvironmentsCommand extends AcquiaCommand
         }
 
         $table->render();
-
     }
 }
