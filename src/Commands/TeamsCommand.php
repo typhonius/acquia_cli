@@ -65,7 +65,7 @@ class TeamsCommand extends AcquiaCommand
         $permissions = $this->cloudapi->permissions();
 
         $table = new Table($this->output());
-        $table->setHeaders(array('Name', 'Label'));
+        $table->setHeaders(['Name', 'Label']);
         foreach ($permissions as $permission) {
             /** @var PermissionResponse $permission */
             $table
