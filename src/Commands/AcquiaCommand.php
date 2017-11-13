@@ -185,4 +185,3 @@ abstract class AcquiaCommand extends Tasks
         }
     }
 }
-

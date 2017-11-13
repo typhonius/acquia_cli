@@ -53,7 +53,7 @@ class DeployCommand extends AcquiaCommand
     public function acquiaConfigUpdateProd($site)
     {
         $this->yell('WARNING: UPDATING CONFIG ON PROD');
-        if ($this->confirm('Are you sure you want to update prod config? This will overwrite your prod configuration.')) {
+        if ($this->confirm('Are you sure you want to update prod config? This will overwrite your configuration.')) {
             $this->acquiaConfigUpdate($site, 'prod');
         }
     }
@@ -77,7 +77,7 @@ class DeployCommand extends AcquiaCommand
     }
 
     /**
-     * Prepares a non-production environment for a deployment by copying the database and files from another environment.
+     * Prepares a non-production environment for deployment by copying the database and files from another environment.
      *
      * @param string $site
      * @param string $environmentFrom
@@ -129,6 +129,3 @@ class DeployCommand extends AcquiaCommand
         }
     }
 }
-
-
-

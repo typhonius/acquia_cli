@@ -95,7 +95,15 @@ class CloudflareCommand extends AcquiaCommand
                 $proxied = $record->proxied ? '✅' : '❌';
                 $table
                     ->addRows(array(
-                        array($record->id, $record->type, $record->name, $record->content, $record->ttl, $priority, $proxiable, $proxied),
+                        array(
+                            $record->id,
+                            $record->type,
+                            $record->name,
+                            $record->content,
+                            $record->ttl,
+                            $priority,
+                            $proxiable,
+                            $proxied),
                     ));
             }
             $table->render();
@@ -184,8 +192,10 @@ class CloudflareCommand extends AcquiaCommand
         }
 
         foreach ($zones->result as $zone) {
+            // @codingStandardsIgnoreStart Zend.NamingConventions.ValidVariableName.NotCamelCaps
             $ns = !empty($zone->name_servers) ? implode(', ', $zone->name_servers) : '';
             $vanityNs = !empty($zone->vanity_name_servers) ? implode(', ', $zone->vanity_name_servers) : '';
+            // @codingStandardsIgnoreEnd Zend.NamingConventions.ValidVariableName.NotCamelCaps
             $table
                 ->addRows(array(
                     array(
@@ -210,4 +220,3 @@ class CloudflareCommand extends AcquiaCommand
         return $this->zones->getZoneID($domain);
     }
 }
-

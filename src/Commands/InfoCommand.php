@@ -143,7 +143,6 @@ class InfoCommand extends AcquiaCommand
         }
         $table->render();
         $this->say('* indicates environment in livedev mode.');
-
     }
 
     /**
@@ -221,7 +220,14 @@ class InfoCommand extends AcquiaCommand
 
             $table
                 ->addRows(array(
-                    array($type, $server->name(), $server->fqdn(), $server->amiType(), $server->region(), $server->availabilityZone(), gethostbyname($server->fqdn()), $extra),
+                    array($type,
+                        $server->name(),
+                        $server->fqdn(),
+                        $server->amiType(),
+                        $server->region(),
+                        $server->availabilityZone(),
+                        gethostbyname($server->fqdn()),
+                        $extra),
                 ));
         }
 
