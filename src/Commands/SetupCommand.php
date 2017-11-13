@@ -45,7 +45,7 @@ class SetupCommand extends Tasks
                 if ($this->confirm('Would you like to view the contents of this file?')) {
                     $this->say(file_get_contents($location));
                 }
-                if ($this->confirm("Would you like to delete the acquiacli.yml file at ${location} and regenerate it?")) {
+                if ($this->confirm("Would you like to delete and regenerate the acquiacli.yml file at ${location}?")) {
                     $this->createConfigYaml($location);
                 }
             } elseif ($this->confirm("No file found. Would you like to add a file at ${location}?")) {
@@ -95,4 +95,3 @@ class SetupCommand extends Tasks
         file_put_contents($location, $yaml);
     }
 }
-

@@ -19,5 +19,8 @@
         "psr-4":{
             "AcquiaCli\\":"src"
         }
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "^2.7"
     }
 }

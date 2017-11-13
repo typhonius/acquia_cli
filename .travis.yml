@@ -1,0 +1,17 @@
+sudo: false
+language: php
+
+php:
+    - 7.0
+    - 7.1
+
+before_install:
+    - composer self-update
+    - composer validate --no-check-all --ansi
+
+install:
+    - travis_retry composer install --no-interaction --prefer-source
+
+script:
+    - php -l src/
+    - ${TRAVIS_BUILD_DIR}/vendor/bin/phpcs -s --standard=PSR2 ${TRAVIS_BUILD_DIR}/src/

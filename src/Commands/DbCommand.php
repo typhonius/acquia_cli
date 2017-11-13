@@ -1,6 +1,7 @@
 <?php
 
 namespace AcquiaCli\Commands;
+
 use Acquia\Cloud\Api\Response\Database;
 use Acquia\Cloud\Api\Response\DatabaseBackup;
 use Symfony\Component\Console\Helper\Table;
