@@ -83,7 +83,7 @@ class CloudflareCommand extends AcquiaCommand
     {
         $output = $this->output();
         $table = new Table($output);
-        $table->setHeaders(array('ID', 'Type', 'Name', 'Content', 'TTL', 'Priority', 'Proxiable', 'Proxied'));
+        $table->setHeaders(['ID', 'Type', 'Name', 'Content', 'TTL', 'Priority', 'Proxiable', 'Proxied']);
 
         $zoneId = $this->getCloudflareZoneId($domain);
         $this->buildCloudflareDnsRecordList($zoneId, $type, $name, 1);
@@ -94,8 +94,8 @@ class CloudflareCommand extends AcquiaCommand
                 $proxiable = $record->proxiable ? '✅' : '❌';
                 $proxied = $record->proxied ? '✅' : '❌';
                 $table
-                    ->addRows(array(
-                        array(
+                    ->addRows([
+                        [
                             $record->id,
                             $record->type,
                             $record->name,
@@ -103,8 +103,8 @@ class CloudflareCommand extends AcquiaCommand
                             $record->ttl,
                             $priority,
                             $proxiable,
-                            $proxied),
-                    ));
+                            $proxied],
+                    ]);
             }
             $table->render();
             $total = count($this->records);
@@ -183,7 +183,7 @@ class CloudflareCommand extends AcquiaCommand
     {
         $output = $this->output();
         $table = new Table($output);
-        $table->setHeaders(array('ID', 'Name', 'Status', 'Nameservers', 'Vanity nameservers'));
+        $table->setHeaders(['ID', 'Name', 'Status', 'Nameservers', 'Vanity nameservers']);
 
         $zones = $this->zones->listZones();
 
@@ -192,20 +192,18 @@ class CloudflareCommand extends AcquiaCommand
         }
 
         foreach ($zones->result as $zone) {
-            // @codingStandardsIgnoreStart Zend.NamingConventions.ValidVariableName.NotCamelCaps
             $ns = !empty($zone->name_servers) ? implode(', ', $zone->name_servers) : '';
             $vanityNs = !empty($zone->vanity_name_servers) ? implode(', ', $zone->vanity_name_servers) : '';
-            // @codingStandardsIgnoreEnd Zend.NamingConventions.ValidVariableName.NotCamelCaps
             $table
-                ->addRows(array(
-                    array(
+                ->addRows([
+                    [
                         $zone->id,
                         $zone->name,
                         $zone->status,
                         $ns,
                         $vanityNs,
-                    ),
-                ));
+                    ],
+                ]);
         }
 
         $table->render();

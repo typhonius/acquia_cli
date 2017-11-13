@@ -2,6 +2,7 @@
 
 namespace AcquiaCli\Commands;
 
+use AcquiaCloudApi\Response\EnvironmentResponse;
 use Symfony\Component\Console\Helper\Table;
 
 /**
@@ -37,7 +38,7 @@ class DbCommand extends AcquiaCommand
         $databases = $this->cloudapi->environmentDatabases($environment->uuid);
 
         $table = new Table($this->output());
-        $table->setHeaders(array('ID', 'Type', 'Timestamp'));
+        $table->setHeaders(['ID', 'Type', 'Timestamp']);
 
         foreach ($databases as $database) {
             $dbName = $database->name;

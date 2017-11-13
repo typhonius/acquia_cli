@@ -26,7 +26,7 @@ class OrganizationsCommand extends AcquiaCommand
         $organizations = $this->cloudapi->organizations();
 
         $table = new Table($this->output());
-        $table->setHeaders(array('UUID', 'Organization', 'Owner', 'Subs', 'Admins', 'Users', 'Teams', 'Roles'));
+        $table->setHeaders(['UUID', 'Organization', 'Owner', 'Subs', 'Admins', 'Users', 'Teams', 'Roles']);
         foreach ($organizations as $organization) {
             /** @var OrganizationResponse $permission */
             $table
@@ -61,7 +61,7 @@ class OrganizationsCommand extends AcquiaCommand
 
         $this->say("Applications in organisation: ${organizationUuid}");
         $table = new Table($this->output());
-        $table->setHeaders(array('UUID', 'Name', 'Type', 'Hosting ID'));
+        $table->setHeaders(['UUID', 'Name', 'Type', 'Hosting ID']);
         foreach ($applications as $application) {
             /** @var ApplicationResponse $permission */
             $table
@@ -92,7 +92,7 @@ class OrganizationsCommand extends AcquiaCommand
 
         $this->say("Teams in organisation: ${organizationUuid}");
         $table = new Table($this->output());
-        $table->setHeaders(array('UUID', 'Name'));
+        $table->setHeaders(['UUID', 'Name']);
         foreach ($teams as $team) {
             /** @var TeamResponse $permission */
             $table
@@ -121,7 +121,7 @@ class OrganizationsCommand extends AcquiaCommand
 
         $this->say("Members in organisation: ${organizationUuid}");
         $table = new Table($this->output());
-        $table->setHeaders(array('UUID', 'Username', 'Mail', 'Teams(s)'));
+        $table->setHeaders(['UUID', 'Username', 'Mail', 'Teams(s)']);
         foreach ($members as $member) {
             $teamList = array_map(function ($team) {
                 return $team->name;
