@@ -24,15 +24,15 @@ abstract class AcquiaCommand extends Tasks
     /** Additional configuration */
     protected $extraConfig;
 
-    const UUIDv4 = '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i';
+    const UUIDV4 = '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i';
 
-    const taskFailed = 'failed';
+    const TASKFAILED = 'failed';
 
-    const taskCompleted = 'completed';
+    const TASKCOMPLETED = 'completed';
 
-    const taskStarted = 'started';
+    const TASKSTARTED = 'started';
 
-    const taskInProgress = 'in-progress';
+    const TASKINPROGRESS = 'in-progress';
 
     /**
      * AcquiaCommand constructor.
@@ -67,7 +67,7 @@ abstract class AcquiaCommand extends Tasks
         if ($commandData->input()->hasArgument('uuid')) {
             $uuid = $commandData->input()->getArgument('uuid');
 
-            if (!preg_match(self::UUIDv4, $uuid)) {
+            if (!preg_match(self::UUIDV4, $uuid)) {
                 $uuid = $this->getUuidFromHostingName($uuid);
                 $commandData->input()->setArgument('uuid', $uuid);
             }
@@ -170,18 +170,18 @@ abstract class AcquiaCommand extends Tasks
 
             foreach ($tasks as $task) {
                 switch ($task->status) {
-                    case self::taskFailed:
+                    case self::TASKFAILED:
                         // If there's one failure we should throw an exception
                         // although it may not be for our task.
                         throw new \Exception('Acquia task failed.');
                         break;
-                    case self::taskStarted:
-                    case self::taskInProgress:
+                    case self::TASKSTARTED:
+                    case self::TASKINPROGRESS:
                         // If tasks are started, we should continue back to the
                         // top of the loop and wait until tasks are complete.
                         ++$started;
                         continue;
-                    case self::taskCompleted:
+                    case self::TASKCOMPLETED:
                         // Completed tasks should break and continue execution.
                         ++$completed;
                         break;
@@ -319,7 +319,7 @@ abstract class AcquiaCommand extends Tasks
     {
         $domains = $this->cloudapi->domains($environment->uuid);
 
-        $domainsList = array_map(function($domain) {
+        $domainsList = array_map(function ($domain) {
             $hostname = $domain->hostname;
             $this->say("Purging varnish cache for ${hostname}");
 

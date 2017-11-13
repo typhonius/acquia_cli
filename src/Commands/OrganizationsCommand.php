@@ -123,7 +123,7 @@ class OrganizationsCommand extends AcquiaCommand
         $table = new Table($this->output());
         $table->setHeaders(array('UUID', 'Username', 'Mail', 'Teams(s)'));
         foreach ($members as $member) {
-            $teamList = array_map(function($team) {
+            $teamList = array_map(function ($team) {
                 return $team->name;
             }, $member->teams->getArrayCopy());
             $teamString = implode(',', $teamList);
@@ -141,5 +141,4 @@ class OrganizationsCommand extends AcquiaCommand
 
         $table->render();
     }
-
 }
