@@ -59,13 +59,13 @@ class SetupCommand extends Tasks
      */
     private function createConfigYaml($location)
     {
-        $mail = $this->ask('What is your Acquia email address?');
-        $pass = $this->askHidden('What is your CloudAPI key or Acquia password?');
+        $key = $this->ask('What is your Acquia key?');
+        $secret = $this->askHidden('What is your Acquia secret?');
 
         $config = [
             'acquia' => [
-                'mail' => $mail,
-                'pass' => $pass,
+                'key' => $key,
+                'secret' => $secret,
             ],
             'extraconfig' => [
                 'timezone' => 'Australia/Sydney',

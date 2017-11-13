@@ -65,7 +65,7 @@ class InsightsCommand extends AcquiaCommand
             $table
                 ->addRows([
                     [
-                        $type,
+                        ucwords(str_replace('_', ' ', $type)),
                         $count->pass,
                         $count->fail,
                         $count->ignored,

@@ -3,8 +3,7 @@
 namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\Response\ApplicationResponse;
-use AcquiaCloudApi\Response\EnvironmentResponse;
-use AcquiaCloudApi\Response\EnvironmentsResponse;
+use AcquiaCloudApi\Response\MemberResponse;
 use AcquiaCloudApi\Response\OrganizationResponse;
 use AcquiaCloudApi\Response\TeamResponse;
 use Symfony\Component\Console\Helper\Table;
@@ -20,6 +19,7 @@ class OrganizationsCommand extends AcquiaCommand
      * Shows a list of all organizations.
      *
      * @command organization:list
+     * @alias org:list
      */
     public function showOrganizations()
     {
@@ -53,6 +53,7 @@ class OrganizationsCommand extends AcquiaCommand
      * @param string $organizationUuid
      *
      * @command organization:applications
+     * @alias org:apps
      */
     public function organizationApplications($organizationUuid)
     {
@@ -78,9 +79,12 @@ class OrganizationsCommand extends AcquiaCommand
     }
 
     /**
+     * Shows teams within an organization.
+     *
      * @param string $organizationUuid
      *
      * @command organization:teams
+     * @alias org:teams
      */
     public function organizationTeams($organizationUuid)
     {
@@ -96,6 +100,41 @@ class OrganizationsCommand extends AcquiaCommand
                     [
                         $team->uuid,
                         $team->name,
+                    ],
+                ]);
+        }
+
+        $table->render();
+    }
+
+    /**
+     * Shows all members.
+     *
+     * @param string $organizationUuid
+     *
+     * @command organization:members
+     * @alias org:members
+     */
+    public function members($organizationUuid)
+    {
+        $members = $this->cloudapi->members($organizationUuid);
+
+        $this->say("Members in organisation: ${organizationUuid}");
+        $table = new Table($this->output());
+        $table->setHeaders(array('UUID', 'Username', 'Mail', 'Teams(s)'));
+        foreach ($members as $member) {
+            $teamList = array_map(function($team) {
+                return $team->name;
+            }, $member->teams->getArrayCopy());
+            $teamString = implode(',', $teamList);
+            /** @var MemberResponse $permission */
+            $table
+                ->addRows([
+                    [
+                        $member->uuid,
+                        $member->username,
+                        $member->mail,
+                        $teamString,
                     ],
                 ]);
         }
