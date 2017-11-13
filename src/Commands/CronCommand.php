@@ -80,6 +80,8 @@ class CronCommand extends AcquiaCommand
     }
 
     /**
+     * Enables a disabled cron entry.
+     *
      * @param string              $uuid
      * @param EnvironmentResponse $environment
      * @param int                 $cronId
@@ -93,6 +95,8 @@ class CronCommand extends AcquiaCommand
     }
 
     /**
+     * Disables an enabled cron entry.
+     *
      * @param string              $uuid
      * @param EnvironmentResponse $environment
      * @param int                 $cronId

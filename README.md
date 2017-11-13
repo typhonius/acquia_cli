@@ -34,10 +34,10 @@ The global and per project files may be deleted (manually) and recreated with `.
 ./bin/acquiacli environment:info prod:acquia prod
 
 # Copy the files and db from alpha to dev for testing new code
-./bin/acquiacli preprod:prepare 6fb6adfd-5827-4f88-8e7a-3f577fe08ace alpha dev
+./bin/acquiacli preprod:prepare prod:acquia alpha dev
 
 # Deploy the develop-build branch to the test environment and run all config update steps
-./bin/acquiacli preprod:deploy 6fb6adfd-5827-4f88-8e7a-3f577fe08ace test develop-build
+./bin/acquiacli preprod:deploy prod:acquia test develop-build
 
 # Get a list of DNS records for the foobar.com domain in Cloudflare
 ./bin/acquiacli cf:list foobar.com
@@ -45,6 +45,19 @@ The global and per project files may be deleted (manually) and recreated with `.
 # Add a record for www.foobar.com to point to 127.0.0.1 in Cloudflare.
 ./bin/acquiacli cf:add foobar.com A www 127.0.0.1
 ````
+
+## Command Parameters
+If a command takes an application UUID as a parameter, it can be provided in one of two manners:
+* The Acquia internal hosting ID e.g. prod:acquia
+* The application UUID
+
+Environment parameters take the label name of the environment e.g. dev
+
+All other parameters are currently provided in the UUID form, including but not limited to:
+* Role ID
+* Team ID
+* Organization ID
+
 
 ## Creating a Phar
 A phar archive can be created to run Acquia Cli instead of utilising the entire codebase. Because some of Acquia Cli relies on user configuration of email/password, it is currently most appropriate to allow users to generate their own phar files inclusive of their own configuration.
