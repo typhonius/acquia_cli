@@ -2,18 +2,15 @@
 
 namespace AcquiaCli\Commands;
 
-use AcquiaCloudApi\Response\EnvironmentResponse;
-use AcquiaCloudApi\Response\EnvironmentsResponse;
 use AcquiaCloudApi\Response\PermissionResponse;
 use AcquiaCloudApi\Response\RoleResponse;
 use Symfony\Component\Console\Helper\Table;
-use Symfony\Component\Console\Helper\TableSeparator;
 
 /**
- * Class PermissionsCommand
+ * Class TeamsCommand
  * @package AcquiaCli\Commands
  */
-class PermissionsCommand extends AcquiaCommand
+class TeamsCommand extends AcquiaCommand
 {
 
     /**
@@ -27,6 +24,21 @@ class PermissionsCommand extends AcquiaCommand
     public function teamCreate($organizationUuid, $name)
     {
         $this->cloudapi->teamCreate($organizationUuid, $name);
+    }
+
+    /**
+     * Invites a user to a team.
+     *
+     * @param string $teamUuid
+     * @param string $email
+     * @param string $roles
+     *
+     * @command team:invite
+     */
+    public function teamInvite($teamUuid, $email, $roles)
+    {
+        $rolesArray = explode(',', $roles);
+        $this->cloudapi->teamInvite($teamUuid, $email, $rolesArray);
     }
 
     /**
@@ -46,6 +58,7 @@ class PermissionsCommand extends AcquiaCommand
      * Displays all permissions available on the Acquia Cloud.
      *
      * @command permissions:list
+     * @alias perm:list
      */
     public function showPermissions()
     {
@@ -68,6 +81,8 @@ class PermissionsCommand extends AcquiaCommand
     }
 
     /**
+     * Adds a new role to an organization.
+     *
      * @param string      $organizationUuid
      * @param string      $name
      * @param string      $permissions      A comma separated list of permissions.
@@ -82,6 +97,20 @@ class PermissionsCommand extends AcquiaCommand
     }
 
     /**
+     * Deletes a role.
+     *
+     * @param string $roleUuid
+     *
+     * @command role:delete
+     */
+    public function deleteRole($roleUuid)
+    {
+        $this->cloudapi->roleRemove($roleUuid);
+    }
+
+    /**
+     * Updates the permissions for a role.
+     *
      * @param string $roleUuid
      * @param string $permissions
      *

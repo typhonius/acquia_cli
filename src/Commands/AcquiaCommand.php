@@ -215,13 +215,17 @@ abstract class AcquiaCommand extends Tasks
      */
     protected function backupAndMoveDbs($uuid, $environmentFrom, $environmentTo)
     {
-        $databases = $this->cloudapi->environmentDatabases($environmentFrom);
+        $environmentFromLabel = $environmentFrom->label;
+        $environmentToLabel = $environmentTo->label;
+
+        $databases = $this->cloudapi->environmentDatabases($environmentFrom->uuid);
         foreach ($databases as $database) {
             $this->backupDb($uuid, $environmentTo, $database);
             $dbName = $database->name;
 
             // Copy DB from prod to non-prod.
-            $this->say("Moving DB (${dbName}) from ${environmentFrom} to ${environmentTo}");
+            $this->say("Moving DB (${dbName}) from ${environmentFromLabel} to ${environmentToLabel}");
+
             $this->cloudapi->databaseCopy($environmentTo->uuid, $dbName, $environmentFrom->uuid);
             $this->waitForTask($uuid, 'DatabaseCopied');
         }
