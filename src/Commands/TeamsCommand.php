@@ -30,8 +30,8 @@ class TeamsCommand extends AcquiaCommand
      * Invites a user to a team.
      *
      * @param string $teamUuid
-     * @param string $email
-     * @param string $roles
+     * @param string $email    The email address for the user that needs to be invited.
+     * @param string $roles    A comma separated list of roles that a user should be invited to.
      *
      * @command team:invite
      */
@@ -84,9 +84,9 @@ class TeamsCommand extends AcquiaCommand
      * Adds a new role to an organization.
      *
      * @param string      $organizationUuid
-     * @param string      $name
-     * @param string      $permissions      A comma separated list of permissions.
-     * @param null|string $description
+     * @param string      $name             A human readable role name e.g. 'Release Managers'
+     * @param string      $permissions      A comma separated list of permissions a role should have e.g. 'administer domain non-prod,administer ssh keys,deploy to non-prod'
+     * @param null|string $description      A human readable description of the role e.g. 'For non-technical users to create releases'
      *
      * @command role:add
      */
@@ -112,7 +112,7 @@ class TeamsCommand extends AcquiaCommand
      * Updates the permissions for a role.
      *
      * @param string $roleUuid
-     * @param string $permissions
+     * @param string $permissions A comma separated list of permissions a role should have e.g. 'administer domain non-prod,administer ssh keys,deploy to non-prod'
      *
      * @command role:update:permissions
      */

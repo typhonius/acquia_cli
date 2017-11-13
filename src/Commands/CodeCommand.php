@@ -15,7 +15,7 @@ class CodeCommand extends AcquiaCommand
      * Gets all code branches and tags associated with an application.
      *
      * @param string $uuid
-     * @param string $match
+     * @param string $match A string to filter out specific code branches with.
      *
      * @command code:list
      */

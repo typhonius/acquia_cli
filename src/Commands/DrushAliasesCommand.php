@@ -12,6 +12,8 @@ class DrushAliasesCommand extends AcquiaCommand
 {
 
     /**
+     * Downloads a compressed archive of Drush aliases and prompts the user to unpack it in the right place.
+     *
      * @command drush:aliases
      */
     public function downloadDrushAliases()
