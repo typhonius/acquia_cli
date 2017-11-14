@@ -9,6 +9,7 @@ use Consolidation\AnnotatedCommand\CommandData;
 use Robo\Tasks;
 use Robo\Robo;
 use Exception;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 /**
  * Class AcquiaCommand
@@ -154,8 +155,19 @@ abstract class AcquiaCommand extends Tasks
         $start->setTimezone($timezone);
         $start->sub(new \DateInterval('PT' . $buffer . 'S'));
 
+        $output = $this->output();
+        $progress = new ProgressBar($output);
+        $progress->setBarCharacter('<fg=green>⚬</>');
+        $progress->setEmptyBarCharacter("<fg=red>⚬</>");
+        $progress->setProgressCharacter("<fg=green>➤</>");
+        $progress->setFormat("<fg=white;bg=cyan> %message:-45s%</>\n%elapsed:6s% [%bar%] %percent:3s%%");
+
+        $progress->start();
+        $progress->setMessage("Starting...");
+
         while (true) {
-            $this->say('Waiting for task to complete...');
+            $progress->setMessage('Waiting for task to complete...');
+            $progress->advance($sleep);
             // Sleep initially to ensure that the task gets registered.
             sleep($sleep);
             $this->cloudapi->addQuery('from', $start->format(\DateTime::ATOM));
@@ -204,6 +216,9 @@ abstract class AcquiaCommand extends Tasks
                 throw new \Exception("Task timeout of ${timeout} seconds exceeded.");
             }
         }
+        $progress->setMessage('Task complete');
+        $progress->finish();
+        $this->writeln(PHP_EOL);
 
         return true;
     }
