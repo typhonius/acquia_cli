@@ -149,24 +149,25 @@ abstract class AcquiaCommand extends Tasks
         // ensure we capture our task in the filter.
         $buffer = 30;
 
+        // Acquia servers all use UTC so ensure we use the right timezone.
         $timezone = new \DateTimeZone('UTC');
 
         $start = new \DateTime(date('c'));
         $start->setTimezone($timezone);
         $start->sub(new \DateInterval('PT' . $buffer . 'S'));
 
+        // Kindly stolen from https://jonczyk.me/2017/09/20/make-cool-progressbar-symfony-command/
         $output = $this->output();
         $progress = new ProgressBar($output);
         $progress->setBarCharacter('<fg=green>⚬</>');
-        $progress->setEmptyBarCharacter("<fg=red>⚬</>");
-        $progress->setProgressCharacter("<fg=green>➤</>");
+        $progress->setEmptyBarCharacter('<fg=red>⚬</>');
+        $progress->setProgressCharacter('<fg=green>➤</>');
         $progress->setFormat("<fg=white;bg=cyan> %message:-45s%</>\n%elapsed:6s% [%bar%] %percent:3s%%");
 
         $progress->start();
-        $progress->setMessage("Starting...");
+        $progress->setMessage('Looking up task');
 
         while (true) {
-            $progress->setMessage('Waiting for task to complete...');
             $progress->advance($sleep);
             // Sleep initially to ensure that the task gets registered.
             sleep($sleep);
@@ -181,16 +182,17 @@ abstract class AcquiaCommand extends Tasks
             $completed = 0;
 
             foreach ($tasks as $task) {
+                $progress->setMessage('Task ' . $task->status);
                 switch ($task->status) {
                     case self::TASKFAILED:
                         // If there's one failure we should throw an exception
                         // although it may not be for our task.
                         throw new \Exception('Acquia task failed.');
                         break;
+                    // If tasks are started or in progress, we should continue back
+                    // to the top of the loop and wait until tasks are complete.
                     case self::TASKSTARTED:
                     case self::TASKINPROGRESS:
-                        // If tasks are started, we should continue back to the
-                        // top of the loop and wait until tasks are complete.
                         ++$started;
                         continue;
                     case self::TASKCOMPLETED:
@@ -212,11 +214,12 @@ abstract class AcquiaCommand extends Tasks
             $current->setTimezone($timezone);
             // Remove our buffer from earlier that we took away from the original start date.
             $current->sub(new \DateInterval('PT' . $buffer . 'S'));
+            // Take our current time, remove our start time and see if it exceeds the timeout.
             if ($timeout <= ($current->getTimestamp() - $start->getTimestamp())) {
                 throw new \Exception("Task timeout of ${timeout} seconds exceeded.");
             }
         }
-        $progress->setMessage('Task complete');
+        $progress->setMessage('Task completed');
         $progress->finish();
         $this->writeln(PHP_EOL);
 
