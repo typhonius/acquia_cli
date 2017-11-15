@@ -35,7 +35,7 @@ class LivedevCommand extends AcquiaCommand
      *
      * @command livedev:disable
      */
-    public function acquiaRemoveDomain($uuid, EnvironmentResponse $environment)
+    public function acquiaLivedevDisable($uuid, EnvironmentResponse $environment)
     {
         if ($this->confirm('Are you sure you want to disable livedev? Uncommitted work will be lost.')) {
             $label = $environment->label;
