@@ -2,6 +2,7 @@
 
 namespace AcquiaCli\Commands;
 
+use AcquiaCloudApi\Response\BranchResponse;
 use Symfony\Component\Console\Helper\Table;
 
 /**
@@ -17,21 +18,23 @@ class CodeCommand extends AcquiaCommand
      * @param string $uuid
      * @param string $match A string to filter out specific code branches with.
      *
-     * @command code:list
+     * @command branch:list
+     * @alias code:list
      */
     public function code($uuid, $match = null)
     {
         if (null !== $match) {
             $this->cloudapi->addQuery('filter', "name=@*${match}*");
         }
-        $code = $this->cloudapi->code($uuid);
+        $branches = $this->cloudapi->code($uuid);
         $this->cloudapi->clearQuery();
 
         $output = $this->output();
         $table = new Table($output);
         $table->setHeaders(['Name', 'Tag']);
 
-        foreach ($code as $branch) {
+        foreach ($branches as $branch) {
+            /** @var BranchResponse $branch */
             $tag = $branch->flags->tag ? '✅' : '';
             $table
                 ->addRows([

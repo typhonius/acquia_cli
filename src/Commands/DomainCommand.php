@@ -14,36 +14,36 @@ class DomainCommand extends AcquiaCommand
     /**
      * Add a domain to an environment.
      *
-     * @param string              $environmentUuid
+     * @param string              $uuid
      * @param EnvironmentResponse $environment
      * @param string              $domain
      *
      * @command domain:add
      */
-    public function acquiaAddDomain($environmentUuid, $environment, $domain)
+    public function acquiaAddDomain($uuid, $environment, $domain)
     {
         $label = $environment->label;
         $this->say("Adding ${domain} to ${label} environment");
         $this->cloudapi->addDomain($environment->uuid, $domain);
-        $this->waitForTask($environmentUuid, 'DomainAdded');
+        $this->waitForTask($uuid, 'DomainAdded');
     }
 
     /**
      * Remove a domain to an environment.
      *
-     * @param string              $environmentUuid
+     * @param string              $uuid
      * @param EnvironmentResponse $environment
      * @param string              $domain
      *
      * @command domain:remove
      */
-    public function acquiaRemoveDomain($environmentUuid, $environment, $domain)
+    public function acquiaRemoveDomain($uuid, $environment, $domain)
     {
         if ($this->confirm('Are you sure you want to remove this domain?')) {
             $label = $environment->label;
             $this->say("Removing ${domain} from environment ${label}");
             $this->cloudapi->deleteDomain($environment->uuid, $domain);
-            $this->waitForTask($environmentUuid, 'DomainRemoved');
+            $this->waitForTask($uuid, 'DomainRemoved');
         }
     }
 
