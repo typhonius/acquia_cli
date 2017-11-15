@@ -13,6 +13,12 @@ Alternatively, follow the below steps for a manual installation.
 1. Add your Acquia key and secret to the `acquiacli.yml` file.
 1. Optionally add your Cloudflare email address and API key to the `acquiacli.yml` file.
 
+## Generating an API access token
+
+To generate an API access token, login to [https://cloud.acquia.com](), then visit [https://cloud.acquia.com/#/profile/tokens](), and click ***Create Token***.
+
+* Provide a label for the access token, so it can be easily identified. Click ***Create Token***.
+* The token has been generated, copy the api key and api secret to a secure place. Make sure you record it now: you will not be able to retrieve this access token's secret again.
 
 ## Configuration
 The Acquia Cli tool users cascading configuration on the users own machine to allow both global and per project credentials and overrides as needed.
