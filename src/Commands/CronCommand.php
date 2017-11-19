@@ -58,9 +58,9 @@ class CronCommand extends AcquiaCommand
      *
      * @command cron:add
      */
-    public function cronAdd($uuid, $environment, $commandString, $frequency, $label = null)
+    public function cronAdd($uuid, $environment, $commandString, $frequency, $label)
     {
-        $this->cloudapi->addCron($environment->uuid, $commandString, $frequency, $label);
+        $this->cloudapi->createCron($environment->uuid, $commandString, $frequency, $label);
         $this->waitForTask($uuid, 'CronCreated');
     }
 

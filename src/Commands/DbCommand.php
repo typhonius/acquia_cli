@@ -69,7 +69,7 @@ class DbCommand extends AcquiaCommand
      */
     public function acquiaDbBackupRestore($uuid, $environment, $backupId)
     {
-        $this->cloudapi->databaseBackupRestore($environment->uuid, $backupId);
+        $this->cloudapi->restoreDatabaseBackup($environment->uuid, $backupId);
         $this->waitForTask($uuid, 'DatabaseBackupRestored');
     }
 

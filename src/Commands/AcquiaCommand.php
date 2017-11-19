@@ -172,6 +172,9 @@ abstract class AcquiaCommand extends Tasks
             // Sleep initially to ensure that the task gets registered.
             sleep($sleep);
             $this->cloudapi->addQuery('from', $start->format(\DateTime::ATOM));
+
+            // @TODO add filter query for name.
+
             $tasks = $this->cloudapi->tasks($uuid);
             $this->cloudapi->clearQuery();
 
@@ -272,7 +275,7 @@ abstract class AcquiaCommand extends Tasks
         $label = $environment->label;
         $dbName = $database->name;
         $this->say("Backing up DB (${dbName}) on ${label}");
-        $this->cloudapi->databaseBackup($environment->uuid, $database->name);
+        $this->cloudapi->createDatabaseBackup($environment->uuid, $database->name);
         $this->waitForTask($uuid, 'DatabaseBackupCreated');
     }
 
