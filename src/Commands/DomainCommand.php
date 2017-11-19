@@ -24,7 +24,7 @@ class DomainCommand extends AcquiaCommand
     {
         $label = $environment->label;
         $this->say("Adding ${domain} to ${label} environment");
-        $this->cloudapi->addDomain($environment->uuid, $domain);
+        $this->cloudapi->createDomain($environment->uuid, $domain);
         $this->waitForTask($uuid, 'DomainAdded');
     }
 

@@ -4,7 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "2cb7771591206483d138b924e0bba6bb",
+    "hash": "f900c8bf7eaf4e7f2a24efcf4d262045",
+    "content-hash": "692fce540aa69635a54785f272878d9d",
     "packages": [
         {
             "name": "acquia/http-hmac-php",
@@ -67,7 +68,7 @@
             ],
             "description": "An implementation of the HTTP HMAC Spec in PHP that integrates with popular libraries such as Symfony and Guzzle.",
             "homepage": "https://github.com/acquia/http-hmac-php",
-            "time": "2017-10-27T12:46:34+00:00"
+            "time": "2017-10-27 12:46:34"
         },
         {
             "name": "boedah/robo-drush",
@@ -111,7 +112,7 @@
                 }
             ],
             "description": "Drush CommandStack for Robo Task Runner",
-            "time": "2017-02-01T14:32:23+00:00"
+            "time": "2017-02-01 14:32:23"
         },
         {
             "name": "cloudflare/sdk",
@@ -154,7 +155,7 @@
                 }
             ],
             "description": "PHP binding for v4 of the Cloudflare Client API.",
-            "time": "2017-09-19T15:10:19+00:00"
+            "time": "2017-09-19 15:10:19"
         },
         {
             "name": "consolidation/annotated-command",
@@ -206,7 +207,7 @@
                 }
             ],
             "description": "Initialize Symfony Console commands from annotated command class methods.",
-            "time": "2017-04-03T22:37:00+00:00"
+            "time": "2017-04-03 22:37:00"
         },
         {
             "name": "consolidation/log",
@@ -253,7 +254,7 @@
                 }
             ],
             "description": "Improved Psr-3 / Psr\\Log logger based on Symfony Console components.",
-            "time": "2016-03-23T23:46:42+00:00"
+            "time": "2016-03-23 23:46:42"
         },
         {
             "name": "consolidation/output-formatters",
@@ -302,7 +303,7 @@
                 }
             ],
             "description": "Format text by applying transformations provided by plug-in formatters.",
-            "time": "2017-06-06T19:08:54+00:00"
+            "time": "2017-06-06 19:08:54"
         },
         {
             "name": "consolidation/robo",
@@ -382,7 +383,7 @@
                 }
             ],
             "description": "Modern task runner",
-            "time": "2017-06-03T03:18:12+00:00"
+            "time": "2017-06-03 03:18:12"
         },
         {
             "name": "container-interop/container-interop",
@@ -413,7 +414,7 @@
             ],
             "description": "Promoting the interoperability of container objects (DIC, SL, etc.)",
             "homepage": "https://github.com/container-interop/container-interop",
-            "time": "2017-02-14T19:40:03+00:00"
+            "time": "2017-02-14 19:40:03"
         },
         {
             "name": "dflydev/dot-access-data",
@@ -472,7 +473,7 @@
                 "dot",
                 "notation"
             ],
-            "time": "2017-01-20T21:14:22+00:00"
+            "time": "2017-01-20 21:14:22"
         },
         {
             "name": "grasmash/yaml-expander",
@@ -520,7 +521,7 @@
                 }
             ],
             "description": "Expands internal property references in a yaml file.",
-            "time": "2017-03-24T20:31:04+00:00"
+            "time": "2017-03-24 20:31:04"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -585,7 +586,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2017-06-22T18:50:49+00:00"
+            "time": "2017-06-22 18:50:49"
         },
         {
             "name": "guzzlehttp/promises",
@@ -636,7 +637,7 @@
             "keywords": [
                 "promise"
             ],
-            "time": "2016-12-20T10:07:11+00:00"
+            "time": "2016-12-20 10:07:11"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -701,7 +702,7 @@
                 "uri",
                 "url"
             ],
-            "time": "2017-03-20T17:10:46+00:00"
+            "time": "2017-03-20 17:10:46"
         },
         {
             "name": "league/container",
@@ -766,7 +767,7 @@
                 "provider",
                 "service"
             ],
-            "time": "2017-05-10T09:20:27+00:00"
+            "time": "2017-05-10 09:20:27"
         },
         {
             "name": "phpdocumentor/reflection-common",
@@ -820,7 +821,7 @@
                 "reflection",
                 "static analysis"
             ],
-            "time": "2015-12-27T11:43:31+00:00"
+            "time": "2015-12-27 11:43:31"
         },
         {
             "name": "phpdocumentor/reflection-docblock",
@@ -865,7 +866,7 @@
                 }
             ],
             "description": "With this component, a library can provide support for annotations via DocBlocks or otherwise retrieve information that is embedded in a DocBlock.",
-            "time": "2016-09-30T07:12:33+00:00"
+            "time": "2016-09-30 07:12:33"
         },
         {
             "name": "phpdocumentor/type-resolver",
@@ -912,7 +913,7 @@
                     "email": "me@mikevanriel.com"
                 }
             ],
-            "time": "2016-11-25T06:54:22+00:00"
+            "time": "2016-11-25 06:54:22"
         },
         {
             "name": "psr/container",
@@ -961,7 +962,7 @@
                 "container-interop",
                 "psr"
             ],
-            "time": "2017-02-14T16:28:37+00:00"
+            "time": "2017-02-14 16:28:37"
         },
         {
             "name": "psr/http-message",
@@ -1011,7 +1012,7 @@
                 "request",
                 "response"
             ],
-            "time": "2016-08-06T14:39:51+00:00"
+            "time": "2016-08-06 14:39:51"
         },
         {
             "name": "psr/log",
@@ -1058,7 +1059,7 @@
                 "psr",
                 "psr-3"
             ],
-            "time": "2016-10-10T12:19:37+00:00"
+            "time": "2016-10-10 12:19:37"
         },
         {
             "name": "sarciszewski/php-future",
@@ -1102,7 +1103,58 @@
                 "hash_equals",
                 "security"
             ],
-            "time": "2015-09-28T20:04:00+00:00"
+            "time": "2015-09-28 20:04:00"
+        },
+        {
+            "name": "squizlabs/php_codesniffer",
+            "version": "3.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
+                "reference": "d667e245d5dcd4d7bf80f26f2c947d476b66213e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/d667e245d5dcd4d7bf80f26f2c947d476b66213e",
+                "reference": "d667e245d5dcd4d7bf80f26f2c947d476b66213e",
+                "shasum": ""
+            },
+            "require": {
+                "ext-simplexml": "*",
+                "ext-tokenizer": "*",
+                "ext-xmlwriter": "*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.0 || ^5.0 || ^6.0"
+            },
+            "bin": [
+                "bin/phpcs",
+                "bin/phpcbf"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "BSD-3-Clause"
+            ],
+            "authors": [
+                {
+                    "name": "Greg Sherwood",
+                    "role": "lead"
+                }
+            ],
+            "description": "PHP_CodeSniffer tokenizes PHP, JavaScript and CSS files and detects violations of a defined set of coding standards.",
+            "homepage": "http://www.squizlabs.com/php-codesniffer",
+            "keywords": [
+                "phpcs",
+                "standards"
+            ],
+            "time": "2017-10-16 22:40:25"
         },
         {
             "name": "symfony/console",
@@ -1171,7 +1223,7 @@
             ],
             "description": "Symfony Console Component",
             "homepage": "https://symfony.com",
-            "time": "2017-06-02T19:24:58+00:00"
+            "time": "2017-06-02 19:24:58"
         },
         {
             "name": "symfony/debug",
@@ -1227,7 +1279,7 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-            "time": "2017-06-01T21:01:25+00:00"
+            "time": "2017-06-01 21:01:25"
         },
         {
             "name": "symfony/event-dispatcher",
@@ -1290,7 +1342,7 @@
             ],
             "description": "Symfony EventDispatcher Component",
             "homepage": "https://symfony.com",
-            "time": "2017-10-02T06:42:24+00:00"
+            "time": "2017-10-02 06:42:24"
         },
         {
             "name": "symfony/filesystem",
@@ -1339,7 +1391,7 @@
             ],
             "description": "Symfony Filesystem Component",
             "homepage": "https://symfony.com",
-            "time": "2017-10-03T13:33:10+00:00"
+            "time": "2017-10-03 13:33:10"
         },
         {
             "name": "symfony/finder",
@@ -1388,7 +1440,7 @@
             ],
             "description": "Symfony Finder Component",
             "homepage": "https://symfony.com",
-            "time": "2017-06-01T21:01:25+00:00"
+            "time": "2017-06-01 21:01:25"
         },
         {
             "name": "symfony/polyfill-mbstring",
@@ -1447,7 +1499,7 @@
                 "portable",
                 "shim"
             ],
-            "time": "2017-06-09T14:24:12+00:00"
+            "time": "2017-06-09 14:24:12"
         },
         {
             "name": "symfony/process",
@@ -1496,7 +1548,7 @@
             ],
             "description": "Symfony Process Component",
             "homepage": "https://symfony.com",
-            "time": "2017-05-22T12:32:03+00:00"
+            "time": "2017-05-22 12:32:03"
         },
         {
             "name": "symfony/yaml",
@@ -1551,7 +1603,7 @@
             ],
             "description": "Symfony Yaml Component",
             "homepage": "https://symfony.com",
-            "time": "2017-06-02T22:05:06+00:00"
+            "time": "2017-06-02 22:05:06"
         },
         {
             "name": "typhonius/acquia-php-sdk-v2",
@@ -1559,18 +1611,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/typhonius/acquia-php-sdk-v2.git",
-                "reference": "8dfd3df08ca2da7a9de7d1dc40452e40906747ca"
+                "reference": "b824895545436299cdec435893a0011a9f1d8964"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/typhonius/acquia-php-sdk-v2/zipball/8dfd3df08ca2da7a9de7d1dc40452e40906747ca",
-                "reference": "8dfd3df08ca2da7a9de7d1dc40452e40906747ca",
+                "url": "https://api.github.com/repos/typhonius/acquia-php-sdk-v2/zipball/b824895545436299cdec435893a0011a9f1d8964",
+                "reference": "b824895545436299cdec435893a0011a9f1d8964",
                 "shasum": ""
             },
             "require": {
                 "acquia/http-hmac-php": "^3.1",
                 "guzzlehttp/guzzle": "^6.3",
-                "php": "^7.0"
+                "php": "^7.0",
+                "squizlabs/php_codesniffer": "^3.1"
             },
             "type": "library",
             "autoload": {
@@ -1590,7 +1643,7 @@
                 }
             ],
             "description": "A PHP SDK for Acquia CloudAPI v2",
-            "time": "2017-11-13T00:19:51+00:00"
+            "time": "2017-11-15 03:04:55"
         },
         {
             "name": "webmozart/assert",
@@ -1640,89 +1693,10 @@
                 "check",
                 "validate"
             ],
-            "time": "2016-11-23T20:04:58+00:00"
+            "time": "2016-11-23 20:04:58"
         }
     ],
-    "packages-dev": [
-        {
-            "name": "squizlabs/php_codesniffer",
-            "version": "2.9.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/squizlabs/PHP_CodeSniffer.git",
-                "reference": "dcbed1074f8244661eecddfc2a675430d8d33f62"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/squizlabs/PHP_CodeSniffer/zipball/dcbed1074f8244661eecddfc2a675430d8d33f62",
-                "reference": "dcbed1074f8244661eecddfc2a675430d8d33f62",
-                "shasum": ""
-            },
-            "require": {
-                "ext-simplexml": "*",
-                "ext-tokenizer": "*",
-                "ext-xmlwriter": "*",
-                "php": ">=5.1.2"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~4.0"
-            },
-            "bin": [
-                "scripts/phpcs",
-                "scripts/phpcbf"
-            ],
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "2.x-dev"
-                }
-            },
-            "autoload": {
-                "classmap": [
-                    "CodeSniffer.php",
-                    "CodeSniffer/CLI.php",
-                    "CodeSniffer/Exception.php",
-                    "CodeSniffer/File.php",
-                    "CodeSniffer/Fixer.php",
-                    "CodeSniffer/Report.php",
-                    "CodeSniffer/Reporting.php",
-                    "CodeSniffer/Sniff.php",
-                    "CodeSniffer/Tokens.php",
-                    "CodeSniffer/Reports/",
-                    "CodeSniffer/Tokenizers/",
-                    "CodeSniffer/DocGenerators/",
-                    "CodeSniffer/Standards/AbstractPatternSniff.php",
-                    "CodeSniffer/Standards/AbstractScopeSniff.php",
-                    "CodeSniffer/Standards/AbstractVariableSniff.php",
-                    "CodeSniffer/Standards/IncorrectPatternException.php",
-                    "CodeSniffer/Standards/Generic/Sniffs/",
-                    "CodeSniffer/Standards/MySource/Sniffs/",
-                    "CodeSniffer/Standards/PEAR/Sniffs/",
-                    "CodeSniffer/Standards/PSR1/Sniffs/",
-                    "CodeSniffer/Standards/PSR2/Sniffs/",
-                    "CodeSniffer/Standards/Squiz/Sniffs/",
-                    "CodeSniffer/Standards/Zend/Sniffs/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Greg Sherwood",
-                    "role": "lead"
-                }
-            ],
-            "description": "PHP_CodeSniffer tokenizes PHP, JavaScript and CSS files and detects violations of a defined set of coding standards.",
-            "homepage": "http://www.squizlabs.com/php-codesniffer",
-            "keywords": [
-                "phpcs",
-                "standards"
-            ],
-            "time": "2017-05-22T02:43:20+00:00"
-        }
-    ],
+    "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
