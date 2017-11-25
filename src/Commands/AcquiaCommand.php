@@ -3,6 +3,7 @@
 namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\CloudApi\Client;
+use AcquiaCloudApi\CloudApi\Connector;
 use AcquiaCloudApi\Response\DatabaseResponse;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use Consolidation\AnnotatedCommand\CommandData;
@@ -44,10 +45,11 @@ abstract class AcquiaCommand extends Tasks
         $this->extraConfig = $extraConfig;
 
         $acquia = Robo::config()->get('acquia');
-        $cloudapi = Client::factory([
+        $connector = new Connector([
             'key' => $acquia['key'],
             'secret' => $acquia['secret'],
         ]);
+        $cloudapi = Client::factory($connector);
 
         /** @var \AcquiaCloudApi\CloudApi\Client $cloudapi */
         $this->cloudapi = $cloudapi;
