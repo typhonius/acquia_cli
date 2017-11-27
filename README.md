@@ -1,4 +1,8 @@
 [![Packagist](https://img.shields.io/packagist/v/typhonius/acquia_cli.svg)](https://packagist.org/packages/typhonius/acquia_cli)
+[![Build Status](https://travis-ci.org/typhonius/acquia_cli.svg?branch=master)](https://travis-ci.org/typhonius/acquia_cli)
+[![Total Downloads](https://poser.pugx.org/typhonius/acquia_cli/downloads.png)](https://packagist.org/packages/typhonius/acquia_cli)
+[![License](https://poser.pugx.org/typhonius/acquia_cli/license.png)]()
+
 # Acquia Cli
 
 ## Pre-installation
