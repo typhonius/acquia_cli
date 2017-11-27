@@ -8,6 +8,7 @@ use Robo\Common\ConfigAwareTrait;
 use Robo\Runner as RoboRunner;
 use \Robo\Application;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Consolidation\AnnotatedCommand\CommandFileDiscovery;
 
@@ -38,6 +39,15 @@ class AcquiaCli
         // Create application.
         $this->setConfig($config);
         $application = new Application(self::NAME, self::VERSION);
+
+        $application->getDefinition()->addOption(
+            new InputOption(
+                '--no-wait',
+                null,
+                InputOption::VALUE_NONE,
+                'Run commands without waiting for tasks to complete (risky).'
+            )
+        );
 
         // Create and configure container.
         $container = Robo::createDefaultContainer($input, $output, $application, $config);
