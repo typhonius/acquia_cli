@@ -135,14 +135,16 @@ abstract class AcquiaCommand extends Tasks
      * It's a bit of a hack but there's not really another choice.
      *
      * @string $uuid
-     * @param  $taskUuid
+     * @param  $name
      * @return bool
      * @throws Exception
      */
     protected function waitForTask($uuid, $name)
     {
-
-        // @TODO ensure tasks are sorted most recent first.
+        if ($this->input()->getOption('no-wait')) {
+            $this->say('Skipping wait for task.');
+            return true;
+        }
 
         $sleep = $this->extraConfig['taskwait'];
         $timeout = $this->extraConfig['timeout'];
