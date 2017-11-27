@@ -40,14 +40,21 @@ class AcquiaCli
         $this->setConfig($config);
         $application = new Application(self::NAME, self::VERSION);
 
-        $application->getDefinition()->addOption(
+        $application->getDefinition()->addOptions([
             new InputOption(
                 '--no-wait',
                 null,
                 InputOption::VALUE_NONE,
                 'Run commands without waiting for tasks to complete (risky).'
-            )
-        );
+            ),
+            new InputOption(
+                '--realm',
+                '-r',
+                InputOption::VALUE_REQUIRED,
+                'Specify an alternate realm to use for API calls.',
+                'prod'
+            ),
+        ]);
 
         // Create and configure container.
         $container = Robo::createDefaultContainer($input, $output, $application, $config);

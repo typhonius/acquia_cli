@@ -31,7 +31,7 @@ $globalConfig = getenv('HOME') . '/.acquiacli/acquiacli.yml';
 $paths = [
     dirname(__DIR__) . '/default.acquiacli.yml',
     $globalConfig,
-    'acquiacli.yml',
+    $root . '/acquiacli.yml',
 ];
 
 foreach ($paths as $path) {
