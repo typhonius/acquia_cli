@@ -22,8 +22,13 @@ class DrushAliasesCommand extends AcquiaCommand
         $tmpFile = tempnam(sys_get_temp_dir(), 'AcquiaDrushAliases') . '.tar.gz';
         if (file_put_contents($tmpFile, $aliases, LOCK_EX)) {
             $this->say("Acquia Cloud Drush Aliases downloaded to ${tmpFile}");
-            $this->say('Run the following command to install them.');
-            $this->say("tar -C \$HOME -xf ${tmpFile}");
+            $this->say('Run the following command to install them:');
+            $this->writeln("$ tar -C \$HOME -xf ${tmpFile}");
+            $this->yell(
+                'This command will unpack into ~/.acquia and ~/.drush potentially overwriting existing files!',
+                40,
+                'yellow'
+            );
         } else {
             $this->say('Unable to download Drush Aliases');
         }
