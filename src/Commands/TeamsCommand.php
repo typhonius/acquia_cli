@@ -44,14 +44,14 @@ class TeamsCommand extends AcquiaCommand
     /**
      * Assigns an application to a team.
      *
+     * @param string $uuid
      * @param string $teamUuid
-     * @param string $applicationUuid
      *
      * @command team:addapp
      */
-    public function teamAddApplication($teamUuid, $applicationUuid)
+    public function teamAddApplication($uuid, $teamUuid)
     {
-        $this->cloudapi->addApplicationToTeam($teamUuid, $applicationUuid);
+        $this->cloudapi->addApplicationToTeam($teamUuid, $uuid);
     }
 
     /**

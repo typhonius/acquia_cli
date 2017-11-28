@@ -2,7 +2,6 @@ sudo: false
 language: php
 
 php:
-    - 7.0
     - 7.1
 
 before_install:
@@ -13,5 +12,6 @@ install:
     - travis_retry composer install --no-interaction --prefer-source
 
 script:
-    - php -l src/
-    - ${TRAVIS_BUILD_DIR}/vendor/bin/phpcs -s --standard=PSR2 ${TRAVIS_BUILD_DIR}/src/
+    - cd ${TRAVIS_BUILD_DIR}
+    - composer lint
+    - composer sniff
