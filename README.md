@@ -97,6 +97,12 @@ All other parameters are currently provided in the UUID form, including but not 
 * Team ID
 * Organization ID
 
+Commands using the following parameters will be automatically converted by the Acquia Cli tool using the SDK. This is achieved in the `validateUuidHook` method in the `AcquiaCommand` class using a `@hook validate` [annotation](https://github.com/consolidation/annotated-command).
+* `$uuid` is converted to the UUID of the application
+* `$environment` is converted into an EnvironmentResponse object
+* `$environmentFrom` is converted into an EnvironmentResponse object
+* `$environmentTo` is converted into an EnvironmentResponse object
+
 
 ## Creating a Phar
 A phar archive can be created to run Acquia Cli instead of utilising the entire codebase. Because some of Acquia Cli relies on user configuration of email/password, it is currently most appropriate to allow users to generate their own phar files inclusive of their own configuration.
