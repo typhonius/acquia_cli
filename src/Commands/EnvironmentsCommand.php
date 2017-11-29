@@ -92,4 +92,20 @@ class EnvironmentsCommand extends AcquiaCommand
 
         $table->render();
     }
+
+    /**
+     * Renames an environment.
+     *
+     * @param string $uuid
+     * @param string $environment
+     * @param string $name
+     *
+     * @command environment:rename
+     * @alias env:rename
+     */
+    public function acquiaEnvironmentRename($uuid, $environment, $name)
+    {
+        $this->say('Renaming ' . $environment->label . " to ${name}");
+        $this->cloudapi->renameEnvironment($environment->uuid, $name);
+    }
 }
