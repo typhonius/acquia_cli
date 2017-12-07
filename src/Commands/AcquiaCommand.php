@@ -258,7 +258,7 @@ abstract class AcquiaCommand extends Tasks
             // Copy DB from prod to non-prod.
             $this->say("Moving DB (${dbName}) from ${environmentFromLabel} to ${environmentToLabel}");
 
-            $this->cloudapi->databaseCopy($environmentTo->uuid, $dbName, $environmentFrom->uuid);
+            $this->cloudapi->databaseCopy($environmentFrom->uuid, $dbName, $environmentTo->uuid);
             $this->waitForTask($uuid, 'DatabaseCopied');
         }
     }
