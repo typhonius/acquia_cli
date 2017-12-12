@@ -25,7 +25,7 @@ class AcquiaCli
 
     const NAME = 'AcquiaCli';
 
-    const VERSION = '1.0.1-dev';
+    const VERSION = '1.0.2-dev';
 
     /**
      * AcquiaCli constructor.

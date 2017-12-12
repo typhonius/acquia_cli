@@ -82,6 +82,7 @@ abstract class AcquiaCommand extends Tasks
                 $commandData->input()->setArgument('uuid', $uuid);
             }
 
+            // Convert environment parameters to an EnvironmentResponse
             if ($commandData->input()->hasArgument('environment')) {
                 $environmentName = $commandData->input()->getArgument('environment');
                 $environment = $this->getEnvironmentFromEnvironmentName($uuid, $environmentName);
@@ -182,47 +183,42 @@ abstract class AcquiaCommand extends Tasks
             $progress->advance($sleep);
             // Sleep initially to ensure that the task gets registered.
             sleep($sleep);
+            // Add queries to limit the tasks returned to a single task of a specific name created within the last 30s.
             $this->cloudapi->addQuery('from', $start->format(\DateTime::ATOM));
-
-            // @TODO add filter query for name.
+            $this->cloudapi->addQuery('sort', '-created');
+            $this->cloudapi->addQuery('limit', 1);
+            $this->cloudapi->addQuery('filter', "name=${name}");
 
             $tasks = $this->cloudapi->tasks($uuid);
             $this->cloudapi->clearQuery();
 
-            if (!$count = count($tasks)) {
-                throw new \Exception('No tasks registered.');
-            }
-            $started = 0;
-            $completed = 0;
-
-            foreach ($tasks as $task) {
-                $progress->setMessage('Task ' . $task->status);
-                switch ($task->status) {
-                    case self::TASKFAILED:
-                        // If there's one failure we should throw an exception
-                        // although it may not be for our task.
-                        throw new \Exception('Acquia task failed.');
-                        break;
-                    // If tasks are started or in progress, we should continue back
-                    // to the top of the loop and wait until tasks are complete.
-                    case self::TASKSTARTED:
-                    case self::TASKINPROGRESS:
-                        ++$started;
-                        continue;
-                    case self::TASKCOMPLETED:
-                        // Completed tasks should break and continue execution.
-                        ++$completed;
-                        break;
-                    default:
-                        throw new \Exception('Unknown task status.');
-                        break;
-                }
-            }
-            // Break here if all tasks are completed.
-            if ($count === $completed) {
-                break;
+            if (!$task = reset($tasks)) {
+                throw new \Exception('No tasks registered. 
+The task may have been queried prior to being registered within the API.
+This may be due to the wait timeout being set too low in the Acquia Cli configuration file.');
             }
 
+            $progress->setMessage('Task ' . $task->status);
+            switch ($task->status) {
+                case self::TASKFAILED:
+                    // If there's one failure we should throw an exception
+                    // although it may not be for our task.
+                    throw new \Exception('Acquia task failed.');
+                    break(2);
+                // If tasks are started or in progress, we should continue back
+                // to the top of the loop and wait until tasks are complete.
+                case self::TASKSTARTED:
+                case self::TASKINPROGRESS:
+                    break;
+                case self::TASKCOMPLETED:
+                    // Completed tasks should break out of the loop and continue execution.
+                    break(2);
+                default:
+                    throw new \Exception('Unknown task status.');
+                    break(2);
+            }
+
+            // Timeout if the command exceeds the configured timeout threshold.
             // Create a new DateTime for now.
             $current = new \DateTime(date('c'));
             $current->setTimezone($timezone);
@@ -233,7 +229,6 @@ abstract class AcquiaCommand extends Tasks
                 throw new \Exception("Task timeout of ${timeout} seconds exceeded.");
             }
         }
-        $progress->setMessage('Task completed');
         $progress->finish();
         $this->writeln(PHP_EOL);
 
