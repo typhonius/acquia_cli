@@ -31,14 +31,8 @@ class SshCommand extends AcquiaCommand
         $this->cloudapi->clearQuery();
 
         foreach ($environments as $e) {
-            $this->renderSshInfo($e);
+            /** @var $e EnvironmentResponse */
+            $this->say($e->name . ': ssh ' . $e->sshUrl);
         }
-    }
-
-    private function renderSshInfo(EnvironmentResponse $environment)
-    {
-        $environmentName = $environment->name;
-        $ssh = $environment->sshUrl;
-        $this->say("${environmentName}: ssh ${ssh}");
     }
 }

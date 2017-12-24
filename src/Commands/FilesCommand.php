@@ -21,6 +21,11 @@ class FilesCommand extends AcquiaCommand
      */
     public function acquiaFilesCopy($uuid, EnvironmentResponse $environmentFrom, EnvironmentResponse $environmentTo)
     {
-        $this->backupFiles($uuid, $environmentFrom, $environmentTo);
+        $labelFrom = $environmentFrom->label;
+        $labelTo = $environmentTo->label;
+        if ($this->confirm("Are you sure you want to copy files from ${labelFrom} to ${labelTo}?")) {
+            $this->say("Copying files from ${labelFrom} to ${labelTo}");
+            $this->backupFiles($uuid, $environmentFrom, $environmentTo);
+        }
     }
 }

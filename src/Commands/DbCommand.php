@@ -2,6 +2,7 @@
 
 namespace AcquiaCli\Commands;
 
+use AcquiaCloudApi\CloudApi\Connector;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use Symfony\Component\Console\Helper\Table;
 
@@ -69,8 +70,11 @@ class DbCommand extends AcquiaCommand
      */
     public function acquiaDbBackupRestore($uuid, $environment, $backupId)
     {
-        $this->cloudapi->restoreDatabaseBackup($environment->uuid, $backupId);
-        $this->waitForTask($uuid, 'DatabaseBackupRestored');
+        $environmentName = $environment->label;
+        if ($this->confirm("Are you sure you want to restore backup id ${backupId} to ${environmentName}?")) {
+            $this->cloudapi->restoreDatabaseBackup($environment->uuid, $backupId);
+            $this->waitForTask($uuid, 'DatabaseBackupRestored');
+        }
     }
 
     /**
@@ -84,7 +88,8 @@ class DbCommand extends AcquiaCommand
      */
     public function acquiaDbBackupLink($uuid, $environment, $backupId)
     {
-        $id = $environment->uuid;
-        $this->say($this->cloudapi::BASE_URI . "/environments/${id}/database-backups/${backupId}/actions/download");
+        $environmentUuid = $environment->uuid;
+        $this->say(Connector::BASE_URI .
+            "/environments/${environmentUuid}/database-backups/${backupId}/actions/download");
     }
 }

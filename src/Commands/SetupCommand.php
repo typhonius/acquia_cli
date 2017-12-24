@@ -55,7 +55,7 @@ class SetupCommand extends Tasks
     }
 
     /**
-     *
+     * Function to create configuration files for this library.
      */
     private function createConfigYaml($location)
     {

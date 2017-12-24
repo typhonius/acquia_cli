@@ -97,7 +97,7 @@ class EnvironmentsCommand extends AcquiaCommand
      * Renames an environment.
      *
      * @param string $uuid
-     * @param string $environment
+     * @param EnvironmentResponse $environment
      * @param string $name
      *
      * @command environment:rename

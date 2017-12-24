@@ -23,6 +23,7 @@ class TeamsCommand extends AcquiaCommand
      */
     public function teamCreate($organizationUuid, $name)
     {
+        $this->say('Creating new team.');
         $this->cloudapi->createTeam($organizationUuid, $name);
     }
 
@@ -38,6 +39,7 @@ class TeamsCommand extends AcquiaCommand
     public function teamInvite($teamUuid, $email, $roles)
     {
         $rolesArray = explode(',', $roles);
+        $this->say("Inviting ${email} to team.");
         $this->cloudapi->createTeamInvite($teamUuid, $email, $rolesArray);
     }
 
@@ -51,6 +53,7 @@ class TeamsCommand extends AcquiaCommand
      */
     public function teamAddApplication($uuid, $teamUuid)
     {
+        $this->say("Adding application to team.");
         $this->cloudapi->addApplicationToTeam($teamUuid, $uuid);
     }
 
@@ -95,6 +98,7 @@ class TeamsCommand extends AcquiaCommand
     public function addRole($organizationUuid, $name, $permissions, $description = null)
     {
         $permissionsArray = explode(',', $permissions);
+        $this->say("Creating new role (${name}) and adding it to organisation.");
         $this->cloudapi->createRole($organizationUuid, $name, $permissionsArray, $description);
     }
 
@@ -107,7 +111,10 @@ class TeamsCommand extends AcquiaCommand
      */
     public function deleteRole($roleUuid)
     {
-        $this->cloudapi->deleteRole($roleUuid);
+        if ($this->confirm('Are you sure you want to remove this role?')) {
+            $this->say('Deleting role');
+            $this->cloudapi->deleteRole($roleUuid);
+        }
     }
 
     /**
@@ -122,6 +129,7 @@ class TeamsCommand extends AcquiaCommand
     public function roleUpdatePermissions($roleUuid, $permissions)
     {
         $permissionsArray = explode(',', $permissions);
+        $this->say('Updating role permissions');
         $this->cloudapi->updateRole($roleUuid, $permissionsArray);
     }
 
