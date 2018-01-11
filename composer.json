@@ -13,7 +13,7 @@
         "consolidation/config": "^1.0.0",
         "consolidation/robo": "^1.1.4",
         "boedah/robo-drush": "^3.0",
-        "cloudflare/sdk": "^1.0.0",
+        "cloudflare/sdk": "^1.0.0"
     },
     "bin": ["bin/acquiacli"],
     "autoload":{
