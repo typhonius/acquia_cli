@@ -3,7 +3,7 @@
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Robo\Config\Config;
-use Robo\Config\ConfigProcessor;
+use Consolidation\Config\Loader\ConfigProcessor;
 use Consolidation\Config\Loader\YamlConfigLoader;
 use AcquiaCli\AcquiaCli;
 
