@@ -3,8 +3,8 @@
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Robo\Config\Config;
-use Robo\Config\YamlConfigLoader;
-use Robo\Config\ConfigProcessor;
+use Consolidation\Config\Loader\ConfigProcessor;
+use Consolidation\Config\Loader\YamlConfigLoader;
 use AcquiaCli\AcquiaCli;
 
 if (strpos(basename(__FILE__), 'phar')) {
@@ -14,6 +14,9 @@ if (strpos(basename(__FILE__), 'phar')) {
     if (file_exists(dirname(__DIR__).'/vendor/autoload.php')) {
         $root = dirname(__DIR__);
         require_once dirname(__DIR__) . '/vendor/autoload.php';
+    } elseif (file_exists(getcwd() . '/vendor/autoload.php')) {
+        $root = getcwd();
+        require_once getcwd() . '/vendor/autoload.php';
     } elseif (file_exists(__DIR__ . '/../../../autoload.php')) {
         $root = __DIR__ . '/../../../';
         require_once __DIR__ . '/../../../autoload.php';
