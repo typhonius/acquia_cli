@@ -3,8 +3,8 @@
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use Robo\Config\Config;
-use Consolidation\Config\Loader\ConfigProcessor;
-use Consolidation\Config\Loader\YamlConfigLoader;
+use Robo\Config\YamlConfigLoader;
+use Robo\Config\ConfigProcessor;
 use AcquiaCli\AcquiaCli;
 
 if (strpos(basename(__FILE__), 'phar')) {
