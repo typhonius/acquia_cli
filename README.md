@@ -27,7 +27,7 @@ Alternatively, follow the below steps for a manual installation.
 
 
 ## Configuration
-The Acquia Cli tool users cascading configuration on the users own machine to allow both global and per project credentials and overrides as needed.
+The Acquia Cli tool uses cascading configuration on the user's own machine to allow both global and per project credentials and overrides as needed.
 
 Acquia Cli will load configuration in the following order with each step overriding matching array keys in the step prior:
 
@@ -38,10 +38,13 @@ Acquia Cli will load configuration in the following order with each step overrid
 The global and per project files may be deleted (manually) and recreated with `./bin/acquiacli setup` whenever a user wishes to do so.
 
 Options may be manually set within the relevant `acquiacli.yml` file to change the following parameters under the `extraconfig` key:
-* timezone: Use [a supported PHP timezone](https://secure.php.net/manual/en/timezones.php) to see times in your locale. Default: 'Australia/Sydney'
-* format: Use [a supported PHP date string](https://secure.php.net/manual/en/function.date.php) to show times in an alternate format. Default: 'Y-m-d H:i:s'
-* taskwait: Add a number in seconds to wait before hitting the API to check the status of a task. Default: 5
-* timeout: Add a number in seconds before a task is considered to have timed out. Default: 120
+
+Key | Default | Description
+--- | :---: | ---
+timezone | Australia/Sydney | Use [a supported PHP timezone](https://secure.php.net/manual/en/timezones.php) to see times in your locale.
+format | Y-m-d H:i:s | Use [a supported PHP date string](https://secure.php.net/manual/en/function.date.php) to show times in an alternate format.
+taskwait | 5 | A number in seconds to wait before hitting the API to check the status of a task.
+timeout | 300 | A number in seconds before a task is considered to have timed out.
 
 
 ## Usage/Examples
