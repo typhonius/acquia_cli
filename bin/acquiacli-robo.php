@@ -15,7 +15,7 @@ if (strpos(basename(__FILE__), 'phar')) {
         $root = dirname(__DIR__);
         require_once dirname(__DIR__) . '/vendor/autoload.php';
     } elseif (file_exists(dirname(__DIR__) . '/../../autoload.php')) {
-        $root = dirname(__DIR__) . '/../../../';
+        $root = dirname(__DIR__) . '/../../..';
         require_once dirname(__DIR__) . '/../../autoload.php';
     } else {
         $root = __DIR__;
@@ -28,10 +28,11 @@ $loader = new YamlConfigLoader();
 $processor = new ConfigProcessor();
 
 $globalConfig = getenv('HOME') . '/.acquiacli/acquiacli.yml';
+$projectConfig = $root . '/acquiacli.yml';
 $paths = [
     dirname(__DIR__) . '/default.acquiacli.yml',
     $globalConfig,
-    $root . '/acquiacli.yml',
+    $projectConfig,
 ];
 
 foreach ($paths as $path) {
@@ -39,7 +40,7 @@ foreach ($paths as $path) {
 }
 
 $config->import($processor->export());
-$config->set('config.project', $root . '/acquiacli.yml');
+$config->set('config.project', $projectConfig);
 $config->set('config.global', $globalConfig);
 
 $input = new ArgvInput($argv);

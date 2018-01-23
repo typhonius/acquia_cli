@@ -23,9 +23,10 @@ abstract class AcquiaCommand extends Tasks
     /** @var \AcquiaCloudApi\CloudApi\Client $cloudapi */
     protected $cloudapi;
 
-    /** Additional configuration */
+    /** Additional configuration. */
     protected $extraConfig;
 
+    /** Regex for a valid UUID string. */
     const UUIDV4 = '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i';
 
     const TASKFAILED = 'failed';

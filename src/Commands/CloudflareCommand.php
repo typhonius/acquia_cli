@@ -2,8 +2,8 @@
 
 namespace AcquiaCli\Commands;
 
-use \Cloudflare\API\Auth\APIKey;
-use \Cloudflare\API\Adapter\Guzzle;
+use Cloudflare\API\Auth\APIKey;
+use Cloudflare\API\Adapter\Guzzle;
 use Cloudflare\API\Endpoints\DNS;
 use Cloudflare\API\Endpoints\EndpointException;
 use Cloudflare\API\Endpoints\Zones;
