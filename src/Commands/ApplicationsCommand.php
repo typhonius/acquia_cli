@@ -86,6 +86,7 @@ class ApplicationsCommand extends AcquiaCommand
                 ]);
         }
         $table->render();
+        $this->say('🔧  Git URL: ' . $environment->vcs->url);
         $this->say('💻  indicates environment in livedev mode.');
         $this->say('🔒  indicates environment in production mode.');
     }
