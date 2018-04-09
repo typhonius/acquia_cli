@@ -61,7 +61,9 @@ class DomainCommand extends AcquiaCommand
     {
         $environmentFromLabel = $environmentFrom->label;
         $environmentToLabel = $environmentTo->label;
-        if ($this->confirm("Are you sure you want to move ${domain} from ${environmentFromLabel} to ${environmentToLabel}?")) {
+        if ($this->confirm(
+            "Are you sure you want to move ${domain} from ${environmentFromLabel} to ${environmentToLabel}?"
+        )) {
             $this->say("Moving ${domain} from ${environmentFromLabel} to ${environmentToLabel}");
             $this->cloudapi->deleteDomain($environmentFrom->uuid, $domain);
             $this->waitForTask($uuid, 'DomainRemoved');
