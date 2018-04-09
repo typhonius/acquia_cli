@@ -48,22 +48,25 @@ class DomainCommand extends AcquiaCommand
     }
 
     /**
-     * List all domains.
+     * Move a domain from one environment to another.
      *
-     *
-     * @param string $site
-     * @param string $domain
-     * @param string $environmentFrom
-     * @param string $environmentTo
+     * @param string              $uuid
+     * @param string              $domain
+     * @param EnvironmentResponse $environmentFrom
+     * @param EnvironmentResponse $environmentTo
      *
      * @command domain:move
      */
-//    public function acquiaMoveDomain($site, $domain, $environmentFrom, $environmentTo)
-//    {
-//        if ($this->confirm("Are you sure you want to move ${domain} from ${environmentFrom} to ${environmentTo}?")) {
-//            $this->say("Moving ${domain} from ${environmentFrom} to ${environmentTo}");
-//            $task = $this->cloudapi->moveDomain($site, $domain, $environmentFrom, $environmentTo);
-//            $this->waitForTask($site, $task);
-//        }
-//    }
+    public function acquiaMoveDomain($uuid, $domain, $environmentFrom, $environmentTo)
+    {
+        $environmentFromLabel = $environmentFrom->label;
+        $environmentToLabel = $environmentTo->label;
+        if ($this->confirm("Are you sure you want to move ${domain} from ${environmentFromLabel} to ${environmentToLabel}?")) {
+            $this->say("Moving ${domain} from ${environmentFromLabel} to ${environmentToLabel}");
+            $this->cloudapi->deleteDomain($environmentFrom->uuid, $domain);
+            $this->waitForTask($uuid, 'DomainRemoved');
+            $this->cloudapi->createDomain($environmentTo->uuid, $domain);
+            $this->waitForTask($uuid, 'DomainAdded');
+        }
+    }
 }
