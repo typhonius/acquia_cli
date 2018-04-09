@@ -15,15 +15,19 @@ class DeployCommand extends AcquiaCommand
      *
      * @param string $uuid
      * @param string $branch
+     * @param bool   $skipDrushTasks
+     *   Skips Drush tasks to set maintenance mode, rebuild cache, update the database, and import config
+     *   (not recommended unless you know what you are doing).
      *
      * @command prod:deploy
      */
-    public function acquiaDeployProd($uuid, $branch)
+    public function acquiaDeployProd($uuid, $branch, $skipDrushTasks = false)
     {
         $this->yell('WARNING: DEPLOYING TO PROD');
         if ($this->confirm('Are you sure you want to deploy to prod?')) {
             $environment = $this->getEnvironmentFromEnvironmentName($uuid, 'prod');
-            $this->acquiaDeployEnv($uuid, $environment, $branch);
+            $skipDrushTasks = filter_var($skipDrushTasks, FILTER_VALIDATE_BOOLEAN);
+            $this->acquiaDeployEnv($uuid, $environment, $branch, $drushTasks);
         }
     }
 
@@ -33,17 +37,21 @@ class DeployCommand extends AcquiaCommand
      * @param string              $uuid
      * @param EnvironmentResponse $environment
      * @param string              $branch
+     * @param bool                $skipDrushTasks
+     *   Skips Drush tasks to set maintenance mode, rebuild cache, update the database, and import config
+     *   (not recommended unless you know what you are doing).
      * @throws \Exception
      *
      * @command preprod:deploy
      */
-    public function acquiaDeployPreProd($uuid, $environment, $branch)
+    public function acquiaDeployPreProd($uuid, $environment, $branch, $skipDrushTasks = false)
     {
         if ($environment->name == 'prod') {
             throw new \Exception('Use the prod:deploy command for the production environment.');
         }
 
-        $this->acquiaDeployEnv($uuid, $environment, $branch);
+        $skipDrushTasks = filter_var($skipDrushTasks, FILTER_VALIDATE_BOOLEAN);
+        $this->acquiaDeployEnv($uuid, $environment, $branch, $skipDrushTasks);
     }
 
     /**

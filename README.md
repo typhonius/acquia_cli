@@ -45,6 +45,7 @@ timezone | Australia/Sydney | Use [a supported PHP timezone](https://secure.php.
 format | Y-m-d H:i:s | Use [a supported PHP date string](https://secure.php.net/manual/en/function.date.php) to show times in an alternate format.
 taskwait | 5 | A number in seconds to wait before hitting the API to check the status of a task.
 timeout | 300 | A number in seconds before a task is considered to have timed out.
+configsyncdir | sync | A directory to be passed to the config-import command for syncing config.
 
 
 ## Usage/Examples

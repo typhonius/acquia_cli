@@ -72,6 +72,7 @@ class SetupCommand extends Tasks
                 'format' => 'Y-m-d H:i:s',
                 'taskwait' => 5,
                 'timeout' => 300,
+                'configsyncdir' => 'sync',
             ],
         ];
 

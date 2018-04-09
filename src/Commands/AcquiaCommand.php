@@ -29,12 +29,16 @@ abstract class AcquiaCommand extends Tasks
     /** Regex for a valid UUID string. */
     const UUIDV4 = '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i';
 
+    /** Task response from API indicates failure. */
     const TASKFAILED = 'failed';
 
+    /** Task response from API indicates completion. */
     const TASKCOMPLETED = 'completed';
 
+    /** Task response from API indicates started. */
     const TASKSTARTED = 'started';
 
+    /** Task response from API indicates in progress. */
     const TASKINPROGRESS = 'in-progress';
 
     /**
@@ -305,8 +309,9 @@ This may be due to the wait timeout being set too low in the Acquia Cli configur
      * @param string              $uuid
      * @param EnvironmentResponse $environment
      * @param string              $branch
+     * @param bool                $skipDrushTasks
      */
-    protected function acquiaDeployEnv($uuid, EnvironmentResponse $environment, $branch)
+    protected function acquiaDeployEnv($uuid, EnvironmentResponse $environment, $branch, $skipDrushTasks)
     {
         $this->backupAllEnvironmentDbs($uuid, $environment);
         $label = $environment->label;
@@ -314,6 +319,12 @@ This may be due to the wait timeout being set too low in the Acquia Cli configur
 
         $this->cloudapi->switchCode($environment->uuid, $branch);
         $this->waitForTask($uuid, 'CodeSwitched');
+
+        if ($skipDrushTasks === true) {
+            $this->say('Skipping Drush tasks.');
+            return true;
+        }
+
         $this->acquiaConfigUpdate($environment);
     }
 
@@ -325,6 +336,8 @@ This may be due to the wait timeout being set too low in the Acquia Cli configur
         $sshUrl = $environment->sshUrl;
         $drushAlias = strtok($sshUrl, '@');
 
+        $syncDir = $this->extraConfig['configsyncdir'];
+
         $this->taskDrushStack()
             ->stopOnFail()
             ->siteAlias("@${drushAlias}")
@@ -333,7 +346,7 @@ This may be due to the wait timeout being set too low in the Acquia Cli configur
             ->drush('cache-rebuild')
             ->updateDb()
             ->drush(['pm-enable', 'config_split'])
-            ->drush(['config-import', 'sync'])
+            ->drush(['config-import', $syncDir])
             ->drush('cache-rebuild')
             ->drush('state-set system.maintenance_mode 0')
             ->run();
