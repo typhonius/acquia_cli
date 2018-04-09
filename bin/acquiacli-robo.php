@@ -29,15 +29,10 @@ $processor = new ConfigProcessor();
 
 $globalConfig = getenv('HOME') . '/.acquiacli/acquiacli.yml';
 $projectConfig = $root . '/acquiacli.yml';
-$paths = [
-    dirname(__DIR__) . '/default.acquiacli.yml',
-    $globalConfig,
-    $projectConfig,
-];
 
-foreach ($paths as $path) {
-    $processor->extend($loader->load($path));
-}
+$processor->extend($loader->load(dirname(__DIR__) . '/default.acquiacli.yml'));
+$processor->extend($loader->load($globalConfig));
+$processor->extend($loader->load($projectConfig));
 
 $config->import($processor->export());
 $config->set('config.project', $projectConfig);
