@@ -12,7 +12,8 @@
         "typhonius/acquia-php-sdk-v2": "^1.0.0",
         "consolidation/robo": "^1.2",
         "boedah/robo-drush": "^3.0",
-        "cloudflare/sdk": "^1.0.0"
+        "cloudflare/sdk": "^1.0.0",
+        "symfony/lock": "^3|^4"
     },
     "bin": ["bin/acquiacli"],
     "autoload":{
