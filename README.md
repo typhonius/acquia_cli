@@ -49,6 +49,7 @@ configsyncdir | sync | A directory to be passed to the config-import command for
 
 
 ## Usage/Examples
+Some of the following commands have aliases for simplicity e.g. `environment:info` has the alias of `e:i`.
 ````
 # Show which applications you have access to.
 ./bin/acquiacli application:list
@@ -83,6 +84,9 @@ configsyncdir | sync | A directory to be passed to the config-import command for
 # Add a record for www.foobar.com to point to 127.0.0.1 in Cloudflare.
 ./bin/acquiacli cf:add foobar.com A www 127.0.0.1
 ````
+
+## See it in action
+[![asciicast](https://asciinema.org/a/178427.png)](https://asciinema.org/a/178427)
 
 ## Command Parameters
 If a command takes an application UUID as a parameter, it can be provided in one of two manners:
