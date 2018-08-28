@@ -79,6 +79,8 @@ class TasksCommand extends AcquiaCommand
         $tz = $this->extraConfig['timezone'];
         $format = $this->extraConfig['format'];
 
+        $this->cloudapi->addQuery('limit', 100);
+        $this->cloudapi->addQuery('sort', '~created');
         $tasks = $this->cloudapi->tasks($uuid);
 
         foreach ($tasks as $task) {
