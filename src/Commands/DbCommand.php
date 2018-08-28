@@ -13,6 +13,20 @@ use Symfony\Component\Console\Helper\Table;
 class DbCommand extends AcquiaCommand
 {
     /**
+     * Copies all DBs from one environment to another environment.
+     *
+     * @param string              $uuid
+     * @param EnvironmentResponse $environmentFrom
+     * @param EnvironmentResponse $environmentTo
+     *
+     * @command db:copy:all
+     */
+    public function acquiaCopyDb($uuid, EnvironmentResponse $environmentFrom, EnvironmentResponse $environmentTo)
+    {
+        $this->backupAndMoveDbs($uuid, $environmentFrom, $environmentTo);
+    }
+
+    /**
      * Backs up all DBs in an environment.
      *
      * @param string              $uuid
