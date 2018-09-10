@@ -60,8 +60,11 @@ Some of the following commands have aliases for simplicity e.g. `environment:inf
 # Copy the files and db from alpha to dev for testing new code
 ./bin/acquiacli preprod:prepare prod:acquia alpha dev
 
-# Deploy the develop-build branch to the test environment and run all config update steps
+# Deploy the develop-build branch to the test environment and run all config update steps.
 ./bin/acquiacli preprod:deploy prod:acquia test develop-build
+
+# Deploy the release-1.2.3 branch/tag to the production environment and run all config update steps without prompting the user to confirm.
+./bin/acquiacli prod:deploy prod:acquia release-1.2.3 --yes
 
 # Get a list of organizations you have access to and display organization UUIDs.
 ./bin/acquiacli organization:list
