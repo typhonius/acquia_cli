@@ -61,6 +61,23 @@ abstract class AcquiaCommand extends Tasks
     }
 
     /**
+     * Override the confirm method from consolidation/Robo to allow automatic
+     * confirmation.
+     *
+     * @param string $question
+     */
+    public function confirm($question)
+    {
+        if ($this->input()->getOption('yes')) {
+            $this->say('Ignoring confirmation question as --yes option passed.');
+
+            return true;
+        }
+
+        return parent::confirm($question);
+    }
+
+    /**
      * Replace application names and environment names with UUIDs before
      * commands run.
      *

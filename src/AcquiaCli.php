@@ -56,6 +56,12 @@ class AcquiaCli
                 'Specify an alternate realm to use for API calls.',
                 'prod'
             ),
+            new InputOption(
+                '--yes',
+                '-y',
+                InputOption::VALUE_NONE,
+                'Automatically respond "yes" to all confirmation questions.'
+            ),
         ]);
 
         // Create and configure container.
