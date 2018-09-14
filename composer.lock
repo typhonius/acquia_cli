@@ -1,23 +1,23 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "fdbf2e78325097a385f555674377d270",
     "packages": [
         {
             "name": "acquia/http-hmac-php",
-            "version": "3.2.0",
+            "version": "3.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/acquia/http-hmac-php.git",
-                "reference": "cf4ad39fe4efadb978d49c4fe8671cadf8805920"
+                "reference": "ee04f68a1c8e749b70bc2bb6da52da0db20d0009"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/acquia/http-hmac-php/zipball/cf4ad39fe4efadb978d49c4fe8671cadf8805920",
-                "reference": "cf4ad39fe4efadb978d49c4fe8671cadf8805920",
+                "url": "https://api.github.com/repos/acquia/http-hmac-php/zipball/ee04f68a1c8e749b70bc2bb6da52da0db20d0009",
+                "reference": "ee04f68a1c8e749b70bc2bb6da52da0db20d0009",
                 "shasum": ""
             },
             "require": {
@@ -33,7 +33,7 @@
                 "pdepend/pdepend": "~1.0",
                 "phploc/phploc": "~2.0",
                 "phpmd/phpmd": "~1.0",
-                "phpunit/phpunit": "~3.0",
+                "phpunit/phpunit": "^4.8",
                 "scrutinizer/ocular": "~1.0",
                 "sebastian/phpcpd": "~2.0",
                 "silex/silex": "~1.3.0",
@@ -67,7 +67,7 @@
             ],
             "description": "An implementation of the HTTP HMAC Spec in PHP that integrates with popular libraries such as Symfony and Guzzle.",
             "homepage": "https://github.com/acquia/http-hmac-php",
-            "time": "2017-10-27T12:46:34+00:00"
+            "time": "2018-03-19T19:13:26+00:00"
         },
         {
             "name": "boedah/robo-drush",
@@ -622,16 +622,16 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "6.3.0",
+            "version": "6.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "f4db5a78a5ea468d4831de7f0bf9d9415e348699"
+                "reference": "407b0cb880ace85c9b63c5f9551db498cb2d50ba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/f4db5a78a5ea468d4831de7f0bf9d9415e348699",
-                "reference": "f4db5a78a5ea468d4831de7f0bf9d9415e348699",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/407b0cb880ace85c9b63c5f9551db498cb2d50ba",
+                "reference": "407b0cb880ace85c9b63c5f9551db498cb2d50ba",
                 "shasum": ""
             },
             "require": {
@@ -641,7 +641,7 @@
             },
             "require-dev": {
                 "ext-curl": "*",
-                "phpunit/phpunit": "^4.0 || ^5.0",
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.4 || ^7.0",
                 "psr/log": "^1.0"
             },
             "suggest": {
@@ -650,7 +650,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "6.2-dev"
+                    "dev-master": "6.3-dev"
                 }
             },
             "autoload": {
@@ -683,7 +683,7 @@
                 "rest",
                 "web service"
             ],
-            "time": "2017-06-22T18:50:49+00:00"
+            "time": "2018-04-22T15:46:56+00:00"
         },
         {
             "name": "guzzlehttp/promises",
@@ -1571,25 +1571,25 @@
         },
         {
             "name": "typhonius/acquia-php-sdk-v2",
-            "version": "1.0.1",
+            "version": "1.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/typhonius/acquia-php-sdk-v2.git",
-                "reference": "ee31b327c4db5a21f4019d493833a832d0fc850c"
+                "reference": "2e046528a1e85eda89cd40c0960cef0e006b84ff"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/typhonius/acquia-php-sdk-v2/zipball/ee31b327c4db5a21f4019d493833a832d0fc850c",
-                "reference": "ee31b327c4db5a21f4019d493833a832d0fc850c",
+                "url": "https://api.github.com/repos/typhonius/acquia-php-sdk-v2/zipball/2e046528a1e85eda89cd40c0960cef0e006b84ff",
+                "reference": "2e046528a1e85eda89cd40c0960cef0e006b84ff",
                 "shasum": ""
             },
             "require": {
                 "acquia/http-hmac-php": "^3.1",
                 "guzzlehttp/guzzle": "^6.3",
-                "php": "^7.1"
+                "php": ">=5.6"
             },
             "require-dev": {
-                "php-coveralls/php-coveralls": "dev-master",
+                "php-coveralls/php-coveralls": "^2.0.0",
                 "phpunit/phpunit": "^6.4",
                 "squizlabs/php_codesniffer": "^2.7"
             },
@@ -1611,7 +1611,7 @@
                 }
             ],
             "description": "A PHP SDK for Acquia CloudAPI v2",
-            "time": "2017-11-27T05:24:23+00:00"
+            "time": "2018-04-11T23:41:25+00:00"
         }
     ],
     "packages-dev": [
