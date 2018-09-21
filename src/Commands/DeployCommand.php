@@ -27,7 +27,7 @@ class DeployCommand extends AcquiaCommand
         if ($this->confirm('Are you sure you want to deploy to prod?')) {
             $environment = $this->getEnvironmentFromEnvironmentName($uuid, 'prod');
             $skipDrushTasks = filter_var($skipDrushTasks, FILTER_VALIDATE_BOOLEAN);
-            $this->acquiaDeployEnv($uuid, $environment, $branch, $drushTasks);
+            $this->acquiaDeployEnv($uuid, $environment, $branch, $skipDrushTasks);
         }
     }
 
