@@ -68,10 +68,10 @@ class EnvironmentsCommand extends AcquiaCommand
         $servers = $this->cloudapi->servers($environment->uuid);
 
         foreach ($servers as $server) {
-            $memcache = $server->flags->memcache ? '✅' : '';
-            $active = $server->flags->active_web || $server->flags->active_bal ? '✅' : '';
-            $primaryDb = $server->flags->primary_db ? '✅' : '';
-            $eip = $server->flags->elastic_ip ? '✅' : '';
+            $memcache = $server->flags->memcache ? '✓' : ' ';
+            $active = $server->flags->active_web || $server->flags->active_bal ? '✓' : ' ';
+            $primaryDb = $server->flags->primary_db ? '✓' : ' ';
+            $eip = $server->flags->elastic_ip ? '✓' : ' ';
 
             $table
                 ->addRows([
