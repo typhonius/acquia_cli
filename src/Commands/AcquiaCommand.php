@@ -325,6 +325,30 @@ This may be due to the wait timeout being set too low in the Acquia Cli configur
 
     /**
      * @param string              $uuid
+     * @param EnvironmentResponse $environmentFrom
+     * @param EnvironmentResponse $environmentTo
+     * @param bool                $skipDrushTasks
+     */
+    protected function acquiaDeployFromEnvToEnv($uuid, EnvironmentResponse $environmentFrom, EnvironmentResponse $environmentTo, $skipDrushTasks)
+    {
+        $this->backupAllEnvironmentDbs($uuid, $environmentTo);
+        $labelFrom = $environmentFrom->label;
+        $labelTo = $environmentTo->label;
+        $this->say("Deploying code from the ${labelFrom} environment to the ${labelTo} environment");
+
+        $this->cloudapi->deployCode($environmentFrom->uuid, $environmentTo->uuid);
+        $this->waitForTask($uuid, 'CodeDeployed');
+
+        if ($skipDrushTasks === true) {
+            $this->say('Skipping Drush tasks.');
+            return true;
+        }
+
+        $this->acquiaConfigUpdate($environmentTo);
+    }
+
+    /**
+     * @param string              $uuid
      * @param EnvironmentResponse $environment
      * @param string              $branch
      * @param bool                $skipDrushTasks
