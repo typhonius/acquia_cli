@@ -61,36 +61,72 @@ class EnvironmentsCommand extends AcquiaCommand
         }
 
         $output = $this->output();
-        $table = new Table($output);
-        // needs AZ?
-        $table->setHeaders(['Role(s)', 'Name', 'FQDN', 'AMI', 'Region', 'IP', 'Memcache', 'Active', 'Primary', 'EIP']);
 
-        $servers = $this->cloudapi->servers($environment->uuid);
+        if (!$environment->flags->cde) {
+            $serverTable = new Table($output);
+            // needs AZ?
+            $serverTable->setHeaders([
+                'Role(s)',
+                'Name',
+                'FQDN',
+                'AMI',
+                'Region',
+                'IP',
+                'Memcache',
+                'Active',
+                'Primary',
+                'EIP'
+            ]);
+            $servers = $this->cloudapi->servers($environment->uuid);
 
-        foreach ($servers as $server) {
-            $memcache = $server->flags->memcache ? '✅' : '';
-            $active = $server->flags->active_web || $server->flags->active_bal ? '✅' : '';
-            $primaryDb = $server->flags->primary_db ? '✅' : '';
-            $eip = $server->flags->elastic_ip ? '✅' : '';
+            foreach ($servers as $server) {
+                $memcache = $server->flags->memcache ? '✓' : ' ';
+                $active = $server->flags->active_web || $server->flags->active_bal ? '✓' : ' ';
+                $primaryDb = $server->flags->primary_db ? '✓' : ' ';
+                $eip = $server->flags->elastic_ip ? '✓' : ' ';
 
-            $table
-                ->addRows([
-                    [
-                        implode(', ', $server->roles),
-                        $server->name,
-                        $server->hostname,
-                        $server->amiType,
-                        $server->region,
-                        $server->ip,
-                        $memcache,
-                        $active,
-                        $primaryDb,
-                        $eip
-                    ],
-                ]);
+                $serverTable
+                    ->addRows([
+                        [
+                            implode(', ', $server->roles),
+                            $server->name,
+                            $server->hostname,
+                            $server->amiType,
+                            $server->region,
+                            $server->ip,
+                            $memcache,
+                            $active,
+                            $primaryDb,
+                            $eip
+                        ],
+                    ]);
+            }
+            $serverTable->render();
         }
 
-        $table->render();
+        $environmentTable = new Table($output);
+        $environmentTable->setHeaders([
+            'Branch',
+            'CDE',
+            'PHP Version',
+            'Memory Limit',
+            'OpCache',
+            'APCu',
+            'Sendmail Path'
+        ]);
+        $environmentTable
+            ->addRows([
+                [
+                    $environment->vcs->path,
+                    $environment->flags->cde ? $environment->name : ' ',
+                    $environment->configuration->php->version,
+                    $environment->configuration->php->memory_limit,
+                    $environment->configuration->php->opcache,
+                    $environment->configuration->php->apcu,
+                    $environment->configuration->php->sendmail_path
+                ],
+            ]);
+        $environmentTable->render();
     }
 
     /**
