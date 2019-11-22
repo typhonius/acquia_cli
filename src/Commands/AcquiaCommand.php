@@ -65,8 +65,9 @@ abstract class AcquiaCommand extends Tasks
      * confirmation.
      *
      * @param string $question
+     * @param bool $default
      */
-    protected function confirm($question)
+    protected function confirm($question, $default = false)
     {
         if ($this->input()->getOption('yes')) {
             $this->say('Ignoring confirmation question as --yes option passed.');
@@ -74,7 +75,7 @@ abstract class AcquiaCommand extends Tasks
             return true;
         }
 
-        return parent::confirm($question);
+        return parent::confirm($question, $default);
     }
 
     /**
