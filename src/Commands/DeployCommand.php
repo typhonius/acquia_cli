@@ -74,7 +74,7 @@ class DeployCommand extends AcquiaCommand
         }
 
         $skipDrushTasks = filter_var($skipDrushTasks, FILTER_VALIDATE_BOOLEAN);
-        $this->acquiaDeployFromEnvToEnv($uuid, $environmentFrom, $environmentTo, $skipDrushTasks);
+        $this->acquiaDeployEnvToEnv($uuid, $environmentFrom, $environmentTo, $skipDrushTasks);
     }
 
     /**
