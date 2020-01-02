@@ -3,6 +3,7 @@
 namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\Response\CronResponse;
+use AcquiaCloudApi\Endpoints\Crons;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use Symfony\Component\Console\Helper\Table;
 
@@ -24,7 +25,8 @@ class CronCommand extends AcquiaCommand
     public function crons($uuid, $environment)
     {
 
-        $crons = $this->cloudapi->crons($environment->uuid);
+        $cronAdapter = new Crons($this->cloudapi);
+        $crons = $cronAdapter->getAll($environment->uuid);
 
         $output = $this->output();
         $table = new Table($output);
@@ -126,7 +128,8 @@ class CronCommand extends AcquiaCommand
      */
     public function cronInfo($uuid, $environment, $cronId)
     {
-        $cron = $this->cloudapi->cron($environment->uuid, $cronId);
+        $cronAdapter = new Crons($this->cloudapi);
+        $cron = $cronAdapter->get($environment->uuid, $cronId);
 
         $enabled = $cron->flags->enabled ? '✅' : '❌';
         $system = $cron->flags->system ? '✅' : '❌';

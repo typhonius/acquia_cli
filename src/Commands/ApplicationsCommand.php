@@ -4,6 +4,8 @@ namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use Symfony\Component\Console\Helper\Table;
+use AcquiaCloudApi\Endpoints\Applications;
+use AcquiaCloudApi\Endpoints\Environments;
 
 /**
  * Class ApplicationsCommand
@@ -21,7 +23,8 @@ class ApplicationsCommand extends AcquiaCommand
      */
     public function acquiaApplications()
     {
-        $applications = $this->cloudapi->applications();
+        $applicationsAdapter = new Applications($this->cloudapi);
+        $applications = $applicationsAdapter->getAll();
 
         $output = $this->output();
         $table = new Table($output);
@@ -50,7 +53,8 @@ class ApplicationsCommand extends AcquiaCommand
      */
     public function acquiaApplicationInfo($uuid)
     {
-        $environments = $this->cloudapi->environments($uuid);
+        $environmentsAdapter = new Applications($this->cloudapi);
+        $environments = $environmentsAdapter->get($uuid);
 
         $output = $this->output();
         $table = new Table($output);
