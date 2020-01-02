@@ -9,11 +9,10 @@
     ],
     "license": "MIT",
     "require": {
-        "typhonius/acquia-php-sdk-v2": "^1.0.0",
-        "consolidation/robo": "^1.2",
-        "boedah/robo-drush": "^3.0",
-        "cloudflare/sdk": "^1.0.0",
+        "typhonius/acquia-php-sdk-v2": "^2.0.0",
+        "consolidation/robo": "^2",
         "symfony/lock": "^3|^4",
+        "typhonius/acquia-logstream": "^0.3",
         "ext-sysvsem": "*"
     },
     "bin": ["bin/acquiacli"],
