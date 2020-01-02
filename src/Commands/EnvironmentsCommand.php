@@ -2,6 +2,8 @@
 
 namespace AcquiaCli\Commands;
 
+use AcquiaCloudApi\Endpoints\Environments;
+use AcquiaCloudApi\Endpoints\Servers;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use Symfony\Component\Console\Helper\Table;
 
@@ -25,13 +27,14 @@ class EnvironmentsCommand extends AcquiaCommand
     public function acquiaEnvironmentInfo($uuid, $env = null)
     {
 
-        if (null !== $env) {
-            $this->cloudapi->addQuery('filter', "name=${env}");
-        }
+        // if (null !== $env) {
+        //     $this->cloudapi->addQuery('filter', "name=${env}");
+        // }
 
-        $environments = $this->cloudapi->environments($uuid);
+        $environmentAdapter = new Environments($this->cloudapi);
+        $environments = $environmentAdapter->getAll($uuid);
 
-        $this->cloudapi->clearQuery();
+        // $this->cloudapi->clearQuery();
 
         foreach ($environments as $e) {
             $this->renderEnvironmentInfo($e);
@@ -77,7 +80,9 @@ class EnvironmentsCommand extends AcquiaCommand
                 'Primary',
                 'EIP'
             ]);
-            $servers = $this->cloudapi->servers($environment->uuid);
+
+            $serverAdapter = new Servers($this->cloudapi);
+            $servers = $serverAdapter->getAll($environment->uuid);
 
             foreach ($servers as $server) {
                 $memcache = $server->flags->memcache ? '✓' : ' ';
