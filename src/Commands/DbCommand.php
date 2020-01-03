@@ -96,14 +96,15 @@ class DbCommand extends AcquiaCommand
      *
      * @param string              $uuid
      * @param EnvironmentResponse $environment
+     * @param string              $dbName
      * @param int                 $backupId
      *
      * @command db:backup:link
      */
-    public function acquiaDbBackupLink($uuid, $environment, $backupId)
+    public function acquiaDbBackupLink($uuid, $environment, $dbName, $backupId)
     {
         $environmentUuid = $environment->uuid;
         $this->say(Connector::BASE_URI .
-            "/environments/${environmentUuid}/database-backups/${backupId}/actions/download");
+            "/environments/${environmentUuid}/databases/${dbName}/backups/${backupId}/actions/download");
     }
 }

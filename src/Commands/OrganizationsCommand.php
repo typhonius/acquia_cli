@@ -7,6 +7,7 @@ use AcquiaCloudApi\Response\MemberResponse;
 use AcquiaCloudApi\Response\OrganizationResponse;
 use AcquiaCloudApi\Response\TeamResponse;
 use Symfony\Component\Console\Helper\Table;
+use AcquiaCloudApi\Endpoints\Organizations;
 
 /**
  * Class OrganizationsCommand
@@ -23,7 +24,8 @@ class OrganizationsCommand extends AcquiaCommand
      */
     public function showOrganizations()
     {
-        $organizations = $this->cloudapi->organizations();
+        $organizationsAdapter = new Organizations($this->cloudapi);
+        $organizations = $organizationsAdapter->getAll();
 
         $table = new Table($this->output());
         $table->setHeaders(['UUID', 'Organization', 'Owner', 'Subs', 'Admins', 'Users', 'Teams', 'Roles']);

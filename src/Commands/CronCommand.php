@@ -62,8 +62,9 @@ class CronCommand extends AcquiaCommand
      */
     public function cronAdd($uuid, $environment, $commandString, $frequency, $label)
     {
-        $this->cloudapi->createCron($environment->uuid, $commandString, $frequency, $label);
-        $this->waitForTask($uuid, 'CronCreated');
+        $cronAdapter = new Crons($this->cloudapi);
+        $response = $cronAdapter->create($environment->uuid, $commandString, $frequency, $label);
+        $this->waitForNotification($response);
     }
 
     /**
@@ -80,8 +81,9 @@ class CronCommand extends AcquiaCommand
         if ($this->confirm("Are you sure you want to delete the cron task?")) {
             $label = $environment->label;
             $this->say("Deleting cron task ${cronId} from ${label}");
-            $this->cloudapi->deleteCron($environment->uuid, $cronId);
-            $this->waitForTask($uuid, 'CronDeleted');
+            $cronAdapter = new Crons($this->cloudapi);
+            $response = $cronAdapter->delete($environment->uuid, $cronId);
+            $this->waitForNotification($response);
         }
     }
 
@@ -96,8 +98,9 @@ class CronCommand extends AcquiaCommand
      */
     public function cronEnable($uuid, $environment, $cronId)
     {
-        $this->cloudapi->enableCron($environment->uuid, $cronId);
-        $this->waitForTask($uuid, 'CronEnabled');
+        $cronAdapter = new Crons($this->cloudapi);
+        $response = $cronAdapter->enable($environment->uuid, $cronId);
+        $this->waitForNotification($response);
     }
 
     /**
@@ -112,8 +115,9 @@ class CronCommand extends AcquiaCommand
     public function cronDisable($uuid, $environment, $cronId)
     {
         if ($this->confirm("Are you sure you want to disable the cron task?")) {
-            $this->cloudapi->disableCron($environment->uuid, $cronId);
-            $this->waitForTask($uuid, 'CronDisabled');
+            $cronAdapter = new Crons($this->cloudapi);
+            $response = $cronAdapter->disable($environment->uuid, $cronId);
+            $this->waitForNotification($response);
         }
     }
 

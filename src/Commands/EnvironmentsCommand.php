@@ -27,14 +27,14 @@ class EnvironmentsCommand extends AcquiaCommand
     public function acquiaEnvironmentInfo($uuid, $env = null)
     {
 
-        // if (null !== $env) {
-        //     $this->cloudapi->addQuery('filter', "name=${env}");
-        // }
+        if (null !== $env) {
+            $this->cloudapi->addQuery('filter', "name=${env}");
+        }
 
         $environmentAdapter = new Environments($this->cloudapi);
         $environments = $environmentAdapter->getAll($uuid);
 
-        // $this->cloudapi->clearQuery();
+        $this->cloudapi->clearQuery();
 
         foreach ($environments as $e) {
             $this->renderEnvironmentInfo($e);
@@ -147,6 +147,7 @@ class EnvironmentsCommand extends AcquiaCommand
     public function acquiaEnvironmentRename($uuid, $environment, $name)
     {
         $this->say('Renaming ' . $environment->label . " to ${name}");
-        $this->cloudapi->renameEnvironment($environment->uuid, $name);
+        $environmentAdapter = new Environments($this->cloudapi);
+        $environments = $environmentAdapter->rename($environment->uuid, $name);
     }
 }
