@@ -6,6 +6,7 @@ use AcquiaCloudApi\Connector\Client;
 use AcquiaCloudApi\Connector\Connector;
 use AcquiaCloudApi\Endpoints\Applications;
 use AcquiaCloudApi\Endpoints\Environments;
+use AcquiaCloudApi\Endpoints\Organizations;
 use AcquiaCloudApi\Endpoints\Notifications;
 use AcquiaCloudApi\Endpoints\Databases;
 use AcquiaCloudApi\Endpoints\DatabaseBackups;
@@ -136,6 +137,12 @@ abstract class AcquiaCommand extends Tasks
                 $commandData->input()->setArgument('environmentTo', $environmentTo);
             }
         }
+        // Convert Organization name to UUID.
+        if ($commandData->input()->hasArgument('organization')) {
+            $organizationName = $commandData->input()->getArgument('organization');
+            $organization = $this->getOrganizationFromOrganizationName($organizationName);
+            $commandData->input()->setArgument('organization', $organization);
+        }
     }
 
     /**
@@ -152,6 +159,26 @@ abstract class AcquiaCommand extends Tasks
         foreach ($environments as $e) {
             if ($environment === $e->name) {
                 return $e;
+            }
+        }
+
+        throw new Exception('Unable to find ID for environment');
+    }
+
+    /**
+     * @param string $uuid
+     * @param string $organization
+     * @return OrganizationResponse
+     * @throws Exception
+     */
+    protected function getOrganizationFromOrganizationName($organizationName)
+    {
+        $org = new Organizations($this->cloudapi);
+        $organizations = $org->getAll($organizationName);
+
+        foreach ($organizations as $organization) {
+            if ($organizationName === $organization->name) {
+                return $organization;
             }
         }
 

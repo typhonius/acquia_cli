@@ -18,7 +18,8 @@ class DrushAliasesCommand extends AcquiaCommand
      */
     public function downloadDrushAliases()
     {
-        $aliases = $this->cloudapi->drushAliases();
+        $account = new Account($this->cloudapi);
+        $aliases = $account->getDrushAliases();
         $tmpFile = tempnam(sys_get_temp_dir(), 'AcquiaDrushAliases') . '.tar.gz';
         if (file_put_contents($tmpFile, $aliases, LOCK_EX)) {
             $this->say("Acquia Cloud Drush Aliases downloaded to ${tmpFile}");

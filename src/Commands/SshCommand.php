@@ -3,6 +3,7 @@
 namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\Response\EnvironmentResponse;
+use AcquiaCloudApi\Endpoints\Environments;
 
 /**
  * Class SshCommand
@@ -26,7 +27,8 @@ class SshCommand extends AcquiaCommand
             $this->cloudapi->addQuery('filter', "name=${env}");
         }
 
-        $environments = $this->cloudapi->environments($uuid);
+        $environmentAdapter = new Environments($this->cloudapi);
+        $environments = $environmentAdapter->getAll($uuid);
 
         $this->cloudapi->clearQuery();
 
