@@ -86,8 +86,9 @@ class DbCommand extends AcquiaCommand
     {
         $environmentName = $environment->label;
         if ($this->confirm("Are you sure you want to restore backup id ${backupId} to ${environmentName}?")) {
-            $this->cloudapi->restoreDatabaseBackup($environment->uuid, $backupId);
-            $this->waitForTask($uuid, 'DatabaseBackupRestored');
+            $dbAdapter = new DatabaseBackups($this->cloudapi);
+            $response = $dbAdapter->restore($environment->uuid, $backupId);
+            $this->waitForNotification($response);
         }
     }
 

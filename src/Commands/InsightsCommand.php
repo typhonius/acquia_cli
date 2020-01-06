@@ -4,6 +4,7 @@ namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\Response\InsightCountResponse;
 use AcquiaCloudApi\Response\InsightResponse;
+use AcquiaCloudApi\Endpoints\Insights;
 use Symfony\Component\Console\Helper\Table;
 
 /**
@@ -17,17 +18,19 @@ class InsightsCommand extends AcquiaCommand
      * Shows Insights information for specified applications.
      *
      * @param string $uuid
-     * @param string $env
+     * @param string $environment
      *
      * @command insights:info
      */
-    public function acquiaInsightsInfo($uuid, $env = null)
+    public function acquiaInsightsInfo($uuid, $environment = null)
     {
-        if (null === $env) {
-            $insights = $this->cloudapi->applicationInsights($uuid);
+
+        $insightsAdapter = new Insights($this->cloudapi);
+
+        if (null === $environment) {
+            $insights = $insightsAdapter->getAll($uuid);
         } else {
-            $environment = $this->getEnvironmentFromEnvironmentName($uuid, $env);
-            $insights = $this->cloudapi->environmentInsights($environment->uuid);
+            $insights = $insightsAdapter->getEnvironment($environment->uuid);
         }
         foreach ($insights as $insight) {
             /** @var InsightResponse $insight */
