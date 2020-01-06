@@ -83,14 +83,16 @@ class OrganizationsCommand extends AcquiaCommand
     /**
      * Shows teams within an organization.
      *
-     * @param string $organizationUuid
+     * @param string $organization
      *
      * @command organization:teams
      * @alias org:teams
      */
-    public function organizationTeams($organizationUuid)
+    public function organizationTeams($organization)
     {
-        $teams = $this->cloudapi->organizationTeams($organizationUuid);
+        $organizationUuid = $organization->uuid;
+        $organizationsAdapter = new Organizations($this->cloudapi);
+        $teams = $organizationsAdapter->getTeams($organizationUuid);
 
         $this->say("Teams in organisation: ${organizationUuid}");
         $table = new Table($this->output());
@@ -112,14 +114,16 @@ class OrganizationsCommand extends AcquiaCommand
     /**
      * Shows all members.
      *
-     * @param string $organizationUuid
+     * @param string $organization
      *
      * @command organization:members
      * @alias org:members
      */
-    public function members($organizationUuid)
+    public function members($organization)
     {
-        $members = $this->cloudapi->members($organizationUuid);
+        $organizationUuid = $organization->uuid;
+        $organizationsAdapter = new Organizations($this->cloudapi);
+        $members = $organizationsAdapter->getMembers($organizationUuid);
 
         $this->say("Members in organisation: ${organizationUuid}");
         $table = new Table($this->output());
