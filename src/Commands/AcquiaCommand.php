@@ -115,8 +115,10 @@ abstract class AcquiaCommand extends Tasks
             // Convert environment parameters to an EnvironmentResponse
             if ($commandData->input()->hasArgument('environment')) {
                 $environmentName = $commandData->input()->getArgument('environment');
-                $environment = $this->getEnvironmentFromEnvironmentName($uuid, $environmentName);
-                $commandData->input()->setArgument('environment', $environment);
+                if (null !== $environmentName) {
+                    $environment = $this->getEnvironmentFromEnvironmentName($uuid, $environmentName);
+                    $commandData->input()->setArgument('environment', $environment);
+                }
             }
             if ($commandData->input()->hasArgument('environmentFrom')) {
                 $environmentFromName = $commandData->input()->getArgument('environmentFrom');
