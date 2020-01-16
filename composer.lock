@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fdbf2e78325097a385f555674377d270",
+    "content-hash": "c933cbe0736acf62a328a776e6147499",
     "packages": [
         {
             "name": "acquia/http-hmac-php",
@@ -666,6 +666,7 @@
             ],
             "description": "Promoting the interoperability of container objects (DIC, SL, etc.)",
             "homepage": "https://github.com/container-interop/container-interop",
+            "abandoned": "psr/container",
             "time": "2017-02-14T19:40:03+00:00"
         },
         {
@@ -1993,6 +1994,8 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "ext-sysvsem": "*"
+    },
     "platform-dev": []
 }
