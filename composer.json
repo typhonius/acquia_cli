@@ -13,7 +13,8 @@
         "consolidation/robo": "^1.2",
         "boedah/robo-drush": "^3.0",
         "cloudflare/sdk": "^1.0.0",
-        "symfony/lock": "^3|^4"
+        "symfony/lock": "^3|^4",
+        "ext-sysvsem": "*"
     },
     "bin": ["bin/acquiacli"],
     "autoload":{
