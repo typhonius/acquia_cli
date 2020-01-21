@@ -135,9 +135,9 @@ class CronCommand extends AcquiaCommand
         $cronAdapter = new Crons($this->cloudapi);
         $cron = $cronAdapter->get($environment->uuid, $cronId);
 
-        $enabled = $cron->flags->enabled ? '✅' : '❌';
-        $system = $cron->flags->system ? '✅' : '❌';
-        $onAnyWeb = $cron->flags->on_any_web ? '✅' : '❌';
+        $enabled = $cron->flags->enabled ? '✓' : ' ';
+        $system = $cron->flags->system ? '✓' : ' ';
+        $onAnyWeb = $cron->flags->on_any_web ? '✓' : ' ';
 
         $this->say('ID: ' . $cron->id);
         $this->say('Label: ' . $cron->label);

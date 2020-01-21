@@ -19,8 +19,7 @@ class CodeCommand extends AcquiaCommand
      * @param string $uuid
      * @param string $match A string to filter out specific code branches with.
      *
-     * @command branch:list
-     * @alias code:list
+     * @command code:list
      */
     public function code($uuid, $match = null)
     {
@@ -37,7 +36,7 @@ class CodeCommand extends AcquiaCommand
 
         foreach ($branches as $branch) {
             /** @var BranchResponse $branch */
-            $tag = $branch->flags->tag ? '✅' : '';
+            $tag = $branch->flags->tag ? '✓' : '';
             $table
                 ->addRows([
                     [
