@@ -75,7 +75,6 @@ class DomainCommand extends AcquiaCommand
 
             $addResponse = $domainAdapter->create($environment->uuid, $domain);
             $this->waitForNotification($addResponse);
-
         }
     }
 }

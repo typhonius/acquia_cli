@@ -23,7 +23,6 @@ To generate an API access token, login to [https://cloud.acquia.com](https://clo
 Alternatively, follow the below steps for a manual installation.
 1. Copy the `default.acquiacli.yml` file to your project root and name it `acquiacli.yml`.
 1. Add your Acquia key and secret to the `acquiacli.yml` file.
-1. Optionally add your Cloudflare email address and API key to the `acquiacli.yml` file.
 
 
 ## Configuration
@@ -81,11 +80,6 @@ Some of the following commands have aliases for simplicity e.g. `environment:inf
 # Add a user to a team and assign roles (Use role:list to obtain the role UUIDs).
 ./bin/acquiacli team:invite d2693c6e-58e7-47e5-8867-e2db88c71b8c 'username@example.com' f0b89594-0fc5-4609-935f-1f18c313c6c7
 
-# Get a list of DNS records for the foobar.com domain in Cloudflare
-./bin/acquiacli cf:list foobar.com
-
-# Add a record for www.foobar.com to point to 127.0.0.1 in Cloudflare.
-./bin/acquiacli cf:add foobar.com A www 127.0.0.1
 ````
 
 ## See it in action

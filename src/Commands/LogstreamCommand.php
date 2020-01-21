@@ -30,8 +30,15 @@ class LogstreamCommand extends AcquiaCommand
      *
      * @command log:stream
      */
-    public function streamLogs($uuid, EnvironmentResponse $environment, $opts = ['colourise|c' => false, 'logtypes|t' => [], 'servers|s' => []])
-    {
+    public function streamLogs(
+        $uuid,
+        EnvironmentResponse $environment,
+        $opts = [
+            'colourise|c' => false,
+            'logtypes|t' => [],
+            'servers|s' => []
+        ]
+    ) {
         $logsAdapter = new Logs($this->cloudapi);
         $stream = $logsAdapter->stream($environment->uuid);
         $params = $stream->logstream->params;
