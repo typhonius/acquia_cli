@@ -6,6 +6,7 @@ use AcquiaCloudApi\Response\EnvironmentResponse;
 use Symfony\Component\Console\Helper\Table;
 use AcquiaCloudApi\Endpoints\Applications;
 use AcquiaCloudApi\Endpoints\Environments;
+use AcquiaCloudApi\Endpoints\Databases;
 
 /**
  * Class ApplicationsCommand
@@ -53,21 +54,22 @@ class ApplicationsCommand extends AcquiaCommand
      */
     public function acquiaApplicationInfo($uuid)
     {
-        $environmentsAdapter = new Applications($this->cloudapi);
-        $environments = $environmentsAdapter->get($uuid);
+        $environmentsAdapter = new Environments($this->cloudapi);
+        $environments = $environmentsAdapter->getAll($uuid);
 
         $output = $this->output();
         $table = new Table($output);
         $table->setHeaders(['Environment', 'ID', 'Branch/Tag', 'Domain(s)', 'Database(s)']);
 
+        $databasesAdapter = new Databases($this->cloudapi);
+        $databases = $databasesAdapter->getAll($uuid);
+
+        $dbNames = array_map(function ($database) {
+            return $database->name;
+        }, $databases->getArrayCopy());
+
         foreach ($environments as $environment) {
             /** @var EnvironmentResponse $environment */
-
-            $databases = $this->cloudapi->environmentDatabases($environment->uuid);
-
-            $dbNames = array_map(function ($database) {
-                return $database->name;
-            }, $databases->getArrayCopy());
 
             $environmentName = $environment->label . ' (' . $environment->name . ')' ;
             if ($environment->flags->livedev) {
