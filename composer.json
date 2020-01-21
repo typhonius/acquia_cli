@@ -1,6 +1,6 @@
 {
     "name": "typhonius/acquia_cli",
-    "description": "A Robo CLI tool for integrating with Acquia CloudAPI and Cloudflare",
+    "description": "A Robo CLI tool for integrating with Acquia CloudAPI",
     "authors": [
         {
             "name": "Adam Malone",

@@ -76,19 +76,6 @@ class SetupCommand extends Tasks
             ],
         ];
 
-
-        if ($this->confirm('Do you want to enter Cloudflare information?')) {
-            $cfmail = $this->ask('What is your Cloudflare email address?');
-            $cfkey = $this->askHidden('What is your Cloudflare API key?');
-
-            $config = $config + [
-                'cloudflare' => [
-                    'mail' => $cfmail,
-                    'key' => $cfkey,
-                ],
-            ];
-        }
-
         $yaml = Yaml::dump($config, 3, 2);
 
         if (!is_dir(dirname($location))) {

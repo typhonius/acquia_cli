@@ -4,6 +4,8 @@ namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\CloudApi\Connector;
 use AcquiaCloudApi\Response\EnvironmentResponse;
+use AcquiaCloudApi\Endpoints\Databases;
+use AcquiaCloudApi\Endpoints\DatabaseBackups;
 use Symfony\Component\Console\Helper\Table;
 
 /**
@@ -49,8 +51,8 @@ class DbCommand extends AcquiaCommand
      */
     public function acquiaDbBackupList($uuid, $environment)
     {
-
-        $databases = $this->cloudapi->environmentDatabases($environment->uuid);
+        $dbAdapter = new Databases($this->cloudapi);
+        $databases = $dbAdapter->getAll($uuid);
 
         $table = new Table($this->output());
         $table->setHeaders(['ID', 'Type', 'Timestamp']);
@@ -58,7 +60,9 @@ class DbCommand extends AcquiaCommand
         foreach ($databases as $database) {
             $dbName = $database->name;
             $this->yell($dbName);
-            $backups = $this->cloudapi->databaseBackups($environment->uuid, $dbName);
+            $dbBackupsAdapter = new DatabaseBackups($this->cloudapi);
+            $backups = $dbBackupsAdapter->getAll($environment->uuid, $dbName);
+
             foreach ($backups as $backup) {
                 $table
                     ->addRows([
@@ -107,5 +111,35 @@ class DbCommand extends AcquiaCommand
         $environmentUuid = $environment->uuid;
         $this->say(Connector::BASE_URI .
             "/environments/${environmentUuid}/databases/${dbName}/backups/${backupId}/actions/download");
+    }
+
+    /**
+     * Downloads a database backup.
+     *
+     * @param string              $uuid
+     * @param EnvironmentResponse $environment
+     * @param string              $dbName
+     * @param int                 $backupId
+     *
+     * @command db:backup:download
+     */
+    public function acquiaDbBackupDownload($uuid, $environment, $dbName, $backupId, $path = null)
+    {
+
+        $dbAdapter = new DatabaseBackups($this->cloudapi);
+        $envName = $environment->name;
+        $backupName = "${envName}-${dbName}-${backupId}";
+        $backup = $dbAdapter->download($environment->uuid, $dbName, $backupId);
+        
+        if (null === $path) {
+            $location = tempnam(sys_get_temp_dir(), $backupName) . '.tar.gz';
+        } else {
+            $location = $path . $backupName . ".tar.gz";
+        }
+        if (file_put_contents($location, $backup, LOCK_EX)) {
+            $this->say("Database backup downloaded to ${location}");
+        } else {
+            $this->say('Unable to download database backup.');
+        }
     }
 }
