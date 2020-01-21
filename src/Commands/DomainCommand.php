@@ -4,6 +4,7 @@ namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use AcquiaCloudApi\Endpoints\Domains;
+use Symfony\Component\Console\Helper\Table;
 
 /**
  * Class DomainCommand
@@ -11,6 +12,71 @@ use AcquiaCloudApi\Endpoints\Domains;
  */
 class DomainCommand extends AcquiaCommand
 {
+
+    /**
+     * Lists domains.
+     *
+     * @param string              $uuid
+     * @param EnvironmentResponse $environment
+     *
+     * @command domain:list
+     */
+    public function acquiaListDomain($uuid, $environment)
+    {
+        $domainAdapter = new Domains($this->cloudapi);
+        $domains = $domainAdapter->getAll($environment->uuid);
+
+        $output = $this->output();
+        $table = new Table($output);
+        $table->setHeaders(['Hostname', 'Default', 'Active', 'Uptime']);
+
+        foreach ($domains as $domain) {
+            /** @var DomainResponse $domain */
+            $table
+                ->addRows([
+                    [
+                        $domain->hostname,
+                        $domain->flags->default ? '✓' : '',
+                        $domain->flags->active ? '✓' : '',
+                        $domain->flags->uptime ? '✓' : '',
+                    ],
+                ]);
+        }
+
+        $table->render();
+    }
+
+    /**
+     * Gets information about a domain.
+     *
+     * @param string              $uuid
+     * @param EnvironmentResponse $environment
+     * @param string              $domain
+     *
+     * @command domain:info
+     */
+    public function acquiaDomainInfo($uuid, $environment, $domain)
+    {
+        $domainAdapter = new Domains($this->cloudapi);
+        $domain = $domainAdapter->status($environment->uuid, $domain);
+        var_dump($domain);
+
+        $output = $this->output();
+        $table = new Table($output);
+        $table->setHeaders(['Hostname', 'Active', 'DNS Resolves', 'IP Addresses', 'CNAMES']);
+        $table
+            ->addRows([
+                [
+                    $domain->hostname,
+                    $domain->flags->active ? '✓' : '',
+                    $domain->flags->dns_resolves ? '✓' : '',
+                    implode($domain->ip_addresses, "\n"),
+                    implode($domain->cnames, "\n"),
+                ],
+            ]);
+
+        $table->render();
+    }
 
     /**
      * Add a domain to an environment.
