@@ -128,7 +128,7 @@ class DeployCommand extends AcquiaCommand
         }
 
         $this->backupAndMoveDbs($uuid, $environmentFrom, $environmentTo);
-        $this->backupFiles($uuid, $environmentFrom, $environmentTo);
+        $this->copyFiles($uuid, $environmentFrom, $environmentTo);
     }
 
     /**

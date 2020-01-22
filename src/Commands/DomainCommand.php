@@ -21,7 +21,7 @@ class DomainCommand extends AcquiaCommand
      *
      * @command domain:list
      */
-    public function acquiaListDomain($uuid, $environment)
+    public function domainList($uuid, $environment)
     {
         $domainAdapter = new Domains($this->cloudapi);
         $domains = $domainAdapter->getAll($environment->uuid);
@@ -29,6 +29,9 @@ class DomainCommand extends AcquiaCommand
         $output = $this->output();
         $table = new Table($output);
         $table->setHeaders(['Hostname', 'Default', 'Active', 'Uptime']);
+        $table->setColumnStyle(1, 'center-align');
+        $table->setColumnStyle(2, 'center-align');
+        $table->setColumnStyle(3, 'center-align');
 
         foreach ($domains as $domain) {
             /** @var DomainResponse $domain */
@@ -55,7 +58,7 @@ class DomainCommand extends AcquiaCommand
      *
      * @command domain:info
      */
-    public function acquiaDomainInfo($uuid, $environment, $domain)
+    public function domainInfo($uuid, $environment, $domain)
     {
         $domainAdapter = new Domains($this->cloudapi);
         $domain = $domainAdapter->status($environment->uuid, $domain);
@@ -85,9 +88,10 @@ class DomainCommand extends AcquiaCommand
      * @param EnvironmentResponse $environment
      * @param string              $domain
      *
-     * @command domain:add
+     * @command domain:create
+     * @alias domain:add
      */
-    public function acquiaAddDomain($uuid, $environment, $domain)
+    public function domainAdd($uuid, $environment, $domain)
     {
         $label = $environment->label;
         $this->say("Adding ${domain} to ${label} environment");
@@ -103,9 +107,10 @@ class DomainCommand extends AcquiaCommand
      * @param EnvironmentResponse $environment
      * @param string              $domain
      *
-     * @command domain:remove
+     * @command domain:delete
+     * @alias domain:remove
      */
-    public function acquiaRemoveDomain($uuid, $environment, $domain)
+    public function domainDelete($uuid, $environment, $domain)
     {
         if ($this->confirm('Are you sure you want to remove this domain?')) {
             $label = $environment->label;
@@ -126,7 +131,7 @@ class DomainCommand extends AcquiaCommand
      *
      * @command domain:move
      */
-    public function acquiaMoveDomain($uuid, $domain, $environmentFrom, $environmentTo)
+    public function domainRemove($uuid, $domain, $environmentFrom, $environmentTo)
     {
         $environmentFromLabel = $environmentFrom->label;
         $environmentToLabel = $environmentTo->label;
