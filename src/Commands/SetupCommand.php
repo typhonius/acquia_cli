@@ -35,11 +35,11 @@ class SetupCommand extends Tasks
     public function setup()
     {
         foreach ($this->configFiles as $type => $location) {
-            $this->say("Checking ${type} configuration at ${location}");
+            $this->say(sprintf('Checking %s configuration at %s', $type, $location));
             if (file_exists($location)) {
-                $this->yell("${type} configuration file found");
+                $this->yell(sprintf('%s configuration file found', $type));
                 if (!is_readable($location) && !@chmod($location, 0644)) {
-                    $this->yell("${type} configuration is not readable", 40, 'red');
+                    $this->yell(sprintf('%s configuration is not readable', $type), 40, 'red');
                     continue;
                 }
                 if ($this->confirm('Would you like to view the contents of this file?')) {
@@ -50,7 +50,7 @@ class SetupCommand extends Tasks
                 if ($this->confirm("Would you like to delete and regenerate the acquiacli.yml file at ${location}?")) {
                     $this->createConfigYaml($location);
                 }
-            } elseif ($this->confirm("No file found. Would you like to add a file at ${location}?")) {
+            } elseif ($this->confirm(sprintf('No file found. Would you like to add a file at %s?', $location))) {
                 $this->createConfigYaml($location);
             }
         }

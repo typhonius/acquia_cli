@@ -358,13 +358,11 @@ abstract class AcquiaCommand extends Tasks
      * @param string              $uuid
      * @param EnvironmentResponse $environmentFrom
      * @param EnvironmentResponse $environmentTo
-     * @param bool                $skipDrush
      */
     protected function acquiaDeployEnvToEnv(
         $uuid,
         EnvironmentResponse $environmentFrom,
-        EnvironmentResponse $environmentTo,
-        $skipDrush
+        EnvironmentResponse $environmentTo
     ) {
         $this->backupAllEnvironmentDbs($uuid, $environmentTo);
         $this->say(
@@ -384,9 +382,8 @@ abstract class AcquiaCommand extends Tasks
      * @param string              $uuid
      * @param EnvironmentResponse $environment
      * @param string              $branch
-     * @param bool                $skipDrushTasks
      */
-    protected function acquiaDeployEnv($uuid, EnvironmentResponse $environment, $branch, $skipDrushTasks)
+    protected function acquiaDeployEnv($uuid, EnvironmentResponse $environment, $branch)
     {
         $this->backupAllEnvironmentDbs($uuid, $environment);
         $this->say(sprintf('Deploying %s to the %s environment', $branch, $environment->label));
