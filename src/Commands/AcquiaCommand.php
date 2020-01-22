@@ -63,6 +63,14 @@ abstract class AcquiaCommand extends Tasks
         $this->extraConfig = $extraConfig;
 
         $acquia = Robo::config()->get('acquia');
+
+        // Allows for environment variables for the key and secret
+        // to override configuration values.
+        if (getenv('ACQUIACLI_KEY') && getenv('ACQUIACLI_SECRET')) {
+            $acquia['key'] = getenv('ACQUIACLI_KEY');
+            $acquia['secret'] = getenv('ACQUIACLI_SECRET');
+        }
+
         $connector = new Connector([
             'key' => $acquia['key'],
             'secret' => $acquia['secret'],

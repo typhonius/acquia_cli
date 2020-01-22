@@ -33,6 +33,7 @@ Acquia Cli will load configuration in the following order with each step overrid
 1. Firstly, default configuration from `default.acquiacli.yml` in the project root is loaded.
 1. Next, if it exists, global configuration from `~/.acquiacli/acquiacli.yml` is loaded.
 1. Finally, if it exists, an `acquiacli.yml` file in the project root will be loaded.
+1. Environment variables take overall precedence for the key and secret, however other config won't be overridden.
 
 The global and per project files may be deleted (manually) and recreated with `./bin/acquiacli setup` whenever a user wishes to do so.
 
@@ -45,6 +46,11 @@ format | Y-m-d H:i:s | Use [a supported PHP date string](https://secure.php.net/
 taskwait | 5 | A number in seconds to wait before hitting the API to check the status of a task.
 timeout | 300 | A number in seconds before a task is considered to have timed out.
 configsyncdir | sync | A directory to be passed to the config-import command for syncing config.
+
+## Environment Variables
+Environmment variables can be used to store and provide the API key and secret.
+* `ACQUIACLI_KEY` The environment variables for the API key
+* `ACQUIACLI_SECRET` The environment variables for the API secret
 
 
 ## Usage/Examples
