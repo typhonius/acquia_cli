@@ -52,6 +52,7 @@ Environmment variables can be used to store and provide the API key and secret.
 * `ACQUIACLI_KEY` The environment variables for the API key
 * `ACQUIACLI_SECRET` The environment variables for the API secret
 
+
 ## Usage/Examples
 Some of the following commands have aliases for simplicity e.g. `environment:info` has the alias of `e:i`.
 ````
