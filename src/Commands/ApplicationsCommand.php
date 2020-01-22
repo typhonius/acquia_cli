@@ -71,13 +71,13 @@ class ApplicationsCommand extends AcquiaCommand
         foreach ($environments as $environment) {
             /** @var EnvironmentResponse $environment */
 
-            $environmentName = $environment->label . ' (' . $environment->name . ')' ;
+            $environmentName = sprintf('%s (%s)', $environment->label, $environment->name);
             if ($environment->flags->livedev) {
-                $environmentName = '💻  ' . $environmentName;
+                $environmentName = sprintf('💻  %s', $environmentName);
             }
 
             if ($environment->flags->production_mode) {
-                $environmentName = '🔒  ' . $environmentName;
+                $environmentName = sprintf('🔒  %s', $environmentName);
             }
 
             $table
@@ -92,7 +92,10 @@ class ApplicationsCommand extends AcquiaCommand
                 ]);
         }
         $table->render();
-        $this->say('🔧  Git URL: ' . $environment->vcs->url);
+
+        if (isset($environment->vcs->url)) {
+            $this->say(sprintf('🔧  Git URL: %s', $environment->vcs->url));
+        }
         $this->say('💻  indicates environment in livedev mode.');
         $this->say('🔒  indicates environment in production mode.');
     }

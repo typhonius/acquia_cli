@@ -94,8 +94,7 @@ class LogsCommand extends AcquiaCommand
     public function logSnapshot($uuid, $environment, $logType)
     {
         $logsAdapter = new Logs($this->cloudapi);
-        $label = $environment->label;
-        $this->say("Creating snapshot for ${logType} in ${label} environment");
+        $this->say(sprintf('Creating snapshot for %s in %s environment', $logType, $environment->label));
         $logsAdapter->snapshot($environment->uuid, $logType);
     }
 
@@ -127,7 +126,7 @@ class LogsCommand extends AcquiaCommand
             $location = $path . $backupName . ".tar.gz";
         }
         if (file_put_contents($location, $log, LOCK_EX)) {
-            $this->say("Log downloaded to ${location}");
+            $this->say(sprintf('Log downloaded to %s', $location));
         } else {
             $this->say('Unable to download log.');
         }

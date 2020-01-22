@@ -142,7 +142,7 @@ class TeamsCommand extends AcquiaCommand
         $permissionsArray = explode(',', $permissions);
         $this->say('Updating role permissions');
         $rolesAdapter = new Roles($this->cloudapi);
-        $rolesAdapter->update($roleUuid, $permissions);
+        $rolesAdapter->update($roleUuid, $permissionsArray);
     }
 
     /**
