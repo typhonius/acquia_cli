@@ -54,7 +54,7 @@ class OrganizationsCommand extends AcquiaCommand
     /**
      * Shows a list of all applications within an organization.
      *
-     * @param string $organization
+     * @param OrganizationResponse $organization
      *
      * @command organization:applications
      * @alias org:apps
@@ -87,7 +87,7 @@ class OrganizationsCommand extends AcquiaCommand
     /**
      * Shows teams within an organization.
      *
-     * @param string $organization
+     * @param OrganizationResponse $organization
      *
      * @command organization:teams
      * @alias org:teams
@@ -118,7 +118,7 @@ class OrganizationsCommand extends AcquiaCommand
     /**
      * Shows all members.
      *
-     * @param string $organization
+     * @param OrganizationResponse $organization
      *
      * @command organization:members
      * @alias org:members

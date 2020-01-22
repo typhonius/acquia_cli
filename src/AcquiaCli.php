@@ -72,7 +72,7 @@ class AcquiaCli
         $commandClasses = $discovery->discover(__DIR__ . '/Commands', '\AcquiaCli\Commands');
 
         // Instantiate Robo Runner.
-        $this->runner = new RoboRunner([]);
+        $this->runner = new RoboRunner();
         $this->runner->setContainer($container);
         $this->runner->registerCommandClasses($application, $commandClasses);
     }

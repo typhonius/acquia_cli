@@ -43,7 +43,9 @@ class SetupCommand extends Tasks
                     continue;
                 }
                 if ($this->confirm('Would you like to view the contents of this file?')) {
-                    $this->say(file_get_contents($location));
+                    if ($contents = file_get_contents($location)) {
+                        $this->say($contents);
+                    }
                 }
                 if ($this->confirm("Would you like to delete and regenerate the acquiacli.yml file at ${location}?")) {
                     $this->createConfigYaml($location);
@@ -81,6 +83,10 @@ class SetupCommand extends Tasks
         if (!is_dir(dirname($location))) {
             mkdir(dirname($location));
         }
-        file_put_contents($location, $yaml);
+        if (file_put_contents($location, $yaml)) {
+            $this->say(sprintf('Configuration file written to %s', $location));
+        } else {
+            $this->say('Unable to write configuration file.');
+        }
     }
 }

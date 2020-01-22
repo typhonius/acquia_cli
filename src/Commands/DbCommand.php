@@ -2,7 +2,7 @@
 
 namespace AcquiaCli\Commands;
 
-use AcquiaCloudApi\CloudApi\Connector;
+use AcquiaCloudApi\Connector\Connector;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use AcquiaCloudApi\Endpoints\Databases;
 use AcquiaCloudApi\Endpoints\DatabaseBackups;
@@ -82,16 +82,18 @@ class DbCommand extends AcquiaCommand
      *
      * @param string              $uuid
      * @param EnvironmentResponse $environment
-     * @param string              $backupId
+     * @param string              $dbName
+     * @param int                 $backupId
      *
      * @command db:backup:restore
      */
-    public function dbBackupRestore($uuid, $environment, $backupId)
+    public function dbBackupRestore($uuid, $environment, $dbName, $backupId)
     {
-        $environmentName = $environment->label;
-        if ($this->confirm("Are you sure you want to restore backup id ${backupId} to ${environmentName}?")) {
+        if ($this->confirm(
+            sprintf('Are you sure you want to restore backup id %s to %s?', $backupId, $environment->label)
+        )) {
             $dbAdapter = new DatabaseBackups($this->cloudapi);
-            $response = $dbAdapter->restore($environment->uuid, $backupId);
+            $response = $dbAdapter->restore($environment->uuid, $dbName, $backupId);
             $this->waitForNotification($response);
         }
     }
@@ -137,7 +139,7 @@ class DbCommand extends AcquiaCommand
             $location = $path . $backupName . ".sql.gz";
         }
         if (file_put_contents($location, $backup, LOCK_EX)) {
-            $this->say("Database backup downloaded to ${location}");
+            $this->say(sprintf('Database backup downloaded to %s', $location));
         } else {
             $this->say('Unable to download database backup.');
         }
