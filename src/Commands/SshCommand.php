@@ -20,7 +20,7 @@ class SshCommand extends AcquiaCommand
      *
      * @command ssh:info
      */
-    public function acquiaSshInfo($uuid, $env = null)
+    public function sshInfo($uuid, $env = null)
     {
 
         if (null !== $env) {
