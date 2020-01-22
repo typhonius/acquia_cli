@@ -15,19 +15,15 @@ class DeployCommand extends AcquiaCommand
      *
      * @param string $uuid
      * @param string $branch
-     * @param bool   $skipDrushTasks
-     *   Skips Drush tasks to set maintenance mode, rebuild cache, update the database, and import config
-     *   (not recommended unless you know what you are doing).
      *
      * @command prod:deploy
      */
-    public function acquiaDeployProd($uuid, $branch, $skipDrushTasks = false)
+    public function acquiaDeployProd($uuid, $branch)
     {
         $this->yell('WARNING: DEPLOYING TO PROD');
         if ($this->confirm('Are you sure you want to deploy to prod?')) {
             $environment = $this->getEnvironmentFromEnvironmentName($uuid, 'prod');
-            $skipDrushTasks = filter_var($skipDrushTasks, FILTER_VALIDATE_BOOLEAN);
-            $this->acquiaDeployEnv($uuid, $environment, $branch, $skipDrushTasks);
+            $this->acquiaDeployEnv($uuid, $environment, $branch);
         }
     }
 
@@ -37,21 +33,17 @@ class DeployCommand extends AcquiaCommand
      * @param string              $uuid
      * @param EnvironmentResponse $environment
      * @param string              $branch
-     * @param bool                $skipDrushTasks
-     *   Skips Drush tasks to set maintenance mode, rebuild cache, update the database, and import config
-     *   (not recommended unless you know what you are doing).
      * @throws \Exception
      *
      * @command preprod:deploy
      */
-    public function acquiaDeployPreProd($uuid, $environment, $branch, $skipDrushTasks = false)
+    public function acquiaDeployPreProd($uuid, $environment, $branch)
     {
         if ($environment->name == 'prod') {
             throw new \Exception('Use the prod:deploy command for the production environment.');
         }
 
-        $skipDrushTasks = filter_var($skipDrushTasks, FILTER_VALIDATE_BOOLEAN);
-        $this->acquiaDeployEnv($uuid, $environment, $branch, $skipDrushTasks);
+        $this->acquiaDeployEnv($uuid, $environment, $branch);
     }
 
     /**
@@ -60,21 +52,17 @@ class DeployCommand extends AcquiaCommand
      * @param string              $uuid
      * @param EnvironmentResponse $environmentFrom
      * @param EnvironmentResponse $environmentTo
-     * @param bool                $skipDrushTasks
-     *   Skips Drush tasks to set maintenance mode, rebuild cache, update the database, and import config
-     *   (not recommended unless you know what you are doing).
      * @throws \Exception
      *
      * @command preprod:deployfromenv
      */
-    public function acquiaDeployPreProdFromEnv($uuid, $environmentFrom, $environmentTo, $skipDrushTasks = false)
+    public function acquiaDeployPreProdFromEnv($uuid, $environmentFrom, $environmentTo)
     {
         if ($environmentTo->name == 'prod') {
             throw new \Exception('Use the prod:deployfromenv command for the production environment.');
         }
 
-        $skipDrushTasks = filter_var($skipDrushTasks, FILTER_VALIDATE_BOOLEAN);
-        $this->acquiaDeployEnvToEnv($uuid, $environmentFrom, $environmentTo, $skipDrushTasks);
+        $this->acquiaDeployEnvToEnv($uuid, $environmentFrom, $environmentTo);
     }
 
     /**
