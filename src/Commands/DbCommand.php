@@ -36,7 +36,7 @@ class DbCommand extends AcquiaCommand
      *
      * @command db:backup
      */
-    public function acquiaBackupDb($uuid, $environment)
+    public function dbBackup($uuid, $environment)
     {
         $this->backupAllEnvironmentDbs($uuid, $environment);
     }
@@ -49,7 +49,7 @@ class DbCommand extends AcquiaCommand
      *
      * @command db:backup:list
      */
-    public function acquiaDbBackupList($uuid, $environment)
+    public function dbBackupList($uuid, $environment)
     {
         $dbAdapter = new Databases($this->cloudapi);
         $databases = $dbAdapter->getAll($uuid);
@@ -86,7 +86,7 @@ class DbCommand extends AcquiaCommand
      *
      * @command db:backup:restore
      */
-    public function acquiaDbBackupRestore($uuid, $environment, $backupId)
+    public function dbBackupRestore($uuid, $environment, $backupId)
     {
         $environmentName = $environment->label;
         if ($this->confirm("Are you sure you want to restore backup id ${backupId} to ${environmentName}?")) {
@@ -106,7 +106,7 @@ class DbCommand extends AcquiaCommand
      *
      * @command db:backup:link
      */
-    public function acquiaDbBackupLink($uuid, $environment, $dbName, $backupId)
+    public function dbBackupLink($uuid, $environment, $dbName, $backupId)
     {
         $environmentUuid = $environment->uuid;
         $this->say(Connector::BASE_URI .
@@ -123,7 +123,7 @@ class DbCommand extends AcquiaCommand
      *
      * @command db:backup:download
      */
-    public function acquiaDbBackupDownload($uuid, $environment, $dbName, $backupId, $path = null)
+    public function dbBackupDownload($uuid, $environment, $dbName, $backupId, $path = null)
     {
 
         $dbAdapter = new DatabaseBackups($this->cloudapi);
@@ -132,9 +132,9 @@ class DbCommand extends AcquiaCommand
         $backup = $dbAdapter->download($environment->uuid, $dbName, $backupId);
         
         if (null === $path) {
-            $location = tempnam(sys_get_temp_dir(), $backupName) . '.tar.gz';
+            $location = tempnam(sys_get_temp_dir(), $backupName) . '.sql.gz';
         } else {
-            $location = $path . $backupName . ".tar.gz";
+            $location = $path . $backupName . ".sql.gz";
         }
         if (file_put_contents($location, $backup, LOCK_EX)) {
             $this->say("Database backup downloaded to ${location}");

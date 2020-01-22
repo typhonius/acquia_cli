@@ -55,12 +55,14 @@ class TeamsCommand extends AcquiaCommand
      * @param string $uuid
      * @param string $teamUuid
      *
-     * @command team:addapp
+     * @command team:addapplication
+     * @alias team:addapp
      */
     public function teamAddApplication($uuid, $teamUuid)
     {
         $this->say("Adding application to team.");
-        $this->cloudapi->addApplicationToTeam($teamUuid, $uuid);
+        $teamsAdapter = new Teams($this->cloudapi);
+        $teamsAdapter->addApplication($teamUuid, $uuid);
     }
 
     /**
@@ -178,7 +180,7 @@ class TeamsCommand extends AcquiaCommand
                 /** @var RoleResponse $role */
                 foreach ($role->permissions as $rolePermission) {
                     if ($rolePermission->name == $permission->name) {
-                        $permissionsMatrix[] = '✅';
+                        $permissionsMatrix[] = '✓';
                         $roleHasPermission = true;
                         continue;
                     }
