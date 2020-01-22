@@ -62,7 +62,6 @@ class DomainCommand extends AcquiaCommand
     {
         $domainAdapter = new Domains($this->cloudapi);
         $domain = $domainAdapter->status($environment->uuid, $domain);
-        var_dump($domain);
 
         $output = $this->output();
         $table = new Table($output);
@@ -141,10 +140,10 @@ class DomainCommand extends AcquiaCommand
             $domainAdapter = new Domains($this->cloudapi);
             $this->say("Moving ${domain} from ${environmentFromLabel} to ${environmentToLabel}");
 
-            $deleteResponse = $domainAdapter->delete($environment->uuid, $domain);
+            $deleteResponse = $domainAdapter->delete($environmentFrom->uuid, $domain);
             $this->waitForNotification($deleteResponse);
 
-            $addResponse = $domainAdapter->create($environment->uuid, $domain);
+            $addResponse = $domainAdapter->create($environmentTo->uuid, $domain);
             $this->waitForNotification($addResponse);
         }
     }

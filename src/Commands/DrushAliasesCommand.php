@@ -3,6 +3,7 @@
 namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\Response\EnvironmentResponse;
+use AcquiaCloudApi\Endpoints\Account;
 
 /**
  * Class DrushAliasesCommand
@@ -22,9 +23,9 @@ class DrushAliasesCommand extends AcquiaCommand
         $aliases = $account->getDrushAliases();
         $tmpFile = tempnam(sys_get_temp_dir(), 'AcquiaDrushAliases') . '.tar.gz';
         if (file_put_contents($tmpFile, $aliases, LOCK_EX)) {
-            $this->say("Acquia Cloud Drush Aliases downloaded to ${tmpFile}");
+            $this->say(sprintf('Acquia Cloud Drush Aliases downloaded to %s', $tmpFile));
             $this->say('Run the following command to install them:');
-            $this->writeln("$ tar -C \$HOME -xf ${tmpFile}");
+            $this->writeln(sprintf('$ tar -C $HOME -xf %s', $tmpFile));
             $this->yell(
                 'This command will unpack into ~/.acquia and ~/.drush potentially overwriting existing files!',
                 40,

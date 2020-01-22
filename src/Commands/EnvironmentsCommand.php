@@ -91,11 +91,8 @@ class EnvironmentsCommand extends AcquiaCommand
     protected function renderEnvironmentInfo(EnvironmentResponse $environment)
     {
 
-        $environmentName = $environment->label;
-        $environmentId = $environment->uuid;
-
-        $this->yell("${environmentName} environment");
-        $this->say("Environment ID: ${environmentId}");
+        $this->yell(sprintf('%s environment', $environment->label));
+        $this->say(sprintf('Environment ID: %s', $environment->uuid));
         if ($environment->flags->livedev) {
             $this->say('💻  Livedev mode enabled.');
         }
@@ -186,7 +183,7 @@ class EnvironmentsCommand extends AcquiaCommand
      */
     public function environmentRename($uuid, $environment, $name)
     {
-        $this->say('Renaming ' . $environment->label . " to ${name}");
+        $this->say(sprintf('Renaming %s to %s', $environment->label, $name));
         $environmentAdapter = new Environments($this->cloudapi);
         $environments = $environmentAdapter->rename($environment->uuid, $name);
     }
@@ -196,7 +193,6 @@ class EnvironmentsCommand extends AcquiaCommand
      *
      * @param string $uuid
      * @param EnvironmentResponse $environment
-     * @param string $name
      *
      * @command environment:delete
      * @alias env:delete

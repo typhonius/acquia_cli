@@ -72,15 +72,14 @@ class CronCommand extends AcquiaCommand
      *
      * @param string              $uuid
      * @param EnvironmentResponse $environment
-     * @param string              $cronId
+     * @param int                 $cronId
      *
      * @command cron:delete
      */
     public function cronDelete($uuid, $environment, $cronId)
     {
         if ($this->confirm("Are you sure you want to delete the cron task?")) {
-            $label = $environment->label;
-            $this->say("Deleting cron task ${cronId} from ${label}");
+            $this->say(sprintf('Deleting cron task %s from %s', $cronId, $environment->label));
             $cronAdapter = new Crons($this->cloudapi);
             $response = $cronAdapter->delete($environment->uuid, $cronId);
             $this->waitForNotification($response);
@@ -126,7 +125,7 @@ class CronCommand extends AcquiaCommand
      *
      * @param string              $uuid
      * @param EnvironmentResponse $environment
-     * @param string              $cronId
+     * @param int                 $cronId
      *
      * @command cron:info
      */
@@ -139,14 +138,14 @@ class CronCommand extends AcquiaCommand
         $system = $cron->flags->system ? '✓' : ' ';
         $onAnyWeb = $cron->flags->on_any_web ? '✓' : ' ';
 
-        $this->say('ID: ' . $cron->id);
-        $this->say('Label: ' . $cron->label);
-        $this->say('Environment: ' . $cron->environment->name);
-        $this->say('Command: ' . $cron->command);
-        $this->say('Frequency: ' . $this->convertCronFrequencyToCrontab($cron));
-        $this->say('Enabled: ' . $enabled);
-        $this->say('System: ' . $system);
-        $this->say('On any web: ' . $onAnyWeb);
+        $this->say(sprintf('ID: %s', $cron->id));
+        $this->say(sprintf('Label: %s', $cron->label));
+        $this->say(sprintf('Environment: %s', $cron->environment->name));
+        $this->say(sprintf('Command: %s', $cron->command));
+        $this->say(sprintf('Frequency: %s', $this->convertCronFrequencyToCrontab($cron)));
+        $this->say(sprintf('Enabled: %s', $enabled));
+        $this->say(sprintf('System: %s', $system));
+        $this->say(sprintf('On any web: %s', $onAnyWeb));
     }
 
     protected function convertCronFrequencyToCrontab(CronResponse $cron)
