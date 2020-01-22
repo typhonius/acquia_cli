@@ -78,40 +78,6 @@ class DeployCommand extends AcquiaCommand
     }
 
     /**
-     * Updates configuration and db in production.
-     *
-     * @param string $uuid
-     *
-     * @command prod:config-update
-     */
-    public function acquiaConfigUpdateProd($uuid)
-    {
-        $this->yell('WARNING: UPDATING CONFIG ON PROD');
-        if ($this->confirm('Are you sure you want to update prod config? This will overwrite your configuration.')) {
-            $environment = $this->getEnvironmentFromEnvironmentName($uuid, 'prod');
-            $this->acquiaConfigUpdate($environment);
-        }
-    }
-
-    /**
-     * Updates configuration and db in a non-production environment.
-     *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
-     * @throws \Exception
-     *
-     * @command preprod:config-update
-     */
-    public function acquiaConfigUpdatePreProd($uuid, $environment)
-    {
-        if ($environment->name == 'prod') {
-            throw new \Exception('Use the prod:config-update command for the production environment.');
-        }
-
-        $this->acquiaConfigUpdate($environment);
-    }
-
-    /**
      * Prepares a non-production environment for deployment by copying the database and files from another environment.
      *
      * @param string              $uuid
