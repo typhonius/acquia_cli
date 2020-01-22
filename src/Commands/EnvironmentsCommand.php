@@ -15,6 +15,46 @@ class EnvironmentsCommand extends AcquiaCommand
 {
 
     /**
+     * Shows list of environments in an application.
+     *
+     * @param string      $uuid
+     *
+     * @command environment:list
+     * @alias env:list
+     * @alias e:l
+     */
+    public function environmentList($uuid)
+    {
+
+        $environmentAdapter = new Environments($this->cloudapi);
+        $environments = $environmentAdapter->getAll($uuid);
+
+        $output = $this->output();
+
+        $table = new Table($output);
+        $table->setHeaders([
+            'UUID',
+            'Name',
+            'Label',
+            'Domains',
+        ]);
+
+        foreach ($environments as $environment) {
+            $table
+            ->addRows([
+                [
+                    $environment->uuid,
+                    $environment->name,
+                    $environment->label,
+                    implode($environment->domains, "\n"),
+                ],
+            ]);
+        }
+
+        $table->render();
+    }
+
+    /**
      * Shows detailed information about servers in an environment.
      *
      * @param string      $uuid
@@ -24,7 +64,7 @@ class EnvironmentsCommand extends AcquiaCommand
      * @alias env:info
      * @alias e:i
      */
-    public function acquiaEnvironmentInfo($uuid, $env = null)
+    public function environmentInfo($uuid, $env = null)
     {
 
         if (null !== $env) {
@@ -144,10 +184,29 @@ class EnvironmentsCommand extends AcquiaCommand
      * @command environment:rename
      * @alias env:rename
      */
-    public function acquiaEnvironmentRename($uuid, $environment, $name)
+    public function environmentRename($uuid, $environment, $name)
     {
         $this->say('Renaming ' . $environment->label . " to ${name}");
         $environmentAdapter = new Environments($this->cloudapi);
         $environments = $environmentAdapter->rename($environment->uuid, $name);
+    }
+
+    /**
+     * Deletes an environment.
+     *
+     * @param string $uuid
+     * @param EnvironmentResponse $environment
+     * @param string $name
+     *
+     * @command environment:delete
+     * @alias env:delete
+     */
+    public function environmentDelete($uuid, $environment)
+    {
+        if ($this->confirm("Are you sure you want to delete this environment?")) {
+            $environmentAdapter = new Environments($this->cloudapi);
+            $response = $environmentAdapter->delete($environment->uuid);
+            $this->waitForNotification($response);
+        }
     }
 }
