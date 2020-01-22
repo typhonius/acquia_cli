@@ -2,17 +2,19 @@
 
 namespace AcquiaCli\Commands;
 
+use AcquiaCloudApi\Endpoints\Notifications;
+use AcquiaCloudApi\Endpoints\Organizations;
 use Symfony\Component\Console\Helper\Table;
 
 /**
  * Class TasksCommand
  * @package AcquiaCli\Commands
  */
-class TasksCommand extends AcquiaCommand
+class NotificationsCommand extends AcquiaCommand
 {
 
     /**
-     * Gets all tasks associated with a site.
+     * Gets all notifications associated with a site.
      *
      * @param string $uuid
      * @param int    $limit  The maximum number of items to return.
@@ -20,42 +22,55 @@ class TasksCommand extends AcquiaCommand
      * @param string $sort   Sortable by: 'name', 'title', 'created', 'completed', 'started'.
      * A leading "~" in the field indicates the field should be sorted in a descending order.
      *
-     * @command task:list
-     * @alias t:l
+     * @command notification:list
+     * @alias n:l
      */
-    public function acquiaTasks($uuid, $limit = 100, $filter = null, $sort = '~created')
+    public function notificationList($uuid, $limit = 50, $filter = null, $sort = '~created_at')
     {
 
         // Allows for limits and sort criteria.
-        str_replace('~', '-', $sort);
+        $sort = str_replace('~', '-', $sort);
         $this->cloudapi->addQuery('limit', $limit);
         $this->cloudapi->addQuery('sort', $sort);
         if (null !== $filter) {
             $this->cloudapi->addQuery('filter', "name=${filter}");
         }
-        $tasks = $this->cloudapi->tasks($uuid);
+
+        $notificationsAdapter = new Notifications($this->cloudapi);
+        $notifications = $notificationsAdapter->getAll($uuid);
+
         $this->cloudapi->clearQuery();
 
         $output = $this->output();
         $table = new Table($output);
-        $table->setHeaders(['ID', 'Created', 'Name', 'Status', 'User']);
+        $table->setHeaders(['UUID', 'Created', 'Name', 'Status']);
 
         $tz = $this->extraConfig['timezone'];
         $format = $this->extraConfig['format'];
         $timezone = new \DateTimeZone($tz);
 
-        foreach ($tasks as $task) {
-            $createdDate = new \DateTime($task->createdAt);
+        // // Get members to map to notifications below
+        // $organizationUuid = $notifications[0]->context->organization->uuids[0];
+        // $organizationsAdapter = new Organizations($this->cloudapi);
+        
+        // // $members = [];
+        // // foreach ($organizationsAdapter->getMembers($organizationUuid) as $member) {
+        // //     $members[$member->uuid] = $member->mail;
+        // // }
+        // // var_dump($members);
+        // // die;
+
+        foreach ($notifications as $notification) {
+            $createdDate = new \DateTime($notification->created_at);
             $createdDate->setTimezone($timezone);
 
             $table
                 ->addRows([
                     [
-                        $task->uuid,
+                        $notification->uuid,
                         $createdDate->format($format),
-                        $task->name,
-                        $task->status,
-                        $task->user->mail,
+                        $notification->label,
+                        $notification->status,
                     ],
                 ]);
         }
@@ -64,16 +79,16 @@ class TasksCommand extends AcquiaCommand
     }
 
     /**
-     * Gets detailed information about a specific task
+     * Gets detailed information about a specific notification
      *
      * @param string $uuid
      * @param string $taskUuid
      *
      * @command task:info
-     * @alias t:i
+     * @alias n:i
      * @throws \Exception
      */
-    public function acquiaTask($uuid, $taskUuid)
+    public function notificationInfo($uuid, $notificationUuid)
     {
 
         $tz = $this->extraConfig['timezone'];
