@@ -7,6 +7,8 @@ use AcquiaCloudApi\Response\MemberResponse;
 use AcquiaCloudApi\Response\OrganizationResponse;
 use AcquiaCloudApi\Response\TeamResponse;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Helper\TableSeparator;
+use Symfony\Component\Console\Helper\TableCell;
 use AcquiaCloudApi\Endpoints\Organizations;
 
 /**
@@ -52,14 +54,16 @@ class OrganizationsCommand extends AcquiaCommand
     /**
      * Shows a list of all applications within an organization.
      *
-     * @param string $organizationUuid
+     * @param string $organization
      *
      * @command organization:applications
      * @alias org:apps
      */
-    public function organizationApplications($organizationUuid)
+    public function organizationApplications($organization)
     {
-        $applications = $this->cloudapi->organizationApplications($organizationUuid);
+        $organizationUuid = $organization->uuid;
+        $organizationsAdapter = new Organizations($this->cloudapi);
+        $applications = $organizationsAdapter->getApplications($organizationUuid);
 
         $this->say("Applications in organisation: ${organizationUuid}");
         $table = new Table($this->output());
@@ -123,17 +127,45 @@ class OrganizationsCommand extends AcquiaCommand
     {
         $organizationUuid = $organization->uuid;
         $organizationsAdapter = new Organizations($this->cloudapi);
+        $admins = $organizationsAdapter->getAdmins($organizationUuid);
         $members = $organizationsAdapter->getMembers($organizationUuid);
 
         $this->say("Members in organisation: ${organizationUuid}");
         $table = new Table($this->output());
-        $table->setHeaders(['UUID', 'Username', 'Mail', 'Teams(s)']);
+        $table
+            ->setHeaders(['UUID', 'Username', 'Mail', 'Teams(s)'])
+            ->setColumnStyle(0, 'center-align')
+            ->setRows([
+                [new TableCell('Organisation Administrators', ['colspan' => 4])],
+                new TableSeparator(),
+            ]);
+
+        foreach ($admins as $admin) {
+            /** @var MemberResponse $admin */
+            $table
+                ->addRows([
+                    [
+                        $admin->uuid,
+                        $admin->username,
+                        $admin->mail,
+                        'admin'
+                    ],
+                ]);
+        }
+
+        $table
+        ->addRows([
+            new TableSeparator(),
+            [new TableCell('Organisation Members', ['colspan' => 4])],
+            new TableSeparator(),
+        ]);
+
         foreach ($members as $member) {
             $teamList = array_map(function ($team) {
                 return $team->name;
             }, $member->teams->getArrayCopy());
             $teamString = implode(',', $teamList);
-            /** @var MemberResponse $permission */
+            /** @var MemberResponse $member */
             $table
                 ->addRows([
                     [
