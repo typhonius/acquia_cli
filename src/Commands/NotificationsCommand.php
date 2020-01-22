@@ -38,7 +38,6 @@ class NotificationsCommand extends AcquiaCommand
 
         $notificationsAdapter = new Notifications($this->cloudapi);
         $notifications = $notificationsAdapter->getAll($uuid);
-
         $this->cloudapi->clearQuery();
 
         $output = $this->output();
@@ -48,17 +47,6 @@ class NotificationsCommand extends AcquiaCommand
         $tz = $this->extraConfig['timezone'];
         $format = $this->extraConfig['format'];
         $timezone = new \DateTimeZone($tz);
-
-        // // Get members to map to notifications below
-        // $organizationUuid = $notifications[0]->context->organization->uuids[0];
-        // $organizationsAdapter = new Organizations($this->cloudapi);
-        
-        // // $members = [];
-        // // foreach ($organizationsAdapter->getMembers($organizationUuid) as $member) {
-        // //     $members[$member->uuid] = $member->mail;
-        // // }
-        // // var_dump($members);
-        // // die;
 
         foreach ($notifications as $notification) {
             $createdDate = new \DateTime($notification->created_at);
@@ -82,9 +70,9 @@ class NotificationsCommand extends AcquiaCommand
      * Gets detailed information about a specific notification
      *
      * @param string $uuid
-     * @param string $taskUuid
+     * @param string $notificationUuid
      *
-     * @command task:info
+     * @command notification:info
      * @alias n:i
      * @throws \Exception
      */
@@ -93,34 +81,21 @@ class NotificationsCommand extends AcquiaCommand
 
         $tz = $this->extraConfig['timezone'];
         $format = $this->extraConfig['format'];
+        $timezone = new \DateTimeZone($tz);
 
-        $this->cloudapi->addQuery('limit', 100);
-        $this->cloudapi->addQuery('sort', '~created');
-        $tasks = $this->cloudapi->tasks($uuid);
+        $notifications = new Notifications($this->cloudapi);
+        $notification = $notifications->get($notificationUuid);
 
-        foreach ($tasks as $task) {
-            if ($taskUuid === $task->uuid) {
-                $timezone = new \DateTimeZone($tz);
+        $createdDate = new \DateTime($notification->created_at);
+        $createdDate->setTimezone($timezone);
+        $completedDate = new \DateTime($notification->completed_at);
+        $completedDate->setTimezone($timezone);
 
-                $createdDate = new \DateTime($task->createdAt);
-                $startedDate = new \DateTime($task->startedAt);
-                $completedDate = new \DateTime($task->completedAt);
-
-                $createdDate->setTimezone($timezone);
-                $startedDate->setTimezone($timezone);
-                $completedDate->setTimezone($timezone);
-
-                $this->say('ID: ' . $task->uuid);
-                $this->say('Sender: ' . $task->user->mail);
-                $this->say('Description: ' . htmlspecialchars_decode($task->description));
-                $this->say('Status: ' . $task->status);
-                $this->say('Created: ' . $createdDate->format($format));
-                $this->say('Started: ' . $startedDate->format($format));
-                $this->say('Completed: ' . $completedDate->format($format));
-
-                return;
-            }
-        }
-        throw new \Exception('Unable to find Task ID');
+        $this->say(sprintf('ID: %s', $notification->uuid));
+        $this->say(sprintf('Event: %s', $notification->event));
+        $this->say(sprintf('Description: %s', htmlspecialchars_decode($notification->description)));
+        $this->say(sprintf('Status: %s', $notification->status));
+        $this->say(sprintf('Created: %s', $createdDate->format($format)));
+        $this->say(sprintf('Completed: %s', $completedDate->format($format)));
     }
 }
