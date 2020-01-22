@@ -17,6 +17,8 @@ use Robo\Tasks;
 use Robo\Robo;
 use Exception;
 use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Helper\TableStyle;
 
 /**
  * Class AcquiaCommand
@@ -65,6 +67,8 @@ abstract class AcquiaCommand extends Tasks
 
         /** @var \AcquiaCloudApi\CloudApi\Client $cloudapi */
         $this->cloudapi = $cloudapi;
+
+        $this->setStyles();
     }
 
     /**
@@ -251,7 +255,7 @@ abstract class AcquiaCommand extends Tasks
                     // Completed tasks should break out of the loop and continue execution.
                     break(2);
                 default:
-                    throw new \Exception('Unknown task status.');
+                    throw new \Exception('Unknown notification status.');
                     break(2);
             }
 
@@ -328,7 +332,7 @@ abstract class AcquiaCommand extends Tasks
      * @param EnvironmentResponse $environmentFrom
      * @param EnvironmentResponse $environmentTo
      */
-    protected function backupFiles($uuid, EnvironmentResponse $environmentFrom, EnvironmentResponse $environmentTo)
+    protected function copyFiles($uuid, EnvironmentResponse $environmentFrom, EnvironmentResponse $environmentTo)
     {
         // Copy files from prod to non-prod.
         $labelFrom = $environmentFrom->label;
@@ -426,5 +430,12 @@ abstract class AcquiaCommand extends Tasks
 
         $this->cloudapi->purgeVarnishCache($environment->uuid, $domainsList);
         $this->waitForTask($uuid, 'VarnishCleared');
+    }
+
+    protected function setStyles()
+    {
+        $tableStyle = new TableStyle();
+        $tableStyle->setPadType(STR_PAD_BOTH);
+        Table::setStyleDefinition('center-align', $tableStyle);
     }
 }
