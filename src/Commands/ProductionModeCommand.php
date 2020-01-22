@@ -3,6 +3,7 @@
 namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\Response\EnvironmentResponse;
+use AcquiaCloudApi\Endpoints\Environments;
 
 /**
  * Class ProductionModeCommand
@@ -21,15 +22,14 @@ class ProductionModeCommand extends AcquiaCommand
      * @command productionmode:enable
      * @alias pm:enable
      */
-    public function acquiaProductionModeEnable($uuid, EnvironmentResponse $environment)
+    public function productionModeEnable($uuid, EnvironmentResponse $environment)
     {
         if ('prod' !== $environment->name) {
             throw new \Exception('Production mode may only be enabled/disabled on the prod environment.');
         }
-        $label = $environment->label;
-        $this->say("Enabling production mode for ${label} environment");
-        $this->cloudapi->enableProductionMode($environment->uuid);
-        $this->waitForTask($uuid, 'ProductionModeEnabled');
+        $this->say(sprintf('Enabling production mode for %s environment', $environment->label));
+        $environmentAdapter = new Environments($this->cloudapi);
+        $environmentAdapter->enableProductionMode($environment->uuid);
     }
 
     /**
@@ -42,17 +42,16 @@ class ProductionModeCommand extends AcquiaCommand
      * @command productionmode:disable
      * @alias pm:disable
      */
-    public function acquiaRemoveDomain($uuid, EnvironmentResponse $environment)
+    public function productionModeDisable($uuid, EnvironmentResponse $environment)
     {
         if ('prod' !== $environment->name) {
             throw new \Exception('Production mode may only be enabled/disabled on the prod environment.');
         }
 
         if ($this->confirm('Are you sure you want to disable production mode?')) {
-            $label = $environment->label;
-            $this->say("Disabling production mode for ${label} environment");
-            $this->cloudapi->disableProductionMode($environment->uuid);
-            $this->waitForTask($uuid, 'ProductionModeDisabled');
+            $this->say(sprintf('Disabling production mode for %s environment', $environment->label));
+            $environmentAdapter = new Environments($this->cloudapi);
+            $environmentAdapter->disableProductionMode($environment->uuid);
         }
     }
 }
