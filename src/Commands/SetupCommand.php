@@ -81,7 +81,7 @@ class SetupCommand extends Tasks
         $yaml = Yaml::dump($config, 3, 2);
 
         if (!is_dir(dirname($location))) {
-            mkdir(dirname($location));
+            mkdir(dirname($location), 700);
         }
         if (file_put_contents($location, $yaml)) {
             $this->say(sprintf('Configuration file written to %s', $location));
