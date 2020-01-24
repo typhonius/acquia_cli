@@ -43,9 +43,9 @@ class InsightsCommand extends AcquiaCommand
      * Shows insights alerts for specified applications.
      *
      * @param string $siteId
+     * @option failed Whether to only show failed insight checks.
      *
      * @command insights:alerts:list
-     * @option failed Whether to only show failed insight checks.
      */
     public function insightsAlertsList($siteId, $options = ['failed' => null])
     {
