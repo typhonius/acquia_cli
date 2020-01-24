@@ -90,10 +90,9 @@ class DomainCommand extends AcquiaCommand
      * @command domain:create
      * @alias domain:add
      */
-    public function domainAdd($uuid, $environment, $domain)
+    public function domainCreate($uuid, $environment, $domain)
     {
-        $label = $environment->label;
-        $this->say("Adding ${domain} to ${label} environment");
+        $this->say(sprintf('Adding %s to environment %s', $domain, $environment->label));
         $domainAdapter = new Domains($this->cloudapi);
         $response = $domainAdapter->create($environment->uuid, $domain);
         $this->waitForNotification($response);
@@ -112,8 +111,7 @@ class DomainCommand extends AcquiaCommand
     public function domainDelete($uuid, $environment, $domain)
     {
         if ($this->confirm('Are you sure you want to remove this domain?')) {
-            $label = $environment->label;
-            $this->say("Removing ${domain} from environment ${label}");
+            $this->say(sprintf('Removing %s from environment %s', $domain, $environment->label));
             $domainAdapter = new Domains($this->cloudapi);
             $response = $domainAdapter->delete($environment->uuid, $domain);
             $this->waitForNotification($response);
@@ -130,15 +128,18 @@ class DomainCommand extends AcquiaCommand
      *
      * @command domain:move
      */
-    public function domainRemove($uuid, $domain, $environmentFrom, $environmentTo)
+    public function domainMove($uuid, $domain, $environmentFrom, $environmentTo)
     {
-        $environmentFromLabel = $environmentFrom->label;
-        $environmentToLabel = $environmentTo->label;
         if ($this->confirm(
-            "Are you sure you want to move ${domain} from ${environmentFromLabel} to ${environmentToLabel}?"
+            sprintf(
+                'Are you sure you want to move %s from environment %s to %s?',
+                $domain,
+                $environmentFrom->label,
+                $environmentTo->label
+            )
         )) {
             $domainAdapter = new Domains($this->cloudapi);
-            $this->say("Moving ${domain} from ${environmentFromLabel} to ${environmentToLabel}");
+            $this->say(sprintf('Moving %s from %s to %s', $domain, $environmentFrom->label, $environmentTo->label));
 
             $deleteResponse = $domainAdapter->delete($environmentFrom->uuid, $domain);
             $this->waitForNotification($deleteResponse);
