@@ -19,10 +19,9 @@ class ApplicationsCommand extends AcquiaCommand
      * Shows all sites a user has access to.
      *
      * @command application:list
-     * @alias app:list
-     * @alias a:l
+     * @aliases app:list,a:l
      */
-    public function acquiaApplications()
+    public function applications()
     {
         $applicationsAdapter = new Applications($this->cloudapi);
         $applications = $applicationsAdapter->getAll();
@@ -49,10 +48,9 @@ class ApplicationsCommand extends AcquiaCommand
      * @param string $uuid
      *
      * @command application:info
-     * @alias app:info
-     * @alias a:i
+     * @aliases app:info,a:i
      */
-    public function acquiaApplicationInfo($uuid)
+    public function applicationInfo($uuid)
     {
         $environmentsAdapter = new Environments($this->cloudapi);
         $environments = $environmentsAdapter->getAll($uuid);
@@ -98,5 +96,68 @@ class ApplicationsCommand extends AcquiaCommand
         }
         $this->say('💻  indicates environment in livedev mode.');
         $this->say('🔒  indicates environment in production mode.');
+    }
+
+    /**
+     * Shows a list of all tags on an application.
+     *
+     * @param string $uuid
+     *
+     * @command application:tags
+     * @aliases app:tags
+     */
+    public function applicationsTags($uuid)
+    {
+        $applicationsAdapter = new Applications($this->cloudapi);
+        $tags = $applicationsAdapter->getAllTags($uuid);
+
+        $output = $this->output();
+        $table = new Table($output);
+        $table->setHeaders(['Name', 'Color']);
+        foreach ($tags as $tag) {
+            $table
+                ->addRows([
+                    [
+                        $tag->name,
+                        $tag->color,
+                    ],
+                ]);
+        }
+        $table->render();
+    }
+
+    /**
+     * Creates an application tag.
+     *
+     * @param string              $uuid
+     * @param string              $name
+     * @param string              $color
+     *
+     * @command application:tag:create
+     * @aliases app:tag:create
+     */
+    public function applicationTagCreate($uuid, $name, $color)
+    {
+        $this->say(sprintf('Creating application tag %s:%s', $name, $color));
+        $applicationsAdapter = new Applications($this->cloudapi);
+        $response = $applicationsAdapter->createTag($uuid, $name, $color);
+        $this->waitForNotification($response);
+    }
+
+    /**
+     * Deletes an application tag.
+     *
+     * @param string              $uuid
+     * @param string              $name
+     *
+     * @command application:tag:delete
+     * @aliases app:tag:delete
+     */
+    public function applicationTagDelete($uuid, $name)
+    {
+        $this->say(sprintf('Deleting application tag %s', $name));
+        $applicationsAdapter = new Applications($this->cloudapi);
+        $response = $applicationsAdapter->deleteTag($uuid, $name);
+        $this->waitForNotification($response);
     }
 }
