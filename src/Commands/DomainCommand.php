@@ -148,4 +148,35 @@ class DomainCommand extends AcquiaCommand
             $this->waitForNotification($addResponse);
         }
     }
+
+    /**
+     * Clears varnish cache for a specific domain.
+     *
+     * @param string $uuid
+     *
+     * @command domain:purge
+     */
+    public function domainPurge($uuid, $environment, $domain = null)
+    {
+        if ($environment->name === 'prod' &&
+            !$this->confirm("Are you sure you want to purge varnish on the production environment?")) {
+            return;
+        }
+
+        $domainAdapter = new Domains($this->cloudapi);
+
+        if (null === $domain) {
+            $domains = $domainAdapter->getAll($environment->uuid);
+            $domainNames = array_map(function ($domain) {
+                $this->say(sprintf('Purging domain: %s', $domain->hostname));
+                return $domain->hostname;
+            }, $domains->getArrayCopy());
+        } else {
+            $this->say(sprintf('Purging domain: %s', $domain));
+            $domainNames = [$domain];
+        }
+
+        $response = $domainAdapter->purge($environment->uuid, $domainNames);
+        $this->waitForNotification($response);
+    }
 }
