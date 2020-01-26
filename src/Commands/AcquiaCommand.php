@@ -245,9 +245,8 @@ abstract class AcquiaCommand extends Tasks
         $progress->setEmptyBarCharacter('<fg=red>⚬</>');
         $progress->setProgressCharacter('<fg=green>➤</>');
         $progress->setFormat("<fg=white;bg=cyan> %message:-45s%</>\n%elapsed:6s% [%bar%] %percent:3s%%");
-
-        $progress->start();
         $progress->setMessage('Looking up notification');
+        $progress->start();
 
         $notificationAdapter = new Notifications($this->cloudapi);
 
@@ -345,79 +344,6 @@ abstract class AcquiaCommand extends Tasks
         $this->say(sprintf('Backing up DB (%s) on %s', $database->name, $environment->label));
         $dbAdapter = new DatabaseBackups($this->cloudapi);
         $response = $dbAdapter->create($environment->uuid, $database->name);
-        $this->waitForNotification($response);
-    }
-
-    /**
-     * @param string              $uuid
-     * @param EnvironmentResponse $environmentFrom
-     * @param EnvironmentResponse $environmentTo
-     */
-    protected function copyFiles($uuid, EnvironmentResponse $environmentFrom, EnvironmentResponse $environmentTo)
-    {
-        // Copy files from prod to non-prod.
-        $environmentAdapter = new Environments($this->cloudapi);
-        $this->say(sprintf('Moving files from %s to %s', $environmentFrom->label, $environmentTo->label));
-        $response = $environmentAdapter->copyFiles($environmentFrom->uuid, $environmentTo->uuid);
-        $this->waitForNotification($response);
-    }
-
-    /**
-     * @param string              $uuid
-     * @param EnvironmentResponse $environmentFrom
-     * @param EnvironmentResponse $environmentTo
-     */
-    protected function acquiaDeployEnvToEnv(
-        $uuid,
-        EnvironmentResponse $environmentFrom,
-        EnvironmentResponse $environmentTo
-    ) {
-        $this->backupAllEnvironmentDbs($uuid, $environmentTo);
-        $this->say(
-            sprintf(
-                'Deploying code from the %s environment to the %s environment',
-                $environmentFrom->label,
-                $environmentTo->label
-            )
-        );
-
-        $code = new Code($this->cloudapi);
-        $response = $code->deploy($environmentFrom->uuid, $environmentTo->uuid);
-        $this->waitForNotification($response);
-    }
-
-    /**
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
-     * @param string              $branch
-     */
-    protected function acquiaDeployEnv($uuid, EnvironmentResponse $environment, $branch)
-    {
-        $this->backupAllEnvironmentDbs($uuid, $environment);
-        $this->say(sprintf('Deploying %s to the %s environment', $branch, $environment->label));
-
-        $code = new Code($this->cloudapi);
-        $response = $code->switch($environment->uuid, $branch);
-        $this->waitForNotification($response);
-    }
-
-    /**
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
-     */
-    protected function acquiaPurgeVarnishForEnvironment($uuid, EnvironmentResponse $environment)
-    {
-        $domainAdapter = new Domains($this->cloudapi);
-        $domains = $domainAdapter->getAll($environment->uuid);
-
-        $domainsList = array_map(function ($domain) {
-            $this->say(sprintf('Purging varnish cache for %s', $domain->hostname));
-            return $domain->hostname;
-        }, $domains->getArrayCopy());
-
-
-        $domainAdapter = new Domains($this->cloudapi);
-        $response = $domainAdapter->purge($environment->uuid, $domainsList);
         $this->waitForNotification($response);
     }
 

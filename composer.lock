@@ -1868,12 +1868,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/typhonius/acquia-php-sdk-v2.git",
-                "reference": "1b1e9e45f4f2b735f98fa43ad06ec6bdcaf86a3b"
+                "reference": "c2ef5c8044ba53b7133fa931aab995fecc335602"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/typhonius/acquia-php-sdk-v2/zipball/1b1e9e45f4f2b735f98fa43ad06ec6bdcaf86a3b",
-                "reference": "1b1e9e45f4f2b735f98fa43ad06ec6bdcaf86a3b",
+                "url": "https://api.github.com/repos/typhonius/acquia-php-sdk-v2/zipball/c2ef5c8044ba53b7133fa931aab995fecc335602",
+                "reference": "c2ef5c8044ba53b7133fa931aab995fecc335602",
                 "shasum": ""
             },
             "require": {
@@ -1908,7 +1908,7 @@
                 }
             ],
             "description": "A PHP SDK for Acquia CloudAPI v2",
-            "time": "2020-01-24T23:11:37+00:00"
+            "time": "2020-01-26T01:43:30+00:00"
         }
     ],
     "packages-dev": [
