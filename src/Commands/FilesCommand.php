@@ -3,6 +3,7 @@
 namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\Response\EnvironmentResponse;
+use AcquiaCloudApi\Endpoints\Environments;
 
 /**
  * Class FilesCommand
@@ -18,6 +19,7 @@ class FilesCommand extends AcquiaCommand
      * @param EnvironmentResponse $environmentTo
      *
      * @command files:copy
+     * @aliases f:c
      */
     public function filesCopy($uuid, EnvironmentResponse $environmentFrom, EnvironmentResponse $environmentTo)
     {
@@ -28,8 +30,10 @@ class FilesCommand extends AcquiaCommand
                 $environmentTo->label
             )
         )) {
+            $environmentAdapter = new Environments($this->cloudapi);
             $this->say(sprintf('Copying files from %s to %s', $environmentFrom->label, $environmentTo->label));
-            $this->copyFiles($uuid, $environmentFrom, $environmentTo);
+            $response = $environmentAdapter->copyFiles($environmentFrom->uuid, $environmentTo->uuid);
+            $this->waitForNotification($response);
         }
     }
 }

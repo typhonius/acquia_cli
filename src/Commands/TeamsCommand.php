@@ -44,7 +44,7 @@ class TeamsCommand extends AcquiaCommand
     public function teamInvite($teamUuid, $email, $roles)
     {
         $rolesArray = explode(',', $roles);
-        $this->say("Inviting ${email} to team.");
+        $this->say(sprintf('Inviting %s to team.', $email));
         $teamsAdapter = new Teams($this->cloudapi);
         $teamsAdapter->invite($teamUuid, $email, $rolesArray);
     }
@@ -69,7 +69,7 @@ class TeamsCommand extends AcquiaCommand
      * Displays all permissions available on the Acquia Cloud.
      *
      * @command permissions:list
-     * @alias perm:list
+     * @aliases perm:list
      */
     public function showPermissions()
     {
@@ -107,7 +107,7 @@ class TeamsCommand extends AcquiaCommand
     public function addRole($organizationUuid, $name, $permissions, $description = null)
     {
         $permissionsArray = explode(',', $permissions);
-        $this->say("Creating new role (${name}) and adding it to organisation.");
+        $this->say(sprintf('Creating new role (%s) and adding it to organisation.', $name));
         $rolesAdapter = new Roles($this->cloudapi);
         $rolesAdapter->create($organizationUuid, $name, $permissionsArray, $description);
     }

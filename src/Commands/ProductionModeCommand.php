@@ -20,7 +20,7 @@ class ProductionModeCommand extends AcquiaCommand
      * @throws \Exception
      *
      * @command productionmode:enable
-     * @alias pm:enable
+     * @aliases pm:enable
      */
     public function productionModeEnable($uuid, EnvironmentResponse $environment)
     {
@@ -40,7 +40,7 @@ class ProductionModeCommand extends AcquiaCommand
      * @throws \Exception
      *
      * @command productionmode:disable
-     * @alias pm:disable
+     * @aliases pm:disable
      */
     public function productionModeDisable($uuid, EnvironmentResponse $environment)
     {

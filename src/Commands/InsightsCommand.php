@@ -60,7 +60,7 @@ class InsightsCommand extends AcquiaCommand
         $table->setColumnStyle(4, 'center-align');
 
         foreach ($alerts as $alert) {
-            /** @var InsightModuleResponse $module */
+            /** @var InsightModuleResponse $alert */
 
             if ($options['failed'] && !$alert->failed_value) {
                 continue;
