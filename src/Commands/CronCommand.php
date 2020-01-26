@@ -58,7 +58,8 @@ class CronCommand extends AcquiaCommand
      * @param string              $frequency     The crontab format frequency wrapped in quotes
      * @param string              $label         An optional label for the cron command wrapped in quotes.
      *
-     * @command cron:add
+     * @command cron:create
+     * @aliases cron:add
      */
     public function cronAdd($uuid, $environment, $commandString, $frequency, $label)
     {
@@ -75,6 +76,7 @@ class CronCommand extends AcquiaCommand
      * @param int                 $cronId
      *
      * @command cron:delete
+     * @aliases cron:remove
      */
     public function cronDelete($uuid, $environment, $cronId)
     {

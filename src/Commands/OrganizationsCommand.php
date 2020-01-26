@@ -22,7 +22,7 @@ class OrganizationsCommand extends AcquiaCommand
      * Shows a list of all organizations.
      *
      * @command organization:list
-     * @alias org:list
+     * @aliases org:list,o:l
      */
     public function showOrganizations()
     {
@@ -57,7 +57,7 @@ class OrganizationsCommand extends AcquiaCommand
      * @param OrganizationResponse $organization
      *
      * @command organization:applications
-     * @alias org:apps
+     * @aliases org:apps,o:a
      */
     public function organizationApplications($organization)
     {
@@ -69,7 +69,7 @@ class OrganizationsCommand extends AcquiaCommand
         $table = new Table($this->output());
         $table->setHeaders(['UUID', 'Name', 'Type', 'Hosting ID']);
         foreach ($applications as $application) {
-            /** @var ApplicationResponse $permission */
+            /** @var ApplicationResponse $application */
             $table
                 ->addRows([
                     [
@@ -90,7 +90,7 @@ class OrganizationsCommand extends AcquiaCommand
      * @param OrganizationResponse $organization
      *
      * @command organization:teams
-     * @alias org:teams
+     * @aliases org:teams,o:t
      */
     public function organizationTeams($organization)
     {
@@ -102,7 +102,7 @@ class OrganizationsCommand extends AcquiaCommand
         $table = new Table($this->output());
         $table->setHeaders(['UUID', 'Name']);
         foreach ($teams as $team) {
-            /** @var TeamResponse $permission */
+            /** @var TeamResponse $team */
             $table
                 ->addRows([
                     [
@@ -121,7 +121,7 @@ class OrganizationsCommand extends AcquiaCommand
      * @param OrganizationResponse $organization
      *
      * @command organization:members
-     * @alias org:members
+     * @aliases org:members,o:m
      */
     public function members($organization)
     {
@@ -161,11 +161,11 @@ class OrganizationsCommand extends AcquiaCommand
         ]);
 
         foreach ($members as $member) {
+            /** @var MemberResponse $member */
             $teamList = array_map(function ($team) {
                 return $team->name;
             }, $member->teams->getArrayCopy());
             $teamString = implode(',', $teamList);
-            /** @var MemberResponse $member */
             $table
                 ->addRows([
                     [

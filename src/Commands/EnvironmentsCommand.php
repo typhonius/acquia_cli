@@ -3,6 +3,7 @@
 namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\Endpoints\Environments;
+use AcquiaCloudApi\Endpoints\Domains;
 use AcquiaCloudApi\Endpoints\Servers;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use Symfony\Component\Console\Helper\Table;
@@ -20,8 +21,7 @@ class EnvironmentsCommand extends AcquiaCommand
      * @param string      $uuid
      *
      * @command environment:list
-     * @alias env:list
-     * @alias e:l
+     * @aliases env:list,e:l
      */
     public function environmentList($uuid)
     {
@@ -40,6 +40,7 @@ class EnvironmentsCommand extends AcquiaCommand
         ]);
 
         foreach ($environments as $environment) {
+            /** @var EnvironmentResponse $environment */
             $table
             ->addRows([
                 [
@@ -61,8 +62,7 @@ class EnvironmentsCommand extends AcquiaCommand
      * @param string|null $env
      *
      * @command environment:info
-     * @alias env:info
-     * @alias e:i
+     * @aliases env:info,e:i
      */
     public function environmentInfo($uuid, $env = null)
     {
@@ -179,7 +179,7 @@ class EnvironmentsCommand extends AcquiaCommand
      * @param string $name
      *
      * @command environment:rename
-     * @alias env:rename
+     * @alias env:rename,e:rename
      */
     public function environmentRename($uuid, $environment, $name)
     {
@@ -195,7 +195,7 @@ class EnvironmentsCommand extends AcquiaCommand
      * @param EnvironmentResponse $environment
      *
      * @command environment:delete
-     * @alias env:delete
+     * @alias env:delete,e:d,environment:remove,env:remove
      */
     public function environmentDelete($uuid, $environment)
     {

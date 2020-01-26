@@ -4,6 +4,7 @@ namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\Response\VariablesResponse;
 use AcquiaCloudApi\Response\VariableResponse;
+use AcquiaCloudApi\Response\EnvironmentResponse;
 use AcquiaCloudApi\Endpoints\Variables;
 use Symfony\Component\Console\Helper\Table;
 
@@ -21,7 +22,7 @@ class VariablesCommand extends AcquiaCommand
      * @param EnvironmentResponse $environment
      *
      * @command variable:list
-     * @alias v:l
+     * @aliases v:l
      */
     public function variablesList($uuid, $environment)
     {
@@ -88,17 +89,16 @@ class VariablesCommand extends AcquiaCommand
      * @param string              $uuid
      * @param EnvironmentResponse $environment
      * @param string              $name
-     * @param string              $value
      *
      * @command variable:delete
      * @aliases variable:remove,v:d,v:r
      */
-    public function variableDelete($uuid, $environment, $name, $value)
+    public function variableDelete($uuid, $environment, $name)
     {
         if ($this->confirm('Are you sure you want to remove this environment variable?')) {
-            $this->say(sprintf('Removing variable %s:%s from %s environment', $name, $value, $environment->label));
+            $this->say(sprintf('Removing variable %s from %s environment', $name, $environment->label));
             $variableAdapter = new Variables($this->cloudapi);
-            $response = $variableAdapter->delete($environment->uuid, $name, $value);
+            $response = $variableAdapter->delete($environment->uuid, $name);
             $this->waitForNotification($response);
         }
     }
