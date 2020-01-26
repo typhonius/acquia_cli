@@ -7,6 +7,8 @@ use AcquiaCloudApi\Response\EnvironmentResponse;
 use AcquiaCloudApi\Endpoints\Databases;
 use AcquiaCloudApi\Endpoints\DatabaseBackups;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Helper\TableSeparator;
+use Symfony\Component\Console\Helper\TableCell;
 
 /**
  * Class DomainCommand
@@ -14,19 +16,6 @@ use Symfony\Component\Console\Helper\Table;
  */
 class DbCommand extends AcquiaCommand
 {
-    /**
-     * Copies all DBs from one environment to another environment.
-     *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environmentFrom
-     * @param EnvironmentResponse $environmentTo
-     *
-     * @command db:copy:all
-     */
-    public function acquiaCopyDb($uuid, EnvironmentResponse $environmentFrom, EnvironmentResponse $environmentTo)
-    {
-        $this->backupAndMoveDbs($uuid, $environmentFrom, $environmentTo);
-    }
 
     /**
      * Backs up all DBs in an environment.
@@ -34,7 +23,8 @@ class DbCommand extends AcquiaCommand
      * @param string              $uuid
      * @param EnvironmentResponse $environment
      *
-     * @command db:backup
+     * @command database:backup
+     * @aliases db:backup
      */
     public function dbBackup($uuid, $environment)
     {
@@ -42,26 +32,62 @@ class DbCommand extends AcquiaCommand
     }
 
     /**
+     * Shows all databases.
+     *
+     * @param string              $uuid
+     *
+     * @command database:list
+     * @aliases db:list
+     */
+    public function dbList($uuid)
+    {
+        $dbAdapter = new Databases($this->cloudapi);
+        $databases = $dbAdapter->getAll($uuid);
+        $table = new Table($this->output());
+        $table->setHeaders(['Databases']);
+        foreach ($databases as $database) {
+            $table
+                ->addRows([
+                    [
+                        $database->name,
+                    ]
+                ]);
+        }
+        $table->render();
+    }
+
+    /**
      * Shows a list of database backups for all databases in an environment.
      *
      * @param string              $uuid
      * @param EnvironmentResponse $environment
+     * @param string              $dbName
      *
-     * @command db:backup:list
+     * @command database:backup:list
+     * @aliases db:backup:list
      */
-    public function dbBackupList($uuid, $environment)
+    public function dbBackupList($uuid, $environment, $dbName = null)
     {
+        if (null !== $dbName) {
+            $this->cloudapi->addQuery('filter', "name=${dbName}");
+        }
         $dbAdapter = new Databases($this->cloudapi);
         $databases = $dbAdapter->getAll($uuid);
+        $this->cloudapi->clearQuery();
 
         $table = new Table($this->output());
         $table->setHeaders(['ID', 'Type', 'Timestamp']);
 
         foreach ($databases as $database) {
-            $dbName = $database->name;
-            $this->yell($dbName);
             $dbBackupsAdapter = new DatabaseBackups($this->cloudapi);
-            $backups = $dbBackupsAdapter->getAll($environment->uuid, $dbName);
+            $backups = $dbBackupsAdapter->getAll($environment->uuid, $database->name);
+            $table
+                ->addRows(
+                    [
+                        [new TableCell($database->name, ['colspan' => 3])],
+                        new TableSeparator()
+                    ]
+                );
 
             foreach ($backups as $backup) {
                 $table
@@ -85,7 +111,8 @@ class DbCommand extends AcquiaCommand
      * @param string              $dbName
      * @param int                 $backupId
      *
-     * @command db:backup:restore
+     * @command database:backup:restore
+     * @aliases db:backup:restore
      */
     public function dbBackupRestore($uuid, $environment, $dbName, $backupId)
     {
@@ -106,7 +133,8 @@ class DbCommand extends AcquiaCommand
      * @param string              $dbName
      * @param int                 $backupId
      *
-     * @command db:backup:link
+     * @command database:backup:link
+     * @aliases db:backup:link
      */
     public function dbBackupLink($uuid, $environment, $dbName, $backupId)
     {
@@ -123,14 +151,14 @@ class DbCommand extends AcquiaCommand
      * @param string              $dbName
      * @param int                 $backupId
      *
-     * @command db:backup:download
+     * @command database:backup:download
+     * @aliases db:backup:download
      */
     public function dbBackupDownload($uuid, $environment, $dbName, $backupId, $path = null)
     {
 
         $dbAdapter = new DatabaseBackups($this->cloudapi);
-        $envName = $environment->name;
-        $backupName = "${envName}-${dbName}-${backupId}";
+        $backupName = sprintf('%s-%s-%s', $environment->name, $dbName, $backupId);
         $backup = $dbAdapter->download($environment->uuid, $dbName, $backupId);
         
         if (null === $path) {
@@ -143,5 +171,101 @@ class DbCommand extends AcquiaCommand
         } else {
             $this->say('Unable to download database backup.');
         }
+    }
+
+    /**
+     * Creates a database.
+     *
+     * @param string              $uuid
+     * @param string              $dbName
+     *
+     * @command database:create
+     * @aliases database:add,db:create,db:add
+     */
+    public function dbCreate($uuid, $dbName)
+    {
+        $dbAdapter = new Databases($this->cloudapi);
+        $response = $dbAdapter->create($uuid, $dbName);
+        $this->waitForNotification($response);
+    }
+
+    /**
+     * Deletes a database.
+     *
+     * @param string              $uuid
+     * @param string              $dbName
+     *
+     * @command database:delete
+     * @aliases database:remove,db:remove,db:delete
+     */
+    public function dbDelete($uuid, $dbName)
+    {
+        if ($this->confirm('Are you sure you want to delete this database?')) {
+            $this->say(sprintf('Deleting database (%s)', $dbName));
+            $dbAdapter = new Databases($this->cloudapi);
+            $response = $dbAdapter->delete($uuid, $dbName);
+            $this->waitForNotification($response);
+        }
+    }
+
+    /**
+     * Truncaates a database.
+     *
+     * @param string              $uuid
+     * @param string              $dbName
+     *
+     * @command database:truncate
+     * @aliases db:truncate
+     */
+    public function dbTruncate($uuid, $dbName)
+    {
+        if ($this->confirm('Are you sure you want to truncate this database?')) {
+            $this->say(sprintf('Truncate database (%s)', $dbName));
+            $dbAdapter = new Databases($this->cloudapi);
+            $response = $dbAdapter->truncate($uuid, $dbName);
+            $this->waitForNotification($response);
+        }
+    }
+
+    /**
+     * Copies a database from one environment to another.
+     *
+     * @param string              $uuid
+     * @param EnvironmentResponse $environmentFrom
+     * @param EnvironmentResponse $environmentTo
+     * @param string              $dbName
+     *
+     * @command database:copy
+     * @aliases db:copy
+     */
+    public function dbCopy($uuid, $environmentFrom, $environmentTo, $dbName)
+    {
+        if ($this->confirm(
+            sprintf(
+                'Are you sure you want to copy database %s from %s to %s?',
+                $dbName,
+                $environmentFrom->label,
+                $environmentTo->label
+            )
+        )) {
+            $dbAdapter = new Databases($this->cloudapi);
+            $response = $dbAdapter->copy($environmentFrom->uuid, $dbName, $environmentTo->uuid);
+            $this->waitForNotification($response);
+        }
+    }
+
+    /**
+     * Copies all DBs from one environment to another environment.
+     *
+     * @param string              $uuid
+     * @param EnvironmentResponse $environmentFrom
+     * @param EnvironmentResponse $environmentTo
+     *
+     * @command database:copy:all
+     * @aliases db:copy:all
+     */
+    public function dbCopyAll($uuid, EnvironmentResponse $environmentFrom, EnvironmentResponse $environmentTo)
+    {
+        $this->backupAndMoveDbs($uuid, $environmentFrom, $environmentTo);
     }
 }
