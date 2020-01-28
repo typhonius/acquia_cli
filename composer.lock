@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ec1f62f25b40448a45e6ecd7884f1923",
+    "content-hash": "4ac4ad45c67fb8a2ee466f30bed920e1",
     "packages": [
         {
             "name": "consolidation/annotated-command",
@@ -504,6 +504,49 @@
                 "notation"
             ],
             "time": "2017-01-20T21:14:22+00:00"
+        },
+        {
+            "name": "evenement/evenement",
+            "version": "v3.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/igorw/evenement.git",
+                "reference": "531bfb9d15f8aa57454f5f0285b18bec903b8fb7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/igorw/evenement/zipball/531bfb9d15f8aa57454f5f0285b18bec903b8fb7",
+                "reference": "531bfb9d15f8aa57454f5f0285b18bec903b8fb7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Evenement": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Igor Wiedler",
+                    "email": "igor@wiedler.ch"
+                }
+            ],
+            "description": "Événement is a very simple event dispatching library for PHP",
+            "keywords": [
+                "event-dispatcher",
+                "event-emitter"
+            ],
+            "time": "2017-07-23T21:35:13+00:00"
         },
         {
             "name": "grasmash/expander",
@@ -1153,6 +1196,421 @@
             "time": "2019-03-08T08:55:37+00:00"
         },
         {
+            "name": "ratchet/pawl",
+            "version": "v0.3.4",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ratchetphp/Pawl.git",
+                "reference": "3a7d5b78e0deaec82f42513a4a3193a8eb12feb1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ratchetphp/Pawl/zipball/3a7d5b78e0deaec82f42513a4a3193a8eb12feb1",
+                "reference": "3a7d5b78e0deaec82f42513a4a3193a8eb12feb1",
+                "shasum": ""
+            },
+            "require": {
+                "evenement/evenement": "^3.0 || ^2.0",
+                "php": ">=5.4",
+                "ratchet/rfc6455": "^0.2.3",
+                "react/socket": "^1.0 || ^0.8 || ^0.7"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8"
+            },
+            "suggest": {
+                "reactivex/rxphp": "~2.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Ratchet\\Client\\": "src"
+                },
+                "files": [
+                    "src/functions_include.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Asynchronous WebSocket client",
+            "keywords": [
+                "Ratchet",
+                "async",
+                "client",
+                "websocket",
+                "websocket client"
+            ],
+            "time": "2019-01-14T14:09:36+00:00"
+        },
+        {
+            "name": "ratchet/rfc6455",
+            "version": "v0.2.6",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ratchetphp/RFC6455.git",
+                "reference": "879e48c840f8dbc296d68d6a5030673df79bd916"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ratchetphp/RFC6455/zipball/879e48c840f8dbc296d68d6a5030673df79bd916",
+                "reference": "879e48c840f8dbc296d68d6a5030673df79bd916",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/psr7": "^1.0",
+                "php": ">=5.4.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.8.*",
+                "react/socket": "^1.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Ratchet\\RFC6455\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Boden",
+                    "email": "cboden@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "RFC6455 WebSocket protocol handler",
+            "homepage": "http://socketo.me",
+            "keywords": [
+                "WebSockets",
+                "rfc6455",
+                "websocket"
+            ],
+            "time": "2019-12-15T10:18:18+00:00"
+        },
+        {
+            "name": "react/cache",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/reactphp/cache.git",
+                "reference": "aa10d63a1b40a36a486bdf527f28bac607ee6466"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/reactphp/cache/zipball/aa10d63a1b40a36a486bdf527f28bac607ee6466",
+                "reference": "aa10d63a1b40a36a486bdf527f28bac607ee6466",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0",
+                "react/promise": "~2.0|~1.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.4 || ^5.7 || ^4.8.35"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "React\\Cache\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Async, Promise-based cache interface for ReactPHP",
+            "keywords": [
+                "cache",
+                "caching",
+                "promise",
+                "reactphp"
+            ],
+            "time": "2019-07-11T13:45:28+00:00"
+        },
+        {
+            "name": "react/dns",
+            "version": "v1.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/reactphp/dns.git",
+                "reference": "a214d90c2884dac18d0cac6176202f247b66d762"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/reactphp/dns/zipball/a214d90c2884dac18d0cac6176202f247b66d762",
+                "reference": "a214d90c2884dac18d0cac6176202f247b66d762",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0",
+                "react/cache": "^1.0 || ^0.6 || ^0.5",
+                "react/event-loop": "^1.0 || ^0.5",
+                "react/promise": "^2.7 || ^1.2.1",
+                "react/promise-timer": "^1.2"
+            },
+            "require-dev": {
+                "clue/block-react": "^1.2",
+                "phpunit/phpunit": "^7.0 || ^6.4 || ^5.7 || ^4.8.35"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "React\\Dns\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Async DNS resolver for ReactPHP",
+            "keywords": [
+                "async",
+                "dns",
+                "dns-resolver",
+                "reactphp"
+            ],
+            "time": "2019-08-15T09:06:31+00:00"
+        },
+        {
+            "name": "react/event-loop",
+            "version": "v1.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/reactphp/event-loop.git",
+                "reference": "6d24de090cd59cfc830263cfba965be77b563c13"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/reactphp/event-loop/zipball/6d24de090cd59cfc830263cfba965be77b563c13",
+                "reference": "6d24de090cd59cfc830263cfba965be77b563c13",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.0 || ^6.4 || ^5.7 || ^4.8.35"
+            },
+            "suggest": {
+                "ext-event": "~1.0 for ExtEventLoop",
+                "ext-pcntl": "For signal handling support when using the StreamSelectLoop",
+                "ext-uv": "* for ExtUvLoop"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "React\\EventLoop\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "ReactPHP's core reactor event loop that libraries can use for evented I/O.",
+            "keywords": [
+                "asynchronous",
+                "event-loop"
+            ],
+            "time": "2020-01-01T18:39:52+00:00"
+        },
+        {
+            "name": "react/promise",
+            "version": "v2.7.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/reactphp/promise.git",
+                "reference": "31ffa96f8d2ed0341a57848cbb84d88b89dd664d"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/reactphp/promise/zipball/31ffa96f8d2ed0341a57848cbb84d88b89dd664d",
+                "reference": "31ffa96f8d2ed0341a57848cbb84d88b89dd664d",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "React\\Promise\\": "src/"
+                },
+                "files": [
+                    "src/functions_include.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jan Sorgalla",
+                    "email": "jsorgalla@gmail.com"
+                }
+            ],
+            "description": "A lightweight implementation of CommonJS Promises/A for PHP",
+            "keywords": [
+                "promise",
+                "promises"
+            ],
+            "time": "2019-01-07T21:25:54+00:00"
+        },
+        {
+            "name": "react/promise-timer",
+            "version": "v1.5.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/reactphp/promise-timer.git",
+                "reference": "35fb910604fd86b00023fc5cda477c8074ad0abc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/reactphp/promise-timer/zipball/35fb910604fd86b00023fc5cda477c8074ad0abc",
+                "reference": "35fb910604fd86b00023fc5cda477c8074ad0abc",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3",
+                "react/event-loop": "^1.0 || ^0.5 || ^0.4 || ^0.3.5",
+                "react/promise": "^2.7.0 || ^1.2.1"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^6.4 || ^5.7 || ^4.8.35"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "React\\Promise\\Timer\\": "src/"
+                },
+                "files": [
+                    "src/functions_include.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Christian Lück",
+                    "email": "christian@lueck.tv"
+                }
+            ],
+            "description": "A trivial implementation of timeouts for Promises, built on top of ReactPHP.",
+            "homepage": "https://github.com/reactphp/promise-timer",
+            "keywords": [
+                "async",
+                "event-loop",
+                "promise",
+                "reactphp",
+                "timeout",
+                "timer"
+            ],
+            "time": "2019-03-27T18:10:32+00:00"
+        },
+        {
+            "name": "react/socket",
+            "version": "v1.3.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/reactphp/socket.git",
+                "reference": "10f0629ec83ea0fa22597f348623f554227e3ca0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/reactphp/socket/zipball/10f0629ec83ea0fa22597f348623f554227e3ca0",
+                "reference": "10f0629ec83ea0fa22597f348623f554227e3ca0",
+                "shasum": ""
+            },
+            "require": {
+                "evenement/evenement": "^3.0 || ^2.0 || ^1.0",
+                "php": ">=5.3.0",
+                "react/dns": "^1.0 || ^0.4.13",
+                "react/event-loop": "^1.0 || ^0.5 || ^0.4 || ^0.3.5",
+                "react/promise": "^2.6.0 || ^1.2.1",
+                "react/promise-timer": "^1.4.0",
+                "react/stream": "^1.1"
+            },
+            "require-dev": {
+                "clue/block-react": "^1.2",
+                "phpunit/phpunit": "^6.4 || ^5.7 || ^4.8.35"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "React\\Socket\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Async, streaming plaintext TCP/IP and secure TLS socket server and client connections for ReactPHP",
+            "keywords": [
+                "Connection",
+                "Socket",
+                "async",
+                "reactphp",
+                "stream"
+            ],
+            "time": "2019-07-10T10:11:14+00:00"
+        },
+        {
+            "name": "react/stream",
+            "version": "v1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/reactphp/stream.git",
+                "reference": "50426855f7a77ddf43b9266c22320df5bf6c6ce6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/reactphp/stream/zipball/50426855f7a77ddf43b9266c22320df5bf6c6ce6",
+                "reference": "50426855f7a77ddf43b9266c22320df5bf6c6ce6",
+                "shasum": ""
+            },
+            "require": {
+                "evenement/evenement": "^3.0 || ^2.0 || ^1.0",
+                "php": ">=5.3.8",
+                "react/event-loop": "^1.0 || ^0.5 || ^0.4 || ^0.3.5"
+            },
+            "require-dev": {
+                "clue/stream-filter": "~1.2",
+                "phpunit/phpunit": "^6.4 || ^5.7 || ^4.8.35"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "React\\Stream\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Event-driven readable and writable streams for non-blocking I/O in ReactPHP",
+            "keywords": [
+                "event-driven",
+                "io",
+                "non-blocking",
+                "pipe",
+                "reactphp",
+                "readable",
+                "stream",
+                "writable"
+            ],
+            "time": "2019-01-01T16:15:09+00:00"
+        },
+        {
             "name": "symfony/console",
             "version": "v4.4.3",
             "source": {
@@ -1747,20 +2205,20 @@
         },
         {
             "name": "symfony/service-contracts",
-            "version": "v2.0.1",
+            "version": "v1.1.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/service-contracts.git",
-                "reference": "144c5e51266b281231e947b51223ba14acf1a749"
+                "reference": "ffc7f5692092df31515df2a5ecf3b7302b3ddacf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/144c5e51266b281231e947b51223ba14acf1a749",
-                "reference": "144c5e51266b281231e947b51223ba14acf1a749",
+                "url": "https://api.github.com/repos/symfony/service-contracts/zipball/ffc7f5692092df31515df2a5ecf3b7302b3ddacf",
+                "reference": "ffc7f5692092df31515df2a5ecf3b7302b3ddacf",
                 "shasum": ""
             },
             "require": {
-                "php": "^7.2.5",
+                "php": "^7.1.3",
                 "psr/container": "^1.0"
             },
             "suggest": {
@@ -1769,7 +2227,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "2.0-dev"
+                    "dev-master": "1.1-dev"
                 }
             },
             "autoload": {
@@ -1801,7 +2259,7 @@
                 "interoperability",
                 "standards"
             ],
-            "time": "2019-11-18T17:27:11+00:00"
+            "time": "2019-10-14T12:27:06+00:00"
         },
         {
             "name": "symfony/yaml",
@@ -1863,8 +2321,51 @@
             "time": "2020-01-21T11:12:16+00:00"
         },
         {
+            "name": "typhonius/acquia-logstream",
+            "version": "0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/typhonius/acquia-logstream.git",
+                "reference": "58208d2b13ede731b805284c7c54722e361009b8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/typhonius/acquia-logstream/zipball/58208d2b13ede731b805284c7c54722e361009b8",
+                "reference": "58208d2b13ede731b805284c7c54722e361009b8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1",
+                "ratchet/pawl": "^0.3",
+                "symfony/console": "^4",
+                "typhonius/acquia-php-sdk-v2": "^2.0.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^0.11.19",
+                "squizlabs/php_codesniffer": "^3.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "AcquiaLogstream\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Adam Malone",
+                    "email": "adam@adammalone.net"
+                }
+            ],
+            "description": "PHP library to connect to Acquia Logstream service",
+            "time": "2019-12-31T03:22:29+00:00"
+        },
+        {
             "name": "typhonius/acquia-php-sdk-v2",
-            "version": "dev-master",
+            "version": "2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/typhonius/acquia-php-sdk-v2.git",
@@ -2814,9 +3315,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "typhonius/acquia-php-sdk-v2": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
