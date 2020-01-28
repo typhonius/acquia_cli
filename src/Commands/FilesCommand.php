@@ -30,10 +30,7 @@ class FilesCommand extends AcquiaCommand
                 $environmentTo->label
             )
         )) {
-            $environmentAdapter = new Environments($this->cloudapi);
-            $this->say(sprintf('Copying files from %s to %s', $environmentFrom->label, $environmentTo->label));
-            $response = $environmentAdapter->copyFiles($environmentFrom->uuid, $environmentTo->uuid);
-            $this->waitForNotification($response);
+            $this->copyFiles($uuid, $environmentFrom, $environmentTo);
         }
     }
 }
