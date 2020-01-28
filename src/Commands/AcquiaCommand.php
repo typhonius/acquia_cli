@@ -298,7 +298,6 @@ abstract class AcquiaCommand extends Tasks
      */
     protected function backupAndMoveDbs($uuid, $environmentFrom, $environmentTo)
     {
-
         $dbAdapter = new Databases($this->cloudapi);
         $databases = $dbAdapter->getAll($uuid);
         foreach ($databases as $database) {
@@ -344,6 +343,19 @@ abstract class AcquiaCommand extends Tasks
         $this->say(sprintf('Backing up DB (%s) on %s', $database->name, $environment->label));
         $dbAdapter = new DatabaseBackups($this->cloudapi);
         $response = $dbAdapter->create($environment->uuid, $database->name);
+        $this->waitForNotification($response);
+    }
+
+    /**
+     * @param string              $uuid
+     * @param EnvironmentResponse $environmentFrom
+     * @param EnvironmentResponse $environmentTo
+     */
+    protected function copyFiles($uuid, $environmentFrom, $environmentTo)
+    {
+        $environmentAdapter = new Environments($this->cloudapi);
+        $this->say(sprintf('Copying files from %s to %s', $environmentFrom->label, $environmentTo->label));
+        $response = $environmentAdapter->copyFiles($environmentFrom->uuid, $environmentTo->uuid);
         $this->waitForNotification($response);
     }
 
