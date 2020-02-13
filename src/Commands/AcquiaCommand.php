@@ -26,6 +26,9 @@ abstract class AcquiaCommand extends Tasks
     /** Additional configuration. */
     protected $extraConfig;
 
+    /** Credential Storage for the client. */
+    protected $acquia;
+
     /** Regex for a valid UUID string. */
     const UUIDV4 = '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i';
 
@@ -40,6 +43,12 @@ abstract class AcquiaCommand extends Tasks
 
     /** Task response from API indicates in progress. */
     const TASKINPROGRESS = 'in-progress';
+
+    /**
+     * Acquia Token Timeout in seconds minus 30S to be safe.
+     * @see https://docs.acquia.com/acquia-cloud/develop/api/auth/
+     */
+    const TOKENTIMEOUT = 270;
 
     /**
      * AcquiaCommand constructor.
@@ -57,10 +66,18 @@ abstract class AcquiaCommand extends Tasks
             $acquia['key'] = getenv('ACQUIACLI_KEY');
             $acquia['secret'] = getenv('ACQUIACLI_SECRET');
         }
+        $this->acquia = $acquia;
+        $this->buildClient();
 
+    }
+
+    /**
+     * Used to build or restablish the client.
+     */
+    public function buildClient() {
         $connector = new Connector([
-            'key' => $acquia['key'],
-            'secret' => $acquia['secret'],
+            'key' => $this->acquia['key'],
+            'secret' => $this->acquia['secret'],
         ]);
         $cloudapi = Client::factory($connector);
 
@@ -198,6 +215,8 @@ abstract class AcquiaCommand extends Tasks
         $start = new \DateTime(date('c'));
         $start->setTimezone($timezone);
         $start->sub(new \DateInterval('PT' . $buffer . 'S'));
+        $tokenTimeout = clone $start;
+        $tokenTimeout->add(new \DateInterval('PT' . self::TOKENTIMEOUT . 'S'));
 
         // Kindly stolen from https://jonczyk.me/2017/09/20/make-cool-progressbar-symfony-command/
         $output = $this->output();
@@ -212,8 +231,20 @@ abstract class AcquiaCommand extends Tasks
 
         while (true) {
             $progress->advance($sleep);
-            // Sleep initially to ensure that the task gets registered.
             sleep($sleep);
+            $current = new \DateTime(date('c'));
+            $current->setTimezone($timezone);
+            // Remove our buffer from earlier that we took away from the original start date.
+            $current->sub(new \DateInterval('PT' . $buffer . 'S'));
+            // This has to happen BEFORE we run our command just in case it's
+            // been a while since we built the client and the start of the
+            // waitfortask command.
+            if ($current->getTimestamp() >= $tokenTimeout->getTimestamp()) {
+                echo "creating new client";
+                $this->buildClient();
+                $tokenTimeout = new \DateTime(date('c'));
+                $tokenTimeout->add(new \DateInterval('PT' . self::TOKENTIMEOUT . 'S'));
+            }
             // Add queries to limit the tasks returned to a single task of a specific name created within the last 30s.
             $this->cloudapi->addQuery('from', $start->format(\DateTime::ATOM));
             $this->cloudapi->addQuery('sort', '-created');
@@ -224,7 +255,7 @@ abstract class AcquiaCommand extends Tasks
             $this->cloudapi->clearQuery();
 
             if (!$task = reset($tasks)) {
-                throw new \Exception('No tasks registered. 
+                throw new \Exception('No tasks registered.
 The task may have been queried prior to being registered within the API.
 This may be due to the wait timeout being set too low in the Acquia Cli configuration file.');
             }
