@@ -9,6 +9,8 @@ use AcquiaCloudApi\Endpoints\DatabaseBackups;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Helper\TableCell;
+use Symfony\Component\Console\Output\BufferedOutput;
+
 
 /**
  * Class DomainCommand
@@ -17,18 +19,13 @@ use Symfony\Component\Console\Helper\TableCell;
 class DbCommand extends AcquiaCommand
 {
 
-    /**
-     * Backs up all DBs in an environment.
-     *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
-     *
-     * @command database:backup
-     * @aliases db:backup
-     */
-    public function dbBackup($uuid, $environment)
+    public $databaseAdapter;
+
+    public function __construct()
     {
-        $this->backupAllEnvironmentDbs($uuid, $environment);
+        parent::__construct();
+
+        $this->databaseAdapter = new Databases($this->cloudapi);
     }
 
     /**
@@ -41,11 +38,11 @@ class DbCommand extends AcquiaCommand
      */
     public function dbList($uuid)
     {
-        $dbAdapter = new Databases($this->cloudapi);
-        $databases = $dbAdapter->getAll($uuid);
+        $databases = $this->databaseAdapter->getAll($uuid);
         $table = new Table($this->output());
         $table->setHeaders(['Databases']);
         foreach ($databases as $database) {
+            echo $database->name;
             $table
                 ->addRows([
                     [
@@ -54,123 +51,6 @@ class DbCommand extends AcquiaCommand
                 ]);
         }
         $table->render();
-    }
-
-    /**
-     * Shows a list of database backups for all databases in an environment.
-     *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
-     * @param string              $dbName
-     *
-     * @command database:backup:list
-     * @aliases db:backup:list
-     */
-    public function dbBackupList($uuid, $environment, $dbName = null)
-    {
-        if (null !== $dbName) {
-            $this->cloudapi->addQuery('filter', "name=${dbName}");
-        }
-        $dbAdapter = new Databases($this->cloudapi);
-        $databases = $dbAdapter->getAll($uuid);
-        $this->cloudapi->clearQuery();
-
-        $table = new Table($this->output());
-        $table->setHeaders(['ID', 'Type', 'Timestamp']);
-
-        foreach ($databases as $database) {
-            $dbBackupsAdapter = new DatabaseBackups($this->cloudapi);
-            $backups = $dbBackupsAdapter->getAll($environment->uuid, $database->name);
-            $table
-                ->addRows(
-                    [
-                        [new TableCell($database->name, ['colspan' => 3])],
-                        new TableSeparator()
-                    ]
-                );
-
-            foreach ($backups as $backup) {
-                $table
-                    ->addRows([
-                        [
-                            $backup->id,
-                            ucfirst($backup->type),
-                            $backup->completedAt,
-                        ],
-                    ]);
-            }
-        }
-        $table->render();
-    }
-
-    /**
-     * Restores a database from a saved backup.
-     *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
-     * @param string              $dbName
-     * @param int                 $backupId
-     *
-     * @command database:backup:restore
-     * @aliases db:backup:restore
-     */
-    public function dbBackupRestore($uuid, $environment, $dbName, $backupId)
-    {
-        if ($this->confirm(
-            sprintf('Are you sure you want to restore backup id %s to %s?', $backupId, $environment->label)
-        )) {
-            $dbAdapter = new DatabaseBackups($this->cloudapi);
-            $response = $dbAdapter->restore($environment->uuid, $dbName, $backupId);
-            $this->waitForNotification($response);
-        }
-    }
-
-    /**
-     * Provides a database backup link.
-     *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
-     * @param string              $dbName
-     * @param int                 $backupId
-     *
-     * @command database:backup:link
-     * @aliases db:backup:link
-     */
-    public function dbBackupLink($uuid, $environment, $dbName, $backupId)
-    {
-        $environmentUuid = $environment->uuid;
-        $this->say(Connector::BASE_URI .
-            "/environments/${environmentUuid}/databases/${dbName}/backups/${backupId}/actions/download");
-    }
-
-    /**
-     * Downloads a database backup.
-     *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
-     * @param string              $dbName
-     * @param int                 $backupId
-     *
-     * @command database:backup:download
-     * @aliases db:backup:download
-     */
-    public function dbBackupDownload($uuid, $environment, $dbName, $backupId, $path = null)
-    {
-
-        $dbAdapter = new DatabaseBackups($this->cloudapi);
-        $backupName = sprintf('%s-%s-%s', $environment->name, $dbName, $backupId);
-        $backup = $dbAdapter->download($environment->uuid, $dbName, $backupId);
-        
-        if (null === $path) {
-            $location = tempnam(sys_get_temp_dir(), $backupName) . '.sql.gz';
-        } else {
-            $location = $path . $backupName . ".sql.gz";
-        }
-        if (file_put_contents($location, $backup, LOCK_EX)) {
-            $this->say(sprintf('Database backup downloaded to %s', $location));
-        } else {
-            $this->say('Unable to download database backup.');
-        }
     }
 
     /**
@@ -184,8 +64,7 @@ class DbCommand extends AcquiaCommand
      */
     public function dbCreate($uuid, $dbName)
     {
-        $dbAdapter = new Databases($this->cloudapi);
-        $response = $dbAdapter->create($uuid, $dbName);
+        $response = $this->databaseAdapter->create($uuid, $dbName);
         $this->waitForNotification($response);
     }
 
