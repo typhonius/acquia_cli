@@ -12,6 +12,15 @@ use AcquiaCloudApi\Endpoints\Environments;
 class SshCommand extends AcquiaCommand
 {
 
+    public $environmentsAdapter;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->environmentsAdapter = new Environments($this->cloudapi);
+    }
+
     /**
      * Shows SSH connection strings for specified environments.
      *
@@ -27,8 +36,7 @@ class SshCommand extends AcquiaCommand
             $this->cloudapi->addQuery('filter', "name=${env}");
         }
 
-        $environmentAdapter = new Environments($this->cloudapi);
-        $environments = $environmentAdapter->getAll($uuid);
+        $environments = $this->environmentsAdapter->getAll($uuid);
 
         $this->cloudapi->clearQuery();
 
