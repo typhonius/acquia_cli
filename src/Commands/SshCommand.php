@@ -9,17 +9,8 @@ use AcquiaCloudApi\Endpoints\Environments;
  * Class SshCommand
  * @package AcquiaCli\Commands
  */
-class SshCommand extends AcquiaCommand
+class SshCommand extends EnvironmentsCommand
 {
-
-    public $environmentsAdapter;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->environmentsAdapter = new Environments($this->cloudapi);
-    }
 
     /**
      * Shows SSH connection strings for specified environments.

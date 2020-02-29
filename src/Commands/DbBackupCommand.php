@@ -9,6 +9,7 @@ use AcquiaCloudApi\Endpoints\DatabaseBackups;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Helper\TableCell;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 /**
  * Class DomainCommand
@@ -18,6 +19,10 @@ class DbBackupCommand extends AcquiaCommand
 {
 
     public $databaseBackupsAdapter;
+
+    private $downloadProgress;
+
+    private $lastStep;
 
     public function __construct()
     {
@@ -135,7 +140,7 @@ class DbBackupCommand extends AcquiaCommand
      * @command database:backup:download
      * @aliases db:backup:download
      * @option $backup Select which backup to download by backup ID. If omitted, the latest will be downloaded.
-     * @option $path Select a path to download the backup to.
+     * @option $path Select a path to download the backup to. If omitted, the system temp directory will be used.
      */
     public function dbBackupDownload($uuid, $environment, $dbName, $opts = ['backup' => null, 'path' => null])
     {
@@ -152,19 +157,41 @@ class DbBackupCommand extends AcquiaCommand
             $backupId = $opts['backup'];
         }
 
-        $backup = $this->databaseBackupsAdapter->download($environment->uuid, $dbName, $backupId);
         $backupName = sprintf('%s-%s-%s', $environment->name, $dbName, $backupId);
-        
+
         if (null === $opts['path']) {
             $location = tempnam(sys_get_temp_dir(), $backupName) . '.sql.gz';
         } else {
             $location = sprintf("%s/%s.sql.gz", $opts['path'], $backupName);
         }
+
         $this->say(sprintf('Downloading database backup to %s', $location));
-        if (file_put_contents($location, $backup, LOCK_EX)) {
-            $this->say(sprintf('Database backup downloaded to %s', $location));
-        } else {
-            $this->say('Unable to download database backup.');
-        }
+
+        $this->downloadProgress = $this->getProgressBar();
+        $this->downloadProgress->start();
+        $this->downloadProgress->setMessage(sprintf('Downloading database backup to %s', $location));
+
+        $this->cloudapi->addOption('sink', $location);
+        $this->cloudapi->addOption('curl.options', ['CURLOPT_RETURNTRANSFER' => true, 'CURLOPT_FILE' => $location]);
+        $this->cloudapi->addOption('progress', function (
+            $downloadTotal,
+            $downloadedBytes
+        ) {
+            if ($downloadTotal) {
+                $currentStep = $downloadedBytes - $this->lastStep;
+                $this->downloadProgress->setMaxSteps($downloadTotal);
+                $this->downloadProgress->setFormat("<fg=white;bg=cyan> %message:-45s%</>\n%current:6s%/%max:6s% bytes [%bar%] %percent:3s%%");
+                $this->downloadProgress->advance($currentStep);
+            }
+            $this->lastStep = $downloadedBytes;
+        });
+
+        $this->databaseBackupsAdapter->download($environment->uuid, $dbName, $backupId);
+        $this->downloadProgress->setMessage(sprintf('Database backup downloaded to %s', $location));
+        $this->downloadProgress->finish();
+
+        $this->writeln(PHP_EOL);
+        $this->say(sprintf('Database backup downloaded to %s', $location));
+
     }
 }

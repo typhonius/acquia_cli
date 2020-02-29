@@ -3,6 +3,7 @@
 namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\Response\InsightCountResponse;
+use AcquiaCloudApi\Response\InsightModuleResponse;
 use AcquiaCloudApi\Response\InsightResponse;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use AcquiaCloudApi\Endpoints\Insights;
@@ -15,6 +16,15 @@ use Symfony\Component\Console\Helper\Table;
 class InsightsCommand extends AcquiaCommand
 {
 
+    protected $insightsAdapter;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->insightsAdapter = new Insights($this->cloudapi);
+    }
+
     /**
      * Shows Insights information for specified applications.
      *
@@ -25,12 +35,11 @@ class InsightsCommand extends AcquiaCommand
      */
     public function insightsInfo($uuid, $environment = null)
     {
-        $insightsAdapter = new Insights($this->cloudapi);
 
         if (null === $environment) {
-            $insights = $insightsAdapter->getAll($uuid);
+            $insights = $this->insightsAdapter->getAll($uuid);
         } else {
-            $insights = $insightsAdapter->getEnvironment($environment->uuid);
+            $insights = $this->insightsAdapter->getEnvironment($environment->uuid);
         }
         foreach ($insights as $insight) {
             /** @var InsightResponse $insight */
@@ -49,8 +58,7 @@ class InsightsCommand extends AcquiaCommand
      */
     public function insightsAlertsList($siteId, $options = ['failed' => null])
     {
-        $insightsAdapter = new Insights($this->cloudapi);
-        $alerts = $insightsAdapter->getAllAlerts($siteId);
+        $alerts = $this->insightsAdapter->getAllAlerts($siteId);
 
         $output = $this->output();
         $table = new Table($output);
@@ -91,8 +99,7 @@ class InsightsCommand extends AcquiaCommand
      */
     public function insightsAlertsGet($siteId, $alertUuid)
     {
-        $insightsAdapter = new Insights($this->cloudapi);
-        $alert = $insightsAdapter->getAlert($siteId, $alertUuid);
+        $alert = $this->insightsAdapter->getAlert($siteId, $alertUuid);
 
         $this->say(sprintf('UUID: %s', $alert->uuid));
         $this->say(sprintf('Name: %s', $alert->name));
@@ -110,8 +117,7 @@ class InsightsCommand extends AcquiaCommand
      */
     public function insightsModules($siteId, $options = ['enabled' => null, 'upgradeable' => null])
     {
-        $insightsAdapter = new Insights($this->cloudapi);
-        $modules = $insightsAdapter->getModules($siteId);
+        $modules = $this->insightsAdapter->getModules($siteId);
 
         $output = $this->output();
         $table = new Table($output);
@@ -121,6 +127,7 @@ class InsightsCommand extends AcquiaCommand
 
         foreach ($modules as $module) {
             /** @var InsightModuleResponse $module */
+            // var_dump($module);
 
             if ($options['enabled'] && !$module->flags->enabled) {
                 continue;

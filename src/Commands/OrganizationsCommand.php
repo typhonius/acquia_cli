@@ -18,6 +18,15 @@ use AcquiaCloudApi\Endpoints\Organizations;
 class OrganizationsCommand extends AcquiaCommand
 {
 
+    protected $organizationsAdapter;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->organizationsAdapter = new Organizations($this->cloudapi);
+    }
+
     /**
      * Shows a list of all organizations.
      *
@@ -26,8 +35,7 @@ class OrganizationsCommand extends AcquiaCommand
      */
     public function showOrganizations()
     {
-        $organizationsAdapter = new Organizations($this->cloudapi);
-        $organizations = $organizationsAdapter->getAll();
+        $organizations = $this->organizationsAdapter->getAll();
 
         $table = new Table($this->output());
         $table->setHeaders(['UUID', 'Organization', 'Owner', 'Subs', 'Admins', 'Users', 'Teams', 'Roles']);
@@ -62,8 +70,7 @@ class OrganizationsCommand extends AcquiaCommand
     public function organizationApplications($organization)
     {
         $organizationUuid = $organization->uuid;
-        $organizationsAdapter = new Organizations($this->cloudapi);
-        $applications = $organizationsAdapter->getApplications($organizationUuid);
+        $applications = $this->organizationsAdapter->getApplications($organizationUuid);
 
         $this->say("Applications in organisation: ${organizationUuid}");
         $table = new Table($this->output());
@@ -95,8 +102,7 @@ class OrganizationsCommand extends AcquiaCommand
     public function organizationTeams($organization)
     {
         $organizationUuid = $organization->uuid;
-        $organizationsAdapter = new Organizations($this->cloudapi);
-        $teams = $organizationsAdapter->getTeams($organizationUuid);
+        $teams = $this->organizationsAdapter->getTeams($organizationUuid);
 
         $this->say("Teams in organisation: ${organizationUuid}");
         $table = new Table($this->output());
@@ -126,9 +132,8 @@ class OrganizationsCommand extends AcquiaCommand
     public function members($organization)
     {
         $organizationUuid = $organization->uuid;
-        $organizationsAdapter = new Organizations($this->cloudapi);
-        $admins = $organizationsAdapter->getAdmins($organizationUuid);
-        $members = $organizationsAdapter->getMembers($organizationUuid);
+        $admins = $this->organizationsAdapter->getAdmins($organizationUuid);
+        $members = $this->organizationsAdapter->getMembers($organizationUuid);
 
         $this->say("Members in organisation: ${organizationUuid}");
         $table = new Table($this->output());

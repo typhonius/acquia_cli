@@ -15,6 +15,15 @@ use Symfony\Component\Console\Helper\Table;
 class VariablesCommand extends AcquiaCommand
 {
 
+    protected $variablesAdapter;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->variablesAdapter = new Variables($this->cloudapi);
+    }
+
     /**
      * Lists variables.
      *
@@ -26,8 +35,7 @@ class VariablesCommand extends AcquiaCommand
      */
     public function variablesList($uuid, $environment)
     {
-        $variablesAdapter = new Variables($this->cloudapi);
-        $variables = $variablesAdapter->getAll($environment->uuid);
+        $variables = $this->variablesAdapter->getAll($environment->uuid);
 
         $output = $this->output();
         $table = new Table($output);
@@ -59,8 +67,7 @@ class VariablesCommand extends AcquiaCommand
      */
     public function variableInfo($uuid, $environment, $name)
     {
-        $variablesAdapter = new Variables($this->cloudapi);
-        $variable = $variablesAdapter->get($environment->uuid, $name);
+        $variable = $this->variablesAdapter->get($environment->uuid, $name);
         $this->say($variable->value);
     }
 
@@ -78,8 +85,7 @@ class VariablesCommand extends AcquiaCommand
     public function variableCreate($uuid, $environment, $name, $value)
     {
         $this->say(sprintf('Adding variable %s:%s to %s environment', $name, $value, $environment->label));
-        $variableAdapter = new Variables($this->cloudapi);
-        $response = $variableAdapter->create($environment->uuid, $name, $value);
+        $response = $this->variablesAdapter->create($environment->uuid, $name, $value);
         $this->waitForNotification($response);
     }
 
@@ -97,8 +103,7 @@ class VariablesCommand extends AcquiaCommand
     {
         if ($this->confirm('Are you sure you want to remove this environment variable?')) {
             $this->say(sprintf('Removing variable %s from %s environment', $name, $environment->label));
-            $variableAdapter = new Variables($this->cloudapi);
-            $response = $variableAdapter->delete($environment->uuid, $name);
+            $response = $this->variablesAdapter->delete($environment->uuid, $name);
             $this->waitForNotification($response);
         }
     }
@@ -118,8 +123,7 @@ class VariablesCommand extends AcquiaCommand
     {
         if ($this->confirm('Are you sure you want to update this environment variable?')) {
             $this->say(sprintf('Updating variable %s:%s on %s environment', $name, $value, $environment->label));
-            $variableAdapter = new Variables($this->cloudapi);
-            $response = $variableAdapter->update($environment->uuid, $name, $value);
+            $response = $this->variablesAdapter->update($environment->uuid, $name, $value);
             $this->waitForNotification($response);
         }
     }

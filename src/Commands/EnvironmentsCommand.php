@@ -3,7 +3,6 @@
 namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\Endpoints\Environments;
-use AcquiaCloudApi\Endpoints\Domains;
 use AcquiaCloudApi\Endpoints\Servers;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use Symfony\Component\Console\Helper\Table;
@@ -14,6 +13,17 @@ use Symfony\Component\Console\Helper\Table;
  */
 class EnvironmentsCommand extends AcquiaCommand
 {
+
+    protected $environmentsAdapter;
+    protected $serversAdapter;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->environmentsAdapter = new Environments($this->cloudapi);
+        $this->serversAdapter = new Servers($this->cloudapi);
+    }
 
     /**
      * Shows list of environments in an application.
@@ -26,8 +36,7 @@ class EnvironmentsCommand extends AcquiaCommand
     public function environmentList($uuid)
     {
 
-        $environmentAdapter = new Environments($this->cloudapi);
-        $environments = $environmentAdapter->getAll($uuid);
+        $environments = $this->environmentsAdapter->getAll($uuid);
 
         $output = $this->output();
 
@@ -71,8 +80,7 @@ class EnvironmentsCommand extends AcquiaCommand
             $this->cloudapi->addQuery('filter', "name=${env}");
         }
 
-        $environmentAdapter = new Environments($this->cloudapi);
-        $environments = $environmentAdapter->getAll($uuid);
+        $environments = $this->environmentsAdapter->getAll($uuid);
 
         $this->cloudapi->clearQuery();
 
@@ -118,8 +126,7 @@ class EnvironmentsCommand extends AcquiaCommand
                 'EIP'
             ]);
 
-            $serverAdapter = new Servers($this->cloudapi);
-            $servers = $serverAdapter->getAll($environment->uuid);
+            $servers = $this->serversAdapter->getAll($environment->uuid);
 
             foreach ($servers as $server) {
                 $memcache = $server->flags->memcache ? '✓' : ' ';
@@ -184,8 +191,7 @@ class EnvironmentsCommand extends AcquiaCommand
     public function environmentRename($uuid, $environment, $name)
     {
         $this->say(sprintf('Renaming %s to %s', $environment->label, $name));
-        $environmentAdapter = new Environments($this->cloudapi);
-        $environments = $environmentAdapter->rename($environment->uuid, $name);
+        $environments = $this->environmentsAdapter->rename($environment->uuid, $name);
     }
 
     /**
@@ -200,8 +206,7 @@ class EnvironmentsCommand extends AcquiaCommand
     public function environmentDelete($uuid, $environment)
     {
         if ($this->confirm("Are you sure you want to delete this environment?")) {
-            $environmentAdapter = new Environments($this->cloudapi);
-            $response = $environmentAdapter->delete($environment->uuid);
+            $response = $this->environmentsAdapter->delete($environment->uuid);
             $this->waitForNotification($response);
         }
     }

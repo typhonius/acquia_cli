@@ -19,7 +19,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 class DbCommand extends AcquiaCommand
 {
 
-    public $databaseAdapter;
+    protected $databaseAdapter;
 
     public function __construct()
     {
@@ -81,8 +81,7 @@ class DbCommand extends AcquiaCommand
     {
         if ($this->confirm('Are you sure you want to delete this database?')) {
             $this->say(sprintf('Deleting database (%s)', $dbName));
-            $dbAdapter = new Databases($this->cloudapi);
-            $response = $dbAdapter->delete($uuid, $dbName);
+            $response = $this->databaseAdapter->delete($uuid, $dbName);
             $this->waitForNotification($response);
         }
     }
@@ -100,8 +99,7 @@ class DbCommand extends AcquiaCommand
     {
         if ($this->confirm('Are you sure you want to truncate this database?')) {
             $this->say(sprintf('Truncate database (%s)', $dbName));
-            $dbAdapter = new Databases($this->cloudapi);
-            $response = $dbAdapter->truncate($uuid, $dbName);
+            $response = $this->databaseAdapter->truncate($uuid, $dbName);
             $this->waitForNotification($response);
         }
     }
@@ -127,8 +125,7 @@ class DbCommand extends AcquiaCommand
                 $environmentTo->label
             )
         )) {
-            $dbAdapter = new Databases($this->cloudapi);
-            $response = $dbAdapter->copy($environmentFrom->uuid, $dbName, $environmentTo->uuid);
+            $response = $this->databaseAdapter->copy($environmentFrom->uuid, $dbName, $environmentTo->uuid);
             $this->waitForNotification($response);
         }
     }

@@ -6,13 +6,11 @@ use AcquiaCloudApi\Connector\Client;
 use AcquiaCloudApi\Connector\Connector;
 use AcquiaCloudApi\Endpoints\Applications;
 use AcquiaCloudApi\Endpoints\Environments;
-use AcquiaCloudApi\Endpoints\Code;
 use AcquiaCloudApi\Endpoints\Organizations;
 use AcquiaCloudApi\Endpoints\Notifications;
 use AcquiaCloudApi\Endpoints\Databases;
 use AcquiaCloudApi\Endpoints\DatabaseBackups;
 use AcquiaCloudApi\Response\DatabaseResponse;
-use AcquiaCloudApi\Endpoints\Domains;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use AcquiaCloudApi\Response\OperationResponse;
 use AcquiaCloudApi\Response\OrganizationResponse;
@@ -75,12 +73,16 @@ abstract class AcquiaCommand extends Tasks
             'key' => $acquia['key'],
             'secret' => $acquia['secret'],
         ]);
+        /** @var \AcquiaCloudApi\Connector\Client $cloudapi */
         $cloudapi = Client::factory($connector);
 
-        /** @var \AcquiaCloudApi\CloudApi\Client $cloudapi */
-        $this->cloudapi = $cloudapi;
-
+        $this->setCloudApi($cloudapi);
         $this->setTableStyles();
+    }
+
+    public function setCloudApi($cloudapi)
+    {
+        $this->cloudapi = $cloudapi;
     }
 
     /**
@@ -163,8 +165,8 @@ abstract class AcquiaCommand extends Tasks
      */
     protected function getEnvironmentFromEnvironmentName($uuid, $environment)
     {
-        $environmentAdapter = new Environments($this->cloudapi);
-        $environments = $environmentAdapter->getAll($uuid);
+        $environmentsAdapter = new Environments($this->cloudapi);
+        $environments = $environmentsAdapter->getAll($uuid);
 
         foreach ($environments as $e) {
             if ($environment === $e->name) {
@@ -238,12 +240,7 @@ abstract class AcquiaCommand extends Tasks
         $start = new \DateTime(date('c'));
         $start->setTimezone($timezone);
 
-        // Kindly stolen from https://jonczyk.me/2017/09/20/make-cool-progressbar-symfony-command/
-        $output = $this->output();
-        $progress = new ProgressBar($output);
-        $progress->setBarCharacter('<fg=green>⚬</>');
-        $progress->setEmptyBarCharacter('<fg=red>⚬</>');
-        $progress->setProgressCharacter('<fg=green>➤</>');
+        $progress = $this->getProgressBar();
         $progress->setFormat("<fg=white;bg=cyan> %message:-45s%</>\n%elapsed:6s% [%bar%] %percent:3s%%");
         $progress->setMessage('Looking up notification');
         $progress->start();
@@ -353,9 +350,9 @@ abstract class AcquiaCommand extends Tasks
      */
     protected function copyFiles($uuid, $environmentFrom, $environmentTo)
     {
-        $environmentAdapter = new Environments($this->cloudapi);
+        $environmentsAdapter = new Environments($this->cloudapi);
         $this->say(sprintf('Copying files from %s to %s', $environmentFrom->label, $environmentTo->label));
-        $response = $environmentAdapter->copyFiles($environmentFrom->uuid, $environmentTo->uuid);
+        $response = $environmentsAdapter->copyFiles($environmentFrom->uuid, $environmentTo->uuid);
         $this->waitForNotification($response);
     }
 
@@ -364,5 +361,17 @@ abstract class AcquiaCommand extends Tasks
         $tableStyle = new TableStyle();
         $tableStyle->setPadType(STR_PAD_BOTH);
         Table::setStyleDefinition('center-align', $tableStyle);
+    }
+
+    protected function getProgressBar()
+    {
+        // Kindly stolen from https://jonczyk.me/2017/09/20/make-cool-progressbar-symfony-command/
+        $output = $this->output();
+        $progressBar = new ProgressBar($output);
+        $progressBar->setBarCharacter('<fg=green>⚬</>');
+        $progressBar->setEmptyBarCharacter('<fg=red>⚬</>');
+        $progressBar->setProgressCharacter('<fg=green>➤</>');
+
+        return $progressBar;
     }
 }
