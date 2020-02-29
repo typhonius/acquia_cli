@@ -11,7 +11,6 @@ use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Output\BufferedOutput;
 
-
 /**
  * Class DomainCommand
  * @package AcquiaCli\Commands

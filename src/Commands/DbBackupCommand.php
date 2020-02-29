@@ -18,7 +18,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 class DbBackupCommand extends AcquiaCommand
 {
 
-    public $databaseBackupsAdapter;
+    protected $databaseBackupsAdapter;
 
     private $downloadProgress;
 
@@ -137,6 +137,8 @@ class DbBackupCommand extends AcquiaCommand
      * @param EnvironmentResponse $environment
      * @param string              $dbName
      *
+     * @throws \Exception
+     *
      * @command database:backup:download
      * @aliases db:backup:download
      * @option $backup Select which backup to download by backup ID. If omitted, the latest will be downloaded.
@@ -150,7 +152,7 @@ class DbBackupCommand extends AcquiaCommand
             $backup = $this->databaseBackupsAdapter->getAll($environment->uuid, $dbName);
             $this->cloudapi->clearQuery();
             if (empty($backup)) {
-                throw new Exception('Unable to find a database backup to download.');
+                throw new \Exception('Unable to find a database backup to download.');
             }
             $backupId = $backup[0]->id;
         } else {
@@ -180,7 +182,9 @@ class DbBackupCommand extends AcquiaCommand
             if ($downloadTotal) {
                 $currentStep = $downloadedBytes - $this->lastStep;
                 $this->downloadProgress->setMaxSteps($downloadTotal);
-                $this->downloadProgress->setFormat("<fg=white;bg=cyan> %message:-45s%</>\n%current:6s%/%max:6s% bytes [%bar%] %percent:3s%%");
+                $this->downloadProgress->setFormat(
+                    "<fg=white;bg=cyan> %message:-45s%</>\n%current:6s%/%max:6s% bytes [%bar%] %percent:3s%%"
+                );
                 $this->downloadProgress->advance($currentStep);
             }
             $this->lastStep = $downloadedBytes;
@@ -192,6 +196,5 @@ class DbBackupCommand extends AcquiaCommand
 
         $this->writeln(PHP_EOL);
         $this->say(sprintf('Database backup downloaded to %s', $location));
-
     }
 }
