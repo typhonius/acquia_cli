@@ -15,6 +15,19 @@ use AcquiaCloudApi\Endpoints\Databases;
 class ApplicationsCommand extends AcquiaCommand
 {
 
+    protected $applicationsAdapter;
+    protected $environmentsAdapter;
+    protected $databasesAdapter;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->applicationsAdapter = new Applications($this->cloudapi);
+        $this->environmentsAdapter = new Environments($this->cloudapi);
+        $this->databasesAdapter = new Databases($this->cloudapi);
+    }
+
     /**
      * Shows all sites a user has access to.
      *
@@ -23,8 +36,7 @@ class ApplicationsCommand extends AcquiaCommand
      */
     public function applications()
     {
-        $applicationsAdapter = new Applications($this->cloudapi);
-        $applications = $applicationsAdapter->getAll();
+        $applications = $this->applicationsAdapter->getAll();
 
         $output = $this->output();
         $table = new Table($output);
@@ -52,15 +64,13 @@ class ApplicationsCommand extends AcquiaCommand
      */
     public function applicationInfo($uuid)
     {
-        $environmentsAdapter = new Environments($this->cloudapi);
-        $environments = $environmentsAdapter->getAll($uuid);
+        $environments = $this->environmentsAdapter->getAll($uuid);
 
         $output = $this->output();
         $table = new Table($output);
         $table->setHeaders(['Environment', 'ID', 'Branch/Tag', 'Domain(s)', 'Database(s)']);
 
-        $databasesAdapter = new Databases($this->cloudapi);
-        $databases = $databasesAdapter->getAll($uuid);
+        $databases = $this->databasesAdapter->getAll($uuid);
 
         $dbNames = array_map(function ($database) {
             return $database->name;
@@ -108,8 +118,7 @@ class ApplicationsCommand extends AcquiaCommand
      */
     public function applicationsTags($uuid)
     {
-        $applicationsAdapter = new Applications($this->cloudapi);
-        $tags = $applicationsAdapter->getAllTags($uuid);
+        $tags = $this->applicationsAdapter->getAllTags($uuid);
 
         $output = $this->output();
         $table = new Table($output);
@@ -139,8 +148,7 @@ class ApplicationsCommand extends AcquiaCommand
     public function applicationTagCreate($uuid, $name, $color)
     {
         $this->say(sprintf('Creating application tag %s:%s', $name, $color));
-        $applicationsAdapter = new Applications($this->cloudapi);
-        $response = $applicationsAdapter->createTag($uuid, $name, $color);
+        $response = $this->applicationsAdapter->createTag($uuid, $name, $color);
         $this->waitForNotification($response);
     }
 
@@ -156,8 +164,7 @@ class ApplicationsCommand extends AcquiaCommand
     public function applicationTagDelete($uuid, $name)
     {
         $this->say(sprintf('Deleting application tag %s', $name));
-        $applicationsAdapter = new Applications($this->cloudapi);
-        $response = $applicationsAdapter->deleteTag($uuid, $name);
+        $response = $this->applicationsAdapter->deleteTag($uuid, $name);
         $this->waitForNotification($response);
     }
 }

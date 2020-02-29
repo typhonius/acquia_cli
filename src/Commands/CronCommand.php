@@ -14,6 +14,15 @@ use Symfony\Component\Console\Helper\Table;
 class CronCommand extends AcquiaCommand
 {
 
+    protected $cronAdapter;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->cronAdapter = new Crons($this->cloudapi);
+    }
+
     /**
      * Shows all cron tasks associated with an environment.
      *
@@ -25,8 +34,7 @@ class CronCommand extends AcquiaCommand
     public function crons($uuid, $environment)
     {
 
-        $cronAdapter = new Crons($this->cloudapi);
-        $crons = $cronAdapter->getAll($environment->uuid);
+        $crons = $this->cronAdapter->getAll($environment->uuid);
 
         $output = $this->output();
         $table = new Table($output);
@@ -63,8 +71,7 @@ class CronCommand extends AcquiaCommand
      */
     public function cronAdd($uuid, $environment, $commandString, $frequency, $label)
     {
-        $cronAdapter = new Crons($this->cloudapi);
-        $response = $cronAdapter->create($environment->uuid, $commandString, $frequency, $label);
+        $response = $this->cronAdapter->create($environment->uuid, $commandString, $frequency, $label);
         $this->waitForNotification($response);
     }
 
@@ -82,8 +89,7 @@ class CronCommand extends AcquiaCommand
     {
         if ($this->confirm("Are you sure you want to delete the cron task?")) {
             $this->say(sprintf('Deleting cron task %s from %s', $cronId, $environment->label));
-            $cronAdapter = new Crons($this->cloudapi);
-            $response = $cronAdapter->delete($environment->uuid, $cronId);
+            $response = $this->cronAdapter->delete($environment->uuid, $cronId);
             $this->waitForNotification($response);
         }
     }
@@ -99,8 +105,7 @@ class CronCommand extends AcquiaCommand
      */
     public function cronEnable($uuid, $environment, $cronId)
     {
-        $cronAdapter = new Crons($this->cloudapi);
-        $response = $cronAdapter->enable($environment->uuid, $cronId);
+        $response = $this->cronAdapter->enable($environment->uuid, $cronId);
         $this->waitForNotification($response);
     }
 
@@ -116,8 +121,7 @@ class CronCommand extends AcquiaCommand
     public function cronDisable($uuid, $environment, $cronId)
     {
         if ($this->confirm("Are you sure you want to disable the cron task?")) {
-            $cronAdapter = new Crons($this->cloudapi);
-            $response = $cronAdapter->disable($environment->uuid, $cronId);
+            $response = $this->cronAdapter->disable($environment->uuid, $cronId);
             $this->waitForNotification($response);
         }
     }
@@ -133,8 +137,7 @@ class CronCommand extends AcquiaCommand
      */
     public function cronInfo($uuid, $environment, $cronId)
     {
-        $cronAdapter = new Crons($this->cloudapi);
-        $cron = $cronAdapter->get($environment->uuid, $cronId);
+        $cron = $this->cronAdapter->get($environment->uuid, $cronId);
 
         $enabled = $cron->flags->enabled ? '✓' : ' ';
         $system = $cron->flags->system ? '✓' : ' ';

@@ -9,7 +9,7 @@ use AcquiaCloudApi\Endpoints\Environments;
  * Class ProductionModeCommand
  * @package AcquiaCli\Commands
  */
-class ProductionModeCommand extends AcquiaCommand
+class ProductionModeCommand extends EnvironmentsCommand
 {
 
     /**
@@ -28,8 +28,7 @@ class ProductionModeCommand extends AcquiaCommand
             throw new \Exception('Production mode may only be enabled/disabled on the prod environment.');
         }
         $this->say(sprintf('Enabling production mode for %s environment', $environment->label));
-        $environmentAdapter = new Environments($this->cloudapi);
-        $environmentAdapter->enableProductionMode($environment->uuid);
+        $this->environmentsAdapter->enableProductionMode($environment->uuid);
     }
 
     /**
@@ -50,8 +49,7 @@ class ProductionModeCommand extends AcquiaCommand
 
         if ($this->confirm('Are you sure you want to disable production mode?')) {
             $this->say(sprintf('Disabling production mode for %s environment', $environment->label));
-            $environmentAdapter = new Environments($this->cloudapi);
-            $environmentAdapter->disableProductionMode($environment->uuid);
+            $this->environmentsAdapter->disableProductionMode($environment->uuid);
         }
     }
 }

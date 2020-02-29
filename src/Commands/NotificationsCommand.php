@@ -13,6 +13,15 @@ use Symfony\Component\Console\Helper\Table;
 class NotificationsCommand extends AcquiaCommand
 {
 
+    protected $notificationsAdapter;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->notificationsAdapter = new Notifications($this->cloudapi);
+    }
+
     /**
      * Gets all notifications associated with a site.
      *
@@ -36,8 +45,7 @@ class NotificationsCommand extends AcquiaCommand
             $this->cloudapi->addQuery('filter', "name=${filter}");
         }
 
-        $notificationsAdapter = new Notifications($this->cloudapi);
-        $notifications = $notificationsAdapter->getAll($uuid);
+        $notifications = $this->notificationsAdapter->getAll($uuid);
         $this->cloudapi->clearQuery();
 
         $output = $this->output();
@@ -83,8 +91,7 @@ class NotificationsCommand extends AcquiaCommand
         $format = $this->extraConfig['format'];
         $timezone = new \DateTimeZone($tz);
 
-        $notifications = new Notifications($this->cloudapi);
-        $notification = $notifications->get($notificationUuid);
+        $notification = $this->notificationsAdapter->get($notificationUuid);
 
         $createdDate = new \DateTime($notification->created_at);
         $createdDate->setTimezone($timezone);

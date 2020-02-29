@@ -14,6 +14,15 @@ use AcquiaCloudApi\Endpoints\Code;
 class CodeCommand extends AcquiaCommand
 {
 
+    protected $codeAdapter;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->codeAdapter = new Code($this->cloudapi);
+    }
+
     /**
      * Gets all code branches and tags associated with an application.
      *
@@ -28,8 +37,7 @@ class CodeCommand extends AcquiaCommand
         if (null !== $match) {
             $this->cloudapi->addQuery('filter', "name=@*${match}*");
         }
-        $codeAdapter = new Code($this->cloudapi);
-        $branches = $codeAdapter->getAll($uuid);
+        $branches = $this->codeAdapter->getAll($uuid);
         $this->cloudapi->clearQuery();
 
         $output = $this->output();
@@ -86,8 +94,7 @@ class CodeCommand extends AcquiaCommand
             )
         );
 
-        $code = new Code($this->cloudapi);
-        $response = $code->deploy($environmentFrom->uuid, $environmentTo->uuid);
+        $response = $this->codeAdapter->deploy($environmentFrom->uuid, $environmentTo->uuid);
         $this->waitForNotification($response);
     }
 
@@ -116,8 +123,7 @@ class CodeCommand extends AcquiaCommand
         $this->backupAllEnvironmentDbs($uuid, $environment);
 
         $this->say(sprintf('Switching %s enviroment to %s branch', $environment->label, $branch));
-        $code = new Code($this->cloudapi);
-        $response = $code->switch($environment->uuid, $branch);
+        $response = $this->codeAdapter->switch($environment->uuid, $branch);
         $this->waitForNotification($response);
     }
 }
