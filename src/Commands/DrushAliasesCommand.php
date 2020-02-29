@@ -8,7 +8,7 @@ use AcquiaCloudApi\Endpoints\Account;
  * Class DrushAliasesCommand
  * @package AcquiaCli\Commands
  */
-class DrushAliasesCommand extends AcquiaCommand
+class DrushAliasesCommand extends AccountCommand
 {
 
     /**
@@ -19,8 +19,7 @@ class DrushAliasesCommand extends AcquiaCommand
      */
     public function downloadDrushAliases($options = ['install' => false])
     {
-        $account = new Account($this->cloudapi);
-        $aliases = $account->getDrushAliases();
+        $aliases = $this->accountAdapter->getDrushAliases();
         $drushArchive = tempnam(sys_get_temp_dir(), 'AcquiaDrushAliases') . '.tar.gz';
         $this->say(sprintf('Acquia Cloud Drush Aliases archive downloaded to %s', $drushArchive));
         if (file_put_contents($drushArchive, $aliases, LOCK_EX)) {

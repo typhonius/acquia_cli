@@ -17,6 +17,19 @@ use AcquiaCloudApi\Endpoints\Roles;
 class TeamsCommand extends AcquiaCommand
 {
 
+    protected $teamsAdapter;
+    protected $rolesAdapter;
+    protected $permissionsAdapter;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->teamsAdapter = new Teams($this->cloudapi);
+        $this->rolesAdapter = new Roles($this->cloudapi);
+        $this->permissionsAdapter = new Permissions($this->cloudapi);
+    }
+
     /**
      * Creates a new team within an organization.
      *
@@ -28,8 +41,7 @@ class TeamsCommand extends AcquiaCommand
     public function teamCreate($organizationUuid, $name)
     {
         $this->say('Creating new team.');
-        $teamsAdapter = new Teams($this->cloudapi);
-        $teamsAdapter->create($organizationUuid, $name);
+        $this->teamsAdapter->create($organizationUuid, $name);
     }
 
     /**
@@ -45,8 +57,7 @@ class TeamsCommand extends AcquiaCommand
     {
         $rolesArray = explode(',', $roles);
         $this->say(sprintf('Inviting %s to team.', $email));
-        $teamsAdapter = new Teams($this->cloudapi);
-        $teamsAdapter->invite($teamUuid, $email, $rolesArray);
+        $this->teamsAdapter->invite($teamUuid, $email, $rolesArray);
     }
 
     /**
@@ -61,8 +72,7 @@ class TeamsCommand extends AcquiaCommand
     public function teamAddApplication($uuid, $teamUuid)
     {
         $this->say("Adding application to team.");
-        $teamsAdapter = new Teams($this->cloudapi);
-        $teamsAdapter->addApplication($teamUuid, $uuid);
+        $this->teamsAdapter->addApplication($teamUuid, $uuid);
     }
 
     /**
@@ -73,8 +83,7 @@ class TeamsCommand extends AcquiaCommand
      */
     public function showPermissions()
     {
-        $permissionsAdapter = new Permissions($this->cloudapi);
-        $permissions = $permissionsAdapter->get();
+        $permissions = $this->permissionsAdapter->get();
 
         $table = new Table($this->output());
         $table->setHeaders(['Name', 'Label']);
@@ -108,8 +117,7 @@ class TeamsCommand extends AcquiaCommand
     {
         $permissionsArray = explode(',', $permissions);
         $this->say(sprintf('Creating new role (%s) and adding it to organisation.', $name));
-        $rolesAdapter = new Roles($this->cloudapi);
-        $rolesAdapter->create($organizationUuid, $name, $permissionsArray, $description);
+        $this->rolesAdapter->create($organizationUuid, $name, $permissionsArray, $description);
     }
 
     /**
@@ -123,8 +131,7 @@ class TeamsCommand extends AcquiaCommand
     {
         if ($this->confirm('Are you sure you want to remove this role?')) {
             $this->say('Deleting role');
-            $rolesAdapter = new Roles($this->cloudapi);
-            $rolesAdapter->delete($roleUuid);
+            $this->rolesAdapter->delete($roleUuid);
         }
     }
 
@@ -141,8 +148,7 @@ class TeamsCommand extends AcquiaCommand
     {
         $permissionsArray = explode(',', $permissions);
         $this->say('Updating role permissions');
-        $rolesAdapter = new Roles($this->cloudapi);
-        $rolesAdapter->update($roleUuid, $permissionsArray);
+        $this->rolesAdapter->update($roleUuid, $permissionsArray);
     }
 
     /**
@@ -156,11 +162,9 @@ class TeamsCommand extends AcquiaCommand
     {
 
         $organizationUuid = $organization->uuid;
-        $rolesAdapter = new Roles($this->cloudapi);
-        $roles = $rolesAdapter->getAll($organizationUuid);
+        $roles = $this->rolesAdapter->getAll($organizationUuid);
 
-        $permissionsAdapter = new Permissions($this->cloudapi);
-        $permissions = $permissionsAdapter->get();
+        $permissions = $this->permissionsAdapter->get();
 
         $roleList = array_map(function ($role) {
             $this->say($role->name . ': ' . $role->uuid);

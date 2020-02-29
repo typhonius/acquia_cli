@@ -19,6 +19,15 @@ class LogsCommand extends AcquiaCommand
     use InputAwareTrait;
     use OutputAwareTrait;
 
+    protected $insightsAdapter;
+
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->logsAdapter = new Logs($this->cloudapi);
+    }
+
     /**
      * Streams logs from an environment.
      *
@@ -40,8 +49,7 @@ class LogsCommand extends AcquiaCommand
             'servers|s' => []
         ]
     ) {
-        $logsAdapter = new Logs($this->cloudapi);
-        $stream = $logsAdapter->stream($environment->uuid);
+        $stream = $this->logsAdapter->stream($environment->uuid);
         $params = $stream->logstream->params;
         $logstream = new LogstreamManager($this->input(), $this->output(), $params);
         if ($opts['colourise']) {
@@ -62,8 +70,7 @@ class LogsCommand extends AcquiaCommand
      */
     public function logList($uuid, EnvironmentResponse $environment)
     {
-        $logsAdapter = new Logs($this->cloudapi);
-        $logs = $logsAdapter->getAll($environment->uuid);
+        $logs = $this->logsAdapter->getAll($environment->uuid);
 
         $output = $this->output();
         $table = new Table($output);
@@ -93,9 +100,8 @@ class LogsCommand extends AcquiaCommand
      */
     public function logSnapshot($uuid, $environment, $logType)
     {
-        $logsAdapter = new Logs($this->cloudapi);
         $this->say(sprintf('Creating snapshot for %s in %s environment', $logType, $environment->label));
-        $logsAdapter->snapshot($environment->uuid, $logType);
+        $this->logsAdapter->snapshot($environment->uuid, $logType);
     }
 
     /**
@@ -110,13 +116,11 @@ class LogsCommand extends AcquiaCommand
      */
     public function logDownload($uuid, $environment, $logType, $path = null)
     {
-        $logsAdapter = new Logs($this->cloudapi);
         $label = $environment->label;
-
         $envName = $environment->name;
         $backupName = "${envName}-${logType}";
 
-        $log = $logsAdapter->download($environment->uuid, $logType);
+        $log = $this->logsAdapter->download($environment->uuid, $logType);
 
         if (null === $path) {
             $location = tempnam(sys_get_temp_dir(), $backupName) . '.tar.gz';
