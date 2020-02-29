@@ -19,7 +19,7 @@ class LogsCommand extends AcquiaCommand
     use InputAwareTrait;
     use OutputAwareTrait;
 
-    protected $insightsAdapter;
+    protected $logsAdapter;
 
     public function __construct()
     {
