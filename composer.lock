@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4ac4ad45c67fb8a2ee466f30bed920e1",
+    "content-hash": "92b16e3122fe9c59d38bd3c67b4c396b",
     "packages": [
         {
             "name": "consolidation/annotated-command",
@@ -2365,16 +2365,16 @@
         },
         {
             "name": "typhonius/acquia-php-sdk-v2",
-            "version": "2.0.3",
+            "version": "2.0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/typhonius/acquia-php-sdk-v2.git",
-                "reference": "c2ef5c8044ba53b7133fa931aab995fecc335602"
+                "reference": "e643cecd5c94d33b804a9b2a0dca769ab7142f34"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/typhonius/acquia-php-sdk-v2/zipball/c2ef5c8044ba53b7133fa931aab995fecc335602",
-                "reference": "c2ef5c8044ba53b7133fa931aab995fecc335602",
+                "url": "https://api.github.com/repos/typhonius/acquia-php-sdk-v2/zipball/e643cecd5c94d33b804a9b2a0dca769ab7142f34",
+                "reference": "e643cecd5c94d33b804a9b2a0dca769ab7142f34",
                 "shasum": ""
             },
             "require": {
@@ -2409,7 +2409,7 @@
                 }
             ],
             "description": "A PHP SDK for Acquia CloudAPI v2",
-            "time": "2020-01-26T01:43:30+00:00"
+            "time": "2020-02-17T01:45:15+00:00"
         }
     ],
     "packages-dev": [

@@ -9,7 +9,7 @@
     ],
     "license": "MIT",
     "require": {
-        "typhonius/acquia-php-sdk-v2": "^2.0.0",
+        "typhonius/acquia-php-sdk-v2": "^2.0.4",
         "typhonius/acquia-logstream": "^0.3",
         "consolidation/robo": "^2",
         "symfony/lock": "^3|^4"
