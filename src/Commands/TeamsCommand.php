@@ -25,9 +25,9 @@ class TeamsCommand extends AcquiaCommand
     {
         parent::__construct();
 
-        $this->teamsAdapter = new Teams($this->cloudapi);
-        $this->rolesAdapter = new Roles($this->cloudapi);
-        $this->permissionsAdapter = new Permissions($this->cloudapi);
+        $this->teamsAdapter = new Teams($this->getCloudApi());
+        $this->rolesAdapter = new Roles($this->getCloudApi());
+        $this->permissionsAdapter = new Permissions($this->getCloudApi());
     }
 
     /**

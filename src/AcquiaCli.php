@@ -66,6 +66,8 @@ class AcquiaCli
 
         // Create and configure container.
         $container = Robo::createDefaultContainer($input, $output, $application, $config);
+        $container->add('cloudApi', \AcquiaCli\CloudApi::class)
+            ->withArgument('config');
 
         $discovery = new CommandFileDiscovery();
         $discovery->setSearchPattern('*Command.php');
