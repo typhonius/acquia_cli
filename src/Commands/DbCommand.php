@@ -24,7 +24,7 @@ class DbCommand extends AcquiaCommand
     {
         parent::__construct();
 
-        $this->databaseAdapter = new Databases($this->cloudapi);
+        $this->databaseAdapter = new Databases($this->getCloudApi());
     }
 
     /**
