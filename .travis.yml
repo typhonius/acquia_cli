@@ -18,3 +18,7 @@ script:
     - composer lint
     - composer sniff
     - composer stan
+
+after_script:
+    - cd ${TRAVIS_BUILD_DIR}
+    - composer coveralls
