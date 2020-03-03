@@ -3,30 +3,9 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
-use AcquiaCli\Tests\AcquiaCliTest;
-use Symfony\Component\Console\Input\ArrayInput;
-use \Symfony\Component\Console\Input\StringInput;
-use AcquiaCloudApi\Endpoints\Environments;
-use AcquiaCloudApi\Response\EnvironmentsResponse;
-
-
-
-
-use AcquiaCli\AcquiaCli;
-
-
-
-use \Robo\Robo;
-use Symfony\Component\Console\Tester\CommandTester;
 
 class SshCommandTest extends AcquiaCliTestCase
 {
-
-
-    protected function setup()
-    {
-        parent::setUp();
-    }
 
     public function testSshInfo()
     {
@@ -46,6 +25,5 @@ class SshCommandTest extends AcquiaCliTestCase
 ';
 
         $this->assertSame($expectedResponse, $actualResponse);
-
     }
 }

@@ -5,8 +5,6 @@ namespace AcquiaCli\Tests;
 use Robo\Robo;
 use Robo\Config\Config;
 use Robo\Common\ConfigAwareTrait;
-use Symfony\Component\Lock\Factory;
-use Symfony\Component\Lock\Store\SemaphoreStore;
 use Robo\Runner as RoboRunner;
 use Robo\Application;
 use Symfony\Component\Console\Input\InputInterface;
@@ -31,27 +29,29 @@ class AcquiaCliTest
     const VERSION = '2.0.0-dev';
 
     /**
-     * AcquiaCli constructor.
-     * @param Config               $config
+     * AcquiaCliTest constructor.
      * @param InputInterface|null  $input
      * @param OutputInterface|null $output
      */
     public function __construct(InputInterface $input = null, OutputInterface $output = null, $client)
     {
         $application = new Application(self::NAME, self::VERSION);
+        $application->getDefinition()->addOptions([
+            new InputOption(
+                '--no-wait',
+                null,
+                InputOption::VALUE_NONE,
+                'Run commands without waiting for tasks to complete (risky).'
+            ),
+        ]);
 
         // Create and configure container.
         $container = Robo::createDefaultContainer($input, $output, $application);
-        // Connector should be a mock instead
         $container->add('client', $client);
-        // $container->add('environment', $environment);
-        // $container->add('applications', $applications);
 
         $container->add('cloudApi', \AcquiaCli\Tests\CloudApiTest::class)
             ->withArgument('config')
             ->withArgument('client');
-            // ->withArgument('applications');
-
 
         $discovery = new CommandFileDiscovery();
         $discovery->setSearchPattern('*Command.php');

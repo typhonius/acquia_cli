@@ -7,7 +7,6 @@ use AcquiaCloudApi\Connector\Connector;
 use AcquiaCloudApi\Endpoints\Applications;
 use AcquiaCloudApi\Endpoints\Environments;
 
-
 /**
  * Class CloudApi
  * @package AcquiaCli
@@ -53,15 +52,5 @@ final class CloudApi
     public function getExtraConfig()
     {
         return $this->extraConfig;
-    }
-
-    public function getApplications()
-    {
-        return new Applications($this->cloudapi);
-    }
-
-    public function getEnvironmentts()
-    {
-        return new Environments($this->cloudapi);
     }
 }

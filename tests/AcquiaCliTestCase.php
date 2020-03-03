@@ -3,24 +3,14 @@
 namespace AcquiaCli\Tests;
 
 use AcquiaCloudApi\Connector\Client;
-use AcquiaCloudApi\Endpoints\Databases;
-use AcquiaCloudApi\Endpoints\DatabaseBackups;
-use AcquiaCloudApi\Endpoints\Environments;
-use AcquiaCloudApi\Response\OperationResponse;
-use AcquiaCloudApi\Response\DatabasesResponse;
-use AcquiaCloudApi\Response\BackupsResponse;
-use AcquiaCloudApi\Response\EnvironmentsResponse;
-use AcquiaCloudApi\Response\ApplicationsResponse;
-
-use League\Container\ContainerAwareInterface;
-
 use Symfony\Component\Console\Input\ArgvInput;
-use Symfony\Component\Console\Output\ConsoleOutput;
 use Robo\Config\Config;
 use Consolidation\Config\Loader\ConfigProcessor;
 use Consolidation\Config\Loader\YamlConfigLoader;
 use AcquiaCli\AcquiaCli;
 use Symfony\Component\Console\Output\BufferedOutput;
+
+use Robo\Robo;
 
 
 use GuzzleHttp\Psr7;
@@ -32,14 +22,13 @@ use PHPUnit\Framework\TestCase;
 abstract class AcquiaCliTestCase extends TestCase
 {
 
-    protected function setup()
-    {
-        parent::setUp();
-    }
-
     protected function getPsr7StreamForFixture($fixture): Psr7\Stream
     {
-        $path = sprintf('%s/vendor/typhonius/acquia-php-sdk-v2/tests/Fixtures/Endpoints/%s', dirname(__DIR__), $fixture);
+        $path = sprintf(
+            '%s/vendor/typhonius/acquia-php-sdk-v2/tests/Fixtures/Endpoints/%s',
+            dirname(__DIR__),
+            $fixture
+        );
         $this->assertFileExists($path);
         $stream = Psr7\stream_for(file_get_contents($path));
         $this->assertInstanceOf(Psr7\Stream::class, $stream);
@@ -55,7 +44,11 @@ abstract class AcquiaCliTestCase extends TestCase
      */
     protected function getPhpSdkResponse($fixture): object
     {
-        $path = sprintf('%s/vendor/typhonius/acquia-php-sdk-v2/tests/Fixtures/Endpoints/%s', dirname(__DIR__), $fixture);
+        $path = sprintf(
+            '%s/vendor/typhonius/acquia-php-sdk-v2/tests/Fixtures/Endpoints/%s',
+            dirname(__DIR__),
+            $fixture
+        );
         $this->assertFileExists($path);
         return json_decode(file_get_contents($path));
     }
@@ -122,95 +115,6 @@ abstract class AcquiaCliTestCase extends TestCase
         return $client;
     }
 
-    /**
-     * Mock client class.
-     *
-     * @param  mixed  $response
-     * @return Client
-     */
-    protected function getDatabasesMock()
-    {
-        $databases = $this
-            ->getMockBuilder('AcquiaCli\Endpoints\Databases')
-            ->disableOriginalConstructor()
-            ->setMethods(['create', 'getAll', 'delete', 'truncate', 'copy'])
-            ->getMock();
-
-        $createFixture = $this->getPhpSdkResponse('Databases/createDatabases.json');
-        $dbCreateResponse = new OperationResponse($createFixture);
-        $databases->method('create')->willReturn($dbCreateResponse);
-
-        $getAllFixture = $this->getPhpSdkResponse('Databases/getAllDatabases.json');
-        $dbGetAllResponse = new DatabasesResponse($getAllFixture->_embedded->items);
-        $databases->method('getAll')->willReturn($dbGetAllResponse);
-
-        return $databases;
-    }
-
-    /**
-     * Mock client class.
-     *
-     * @param  mixed  $response
-     * @return Client
-     */
-    protected function getDatabaseBackupsMock()
-    {
-        $databaseBackups = $this
-            ->getMockBuilder('AcquiaCli\Endpoints\DatabaseBackups')
-            ->disableOriginalConstructor()
-            ->setMethods(['create', 'get', 'getAll', 'download', 'restore'])
-            ->getMock();
-
-        $createFixture = $this->getPhpSdkResponse('DatabaseBackups/createDatabaseBackup.json');
-        $dbCreateResponse = new OperationResponse($createFixture);
-        $databaseBackups->method('create')->willReturn($dbCreateResponse);
-
-        $getAllFixture = $this->getPhpSdkResponse('DatabaseBackups/getAllDatabaseBackups.json');
-        $dbGetAllResponse = new BackupsResponse($getAllFixture->_embedded->items);
-        $databaseBackups->method('getAll')->willReturn($dbGetAllResponse);
-
-        return $databaseBackups;
-    }
-
-    /**
-     * Mock client class.
-     *
-     * @param  mixed  $response
-     * @return Client
-     */
-    protected function getEnvironmentsMock()
-    {
-
-        $environments = $this
-            ->getMockBuilder('AcquiaCli\Endpoints\Environments')
-            ->disableOriginalConstructor()
-            ->setMethods(['get', 'getAll'])
-            ->getMock();
-
-        $getAllFixture = $this->getPhpSdkResponse('Environments/getAllEnvironments.json');
-        $environmentGetAllResponse = new EnvironmentsResponse($getAllFixture->_embedded->items);
-        $environments->method('getAll')->willReturn($environmentGetAllResponse);
-
-        return $environments;
-    }
-
-    protected function getApplicationsMock()
-    {
-
-        $environments = $this
-            ->getMockBuilder('AcquiaCli\Endpoints\Applications')
-            ->disableOriginalConstructor()
-            ->setMethods(['get', 'getAll'])
-            ->getMock();
-
-        $getAllFixture = $this->getPhpSdkResponse('Applications/getAllApplications.json');
-        $applicationsGetAllResponse = new ApplicationsResponse($getAllFixture->_embedded->items);
-        $environments->method('getAll')->willReturn($applicationsGetAllResponse);
-
-        return $environments;
-    }
-
-
     protected function getPrivateProperty($className, $propertyName)
     {
         $reflector = new \ReflectionClass($className);
@@ -222,12 +126,14 @@ abstract class AcquiaCliTestCase extends TestCase
 
     public function execute($client, $command)
     {
-        array_unshift($command, 'acquiacli');
+        array_unshift($command, 'acquiacli', '--no-wait');
         $input = new ArgvInput($command);
         $output = new BufferedOutput();
 
         $app = new AcquiaCliTest($input, $output, $client);
         $app->run($input, $output);
+
+        Robo::unsetContainer();
 
         return $output->fetch();
     }
