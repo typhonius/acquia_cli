@@ -126,7 +126,7 @@ abstract class AcquiaCliTestCase extends TestCase
 
     public function execute($client, $command)
     {
-        array_unshift($command, 'acquiacli', '--no-wait');
+        array_unshift($command, 'acquiacli', '--no-wait', '--yes');
         $input = new ArgvInput($command);
         $output = new BufferedOutput();
 

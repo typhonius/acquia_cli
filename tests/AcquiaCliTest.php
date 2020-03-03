@@ -43,6 +43,12 @@ class AcquiaCliTest
                 InputOption::VALUE_NONE,
                 'Run commands without waiting for tasks to complete (risky).'
             ),
+            new InputOption(
+                '--yes',
+                '-y',
+                InputOption::VALUE_NONE,
+                'Automatically respond "yes" to all confirmation questions.'
+            )
         ]);
 
         // Create and configure container.

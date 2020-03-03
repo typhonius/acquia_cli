@@ -41,7 +41,6 @@ class DbCommand extends AcquiaCommand
         $table = new Table($this->output());
         $table->setHeaders(['Databases']);
         foreach ($databases as $database) {
-            echo $database->name;
             $table
                 ->addRows([
                     [
@@ -64,6 +63,7 @@ class DbCommand extends AcquiaCommand
     public function dbCreate($uuid, $dbName)
     {
         $response = $this->databaseAdapter->create($uuid, $dbName);
+        $this->say(sprintf('Creating database (%s)', $dbName));
         $this->waitForNotification($response);
     }
 
