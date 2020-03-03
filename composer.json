@@ -10,9 +10,9 @@
     "license": "MIT",
     "require": {
         "typhonius/acquia-php-sdk-v2": "^2.0.0",
-        "typhonius/acquia-logstream": "^0.3",
         "consolidation/robo": "^2",
-        "symfony/lock": "^3|^4"
+        "symfony/lock": "^3|^4",
+        "typhonius/acquia-logstream": "^0.3"
     },
     "bin": ["bin/acquiacli"],
     "autoload":{
@@ -20,13 +20,20 @@
             "AcquiaCli\\":"src"
         }
     },
+    "autoload-dev": {
+        "psr-4":{
+            "AcquiaCli\\Tests\\": "tests/"
+        }
+    },
     "require-dev": {
         "squizlabs/php_codesniffer": "^3.1",
-        "phpstan/phpstan": "^0.11.19"
+        "phpstan/phpstan": "^0.11.19",
+        "phpunit/phpunit": "^7.0"
     },
     "scripts": {
         "lint": "php -l ./src/",
         "sniff": "./vendor/bin/phpcs -s --standard=PSR2 ./src/",
+        "test": "./vendor/bin/phpunit --coverage-clover ./tests/logs/clover.xml",
         "stan": "./vendor/bin/phpstan analyse --level 7 src"
     }
 }

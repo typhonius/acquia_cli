@@ -20,7 +20,7 @@ class CronCommand extends AcquiaCommand
     {
         parent::__construct();
 
-        $this->cronAdapter = new Crons($this->getCloudApi());
+        $this->cronAdapter = new Crons($this->cloudapi);
     }
 
     /**

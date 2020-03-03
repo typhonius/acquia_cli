@@ -20,7 +20,7 @@ class CodeCommand extends AcquiaCommand
     {
         parent::__construct();
 
-        $this->codeAdapter = new Code($this->getCloudApi());
+        $this->codeAdapter = new Code($this->cloudapi);
     }
 
     /**

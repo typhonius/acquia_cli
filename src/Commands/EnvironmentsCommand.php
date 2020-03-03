@@ -21,8 +21,8 @@ class EnvironmentsCommand extends AcquiaCommand
     {
         parent::__construct();
 
-        $this->environmentsAdapter = new Environments($this->getCloudApi());
-        $this->serversAdapter = new Servers($this->getCloudApi());
+        $this->environmentsAdapter = new Environments($this->cloudapi);
+        $this->serversAdapter = new Servers($this->cloudapi);
     }
 
     /**

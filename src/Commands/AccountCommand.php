@@ -17,7 +17,7 @@ class AccountCommand extends AcquiaCommand
     {
         parent::__construct();
 
-        $this->accountAdapter = new Account($this->getCloudApi());
+        $this->accountAdapter = new Account($this->cloudapi);
     }
 
     /**

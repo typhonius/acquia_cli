@@ -17,4 +17,5 @@ script:
     - cd ${TRAVIS_BUILD_DIR}
     - composer lint
     - composer sniff
+    - composer test
     - composer stan

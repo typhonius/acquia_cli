@@ -21,7 +21,7 @@ class VariablesCommand extends AcquiaCommand
     {
         parent::__construct();
 
-        $this->variablesAdapter = new Variables($this->getCloudApi());
+        $this->variablesAdapter = new Variables($this->cloudapi);
     }
 
     /**

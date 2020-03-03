@@ -25,7 +25,7 @@ class LogsCommand extends AcquiaCommand
     {
         parent::__construct();
 
-        $this->logsAdapter = new Logs($this->getCloudApi());
+        $this->logsAdapter = new Logs($this->cloudapi);
     }
 
     /**

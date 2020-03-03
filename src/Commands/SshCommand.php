@@ -23,9 +23,9 @@ class SshCommand extends EnvironmentsCommand
     public function sshInfo($uuid, $env = null)
     {
 
-        // if (null !== $env) {
-        //     $this->cloudapi->addQuery('filter', "name=${env}");
-        // }
+        if (null !== $env) {
+            $this->cloudapi->addQuery('filter', "name=${env}");
+        }
 
         $environments = $this->environmentsAdapter->getAll($uuid);
 
@@ -41,8 +41,7 @@ class SshCommand extends EnvironmentsCommand
         //     1 => $a,
         //     2 => $b
         // ];
-        // $this->cloudapi->clearQuery();
-        var_dump($environments);
+        $this->cloudapi->clearQuery();
 
         foreach ($environments as $e) {
             /** @var $e EnvironmentResponse */

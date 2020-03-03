@@ -19,7 +19,7 @@ class NotificationsCommand extends AcquiaCommand
     {
         parent::__construct();
 
-        $this->notificationsAdapter = new Notifications($this->getCloudApi());
+        $this->notificationsAdapter = new Notifications($this->cloudapi);
     }
 
     /**

@@ -4,6 +4,9 @@ namespace AcquiaCli;
 
 use AcquiaCloudApi\Connector\Client;
 use AcquiaCloudApi\Connector\Connector;
+use AcquiaCloudApi\Endpoints\Applications;
+use AcquiaCloudApi\Endpoints\Environments;
+
 
 /**
  * Class CloudApi
@@ -14,10 +17,12 @@ final class CloudApi
 
     private $cloudapi;
 
+    private $extraConfig;
+
     public function __construct($config)
     {
 
-        $extraConfig = $config->get('extraconfig');
+        $this->extraConfig = $config->get('extraconfig');
         $acquia = $config->get('acquia');
 
         if (getenv('ACQUIACLI_KEY') && getenv('ACQUIACLI_SECRET')) {
@@ -43,5 +48,20 @@ final class CloudApi
     public function setCloudApi($cloudapi)
     {
         $this->cloudapi = $cloudapi;
+    }
+
+    public function getExtraConfig()
+    {
+        return $this->extraConfig;
+    }
+
+    public function getApplications()
+    {
+        return new Applications($this->cloudapi);
+    }
+
+    public function getEnvironmentts()
+    {
+        return new Environments($this->cloudapi);
     }
 }

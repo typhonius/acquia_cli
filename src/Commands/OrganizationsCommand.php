@@ -24,7 +24,7 @@ class OrganizationsCommand extends AcquiaCommand
     {
         parent::__construct();
 
-        $this->organizationsAdapter = new Organizations($this->getCloudApi());
+        $this->organizationsAdapter = new Organizations($this->cloudapi);
     }
 
     /**

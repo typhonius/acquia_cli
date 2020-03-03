@@ -19,7 +19,7 @@ class DomainCommand extends AcquiaCommand
     {
         parent::__construct();
 
-        $this->domainAdapter = new Domains($this->getCloudApi());
+        $this->domainAdapter = new Domains($this->cloudapi);
     }
 
     /**

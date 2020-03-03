@@ -28,7 +28,7 @@ class DbBackupCommand extends AcquiaCommand
     {
         parent::__construct();
 
-        $this->databaseBackupsAdapter = new DatabaseBackups($this->getCloudApi());
+        $this->databaseBackupsAdapter = new DatabaseBackups($this->cloudapi);
     }
 
     /**
