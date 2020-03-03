@@ -15,6 +15,7 @@ use Robo\Robo;
 
 use GuzzleHttp\Psr7;
 use PHPUnit\Framework\TestCase;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * Class AcquiaCliTestCase
@@ -22,7 +23,7 @@ use PHPUnit\Framework\TestCase;
 abstract class AcquiaCliTestCase extends TestCase
 {
 
-    protected function getPsr7StreamForFixture($fixture): Psr7\Stream
+    protected function getPsr7StreamForFixture($fixture): StreamInterface
     {
         $path = sprintf(
             '%s/vendor/typhonius/acquia-php-sdk-v2/tests/Fixtures/Endpoints/%s',
@@ -50,7 +51,11 @@ abstract class AcquiaCliTestCase extends TestCase
             $fixture
         );
         $this->assertFileExists($path);
-        return json_decode(file_get_contents($path));
+        if ($contents = file_get_contents($path)) {
+            return json_decode($contents);
+        } else {
+            throw new \Exception(sprintf('Fixture file %s not able to be opened.', $path));
+        }
     }
 
     /**

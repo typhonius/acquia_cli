@@ -2,8 +2,7 @@
 
 namespace AcquiaCli\Tests;
 
-use AcquiaCloudApi\Connector\Client;
-use AcquiaCloudApi\Connector\Connector;
+use Consolidation\Config\ConfigInterface;
 
 /**
  * Class CloudApi
@@ -13,9 +12,9 @@ final class CloudApiTest
 {
 
     private $client;
-    private $applications;
+    private $extraConfig;
 
-    public function __construct($config, $client)
+    public function __construct(ConfigInterface $config, $client)
     {
         $this->extraConfig = $config->get('extraconfig');
         $this->setCloudApi($client);
