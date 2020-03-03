@@ -4,6 +4,8 @@ namespace AcquiaCli;
 
 use AcquiaCloudApi\Connector\Client;
 use AcquiaCloudApi\Connector\Connector;
+use AcquiaCloudApi\Endpoints\Applications;
+use AcquiaCloudApi\Endpoints\Environments;
 
 /**
  * Class CloudApi
@@ -43,5 +45,10 @@ final class CloudApi
     public function setCloudApi($cloudapi)
     {
         $this->cloudapi = $cloudapi;
+    }
+
+    public function getExtraConfig()
+    {
+        return $this->extraConfig;
     }
 }

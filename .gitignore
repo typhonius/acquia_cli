@@ -2,3 +2,4 @@ acquiacli.yml
 robo.yml
 vendor
 .idea
+tests/logs
