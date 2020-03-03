@@ -108,7 +108,7 @@ class CodeCommand extends AcquiaCommand
      * @command code:switch
      * @aliases c:s
      */
-    public function codeSwitch($uuid, EnvironmentResponse $environment, $branch)
+    public function codeSwitch($uuid, $environment, $branch)
     {
         if (!$this->confirm(
             sprintf(
