@@ -22,7 +22,7 @@ class InsightsCommand extends AcquiaCommand
     {
         parent::__construct();
 
-        $this->insightsAdapter = new Insights($this->cloudapi);
+        $this->insightsAdapter = new Insights($this->getCloudApi());
     }
 
     /**

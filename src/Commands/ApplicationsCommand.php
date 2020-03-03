@@ -23,9 +23,9 @@ class ApplicationsCommand extends AcquiaCommand
     {
         parent::__construct();
 
-        $this->applicationsAdapter = new Applications($this->cloudapi);
-        $this->environmentsAdapter = new Environments($this->cloudapi);
-        $this->databasesAdapter = new Databases($this->cloudapi);
+        $this->applicationsAdapter = new Applications($this->getCloudApi());
+        $this->environmentsAdapter = new Environments($this->getCloudApi());
+        $this->databasesAdapter = new Databases($this->getCloudApi());
     }
 
     /**

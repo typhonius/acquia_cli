@@ -31,9 +31,6 @@ abstract class AcquiaCommand extends Tasks
     // @TODO https://github.com/boedah/robo-drush/issues/18
     //use \Boedah\Robo\Task\Drush\loadTasks;
 
-    /** @var \AcquiaCloudApi\Connector\Client $cloudapi */
-    protected $cloudapi;
-
     /** Additional configuration. */
     protected $extraConfig;
 
@@ -57,32 +54,28 @@ abstract class AcquiaCommand extends Tasks
      */
     public function __construct()
     {
-        $extraConfig = Robo::config()->get('extraconfig');
-        $this->extraConfig = $extraConfig;
+        $config = Robo::config();
+        $this->extraConfig = $config->get('extraconfig');
 
-        $acquia = Robo::config()->get('acquia');
-
-        // Allows for environment variables for the key and secret
-        // to override configuration values.
-        if (getenv('ACQUIACLI_KEY') && getenv('ACQUIACLI_SECRET')) {
-            $acquia['key'] = getenv('ACQUIACLI_KEY');
-            $acquia['secret'] = getenv('ACQUIACLI_SECRET');
-        }
-
-        $connector = new Connector([
-            'key' => $acquia['key'],
-            'secret' => $acquia['secret'],
-        ]);
-        /** @var \AcquiaCloudApi\Connector\Client $cloudapi */
-        $cloudapi = Client::factory($connector);
-
-        $this->setCloudApi($cloudapi);
         $this->setTableStyles();
     }
 
-    public function setCloudApi($cloudapi)
+    public function getCloudApi()
     {
-        $this->cloudapi = $cloudapi;
+        $cloudapi = Robo::service('cloudApi')->getCloudApi();
+        return $cloudapi;
+    }
+
+    public function getEnvironments()
+    {
+        $environments = Robo::service('cloudApi')->getEnvironments();
+        return $environments;
+    }
+
+    public function getApplications()
+    {
+        $applications = Robo::service('cloudApi')->getApplications();
+        return $applications;
     }
 
     /**
@@ -165,7 +158,7 @@ abstract class AcquiaCommand extends Tasks
      */
     protected function getEnvironmentFromEnvironmentName($uuid, $environment)
     {
-        $environmentsAdapter = new Environments($this->cloudapi);
+        $environmentsAdapter = $this->getEnvironments();
         $environments = $environmentsAdapter->getAll($uuid);
 
         foreach ($environments as $e) {
@@ -184,7 +177,7 @@ abstract class AcquiaCommand extends Tasks
      */
     protected function getOrganizationFromOrganizationName($organizationName)
     {
-        $org = new Organizations($this->cloudapi);
+        $org = new Organizations($this->getCloudApi());
         $organizations = $org->getAll();
 
         foreach ($organizations as $organization) {
@@ -203,7 +196,7 @@ abstract class AcquiaCommand extends Tasks
      */
     protected function getUuidFromHostingName($name)
     {
-        $app = new Applications($this->cloudapi);
+        $app = $this->getApplications();
         $applications = $app->getAll();
 
         foreach ($applications as $application) {
@@ -245,7 +238,7 @@ abstract class AcquiaCommand extends Tasks
         $progress->setMessage('Looking up notification');
         $progress->start();
 
-        $notificationAdapter = new Notifications($this->cloudapi);
+        $notificationAdapter = new Notifications($this->getCloudApi());
 
         while (true) {
             $progress->advance($sleep);
@@ -295,7 +288,7 @@ abstract class AcquiaCommand extends Tasks
      */
     protected function backupAndMoveDbs($uuid, $environmentFrom, $environmentTo)
     {
-        $dbAdapter = new Databases($this->cloudapi);
+        $dbAdapter = new Databases($this->getCloudApi());
         $databases = $dbAdapter->getAll($uuid);
         foreach ($databases as $database) {
             $this->backupDb($uuid, $environmentTo, $database);
@@ -310,7 +303,7 @@ abstract class AcquiaCommand extends Tasks
                 )
             );
 
-            $databaseAdapter = new Databases($this->cloudapi);
+            $databaseAdapter = new Databases($this->getCloudApi());
             $response = $databaseAdapter->copy($environmentFrom->uuid, $database->name, $environmentTo->uuid);
             $this->waitForNotification($response);
         }
@@ -322,7 +315,7 @@ abstract class AcquiaCommand extends Tasks
      */
     protected function backupAllEnvironmentDbs($uuid, EnvironmentResponse $environment)
     {
-        $dbAdapter = new Databases($this->cloudapi);
+        $dbAdapter = new Databases($this->getCloudApi());
         $databases = $dbAdapter->getAll($uuid);
         foreach ($databases as $database) {
             $this->backupDb($uuid, $environment, $database);
@@ -338,7 +331,7 @@ abstract class AcquiaCommand extends Tasks
     {
         // Run database backups.
         $this->say(sprintf('Backing up DB (%s) on %s', $database->name, $environment->label));
-        $dbAdapter = new DatabaseBackups($this->cloudapi);
+        $dbAdapter = new DatabaseBackups($this->getCloudApi());
         $response = $dbAdapter->create($environment->uuid, $database->name);
         $this->waitForNotification($response);
     }
@@ -350,7 +343,7 @@ abstract class AcquiaCommand extends Tasks
      */
     protected function copyFiles($uuid, $environmentFrom, $environmentTo)
     {
-        $environmentsAdapter = new Environments($this->cloudapi);
+        $environmentsAdapter = $this->getEnvironments();
         $this->say(sprintf('Copying files from %s to %s', $environmentFrom->label, $environmentTo->label));
         $response = $environmentsAdapter->copyFiles($environmentFrom->uuid, $environmentTo->uuid);
         $this->waitForNotification($response);
