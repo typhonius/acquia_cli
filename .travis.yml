@@ -19,3 +19,7 @@ script:
     - composer sniff
     - composer test
     - composer stan
+
+after_script:
+    - cd ${TRAVIS_BUILD_DIR}
+    - composer coveralls
