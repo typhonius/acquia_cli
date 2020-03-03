@@ -216,7 +216,8 @@ abstract class AcquiaCommand extends Tasks
     protected function waitForNotification($response)
     {
         if ($this->input()->getOption('no-wait')) {
-            $this->say('Skipping wait for notification.');
+            // @TODO put this back in later.
+            // $this->say('Skipping wait for notification.');
             return true;
         }
 
@@ -343,7 +344,7 @@ abstract class AcquiaCommand extends Tasks
      */
     protected function copyFiles($uuid, $environmentFrom, $environmentTo)
     {
-        $environmentsAdapter = $this->getEnvironments();
+        $environmentsAdapter = new Environments($this->cloudapi);
         $this->say(sprintf('Copying files from %s to %s', $environmentFrom->label, $environmentTo->label));
         $response = $environmentsAdapter->copyFiles($environmentFrom->uuid, $environmentTo->uuid);
         $this->waitForNotification($response);
