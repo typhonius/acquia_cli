@@ -27,8 +27,9 @@ class AccountCommand extends AcquiaCommand
      */
     public function account()
     {
-        $tz = $this->extraConfig['timezone'];
-        $format = $this->extraConfig['format'];
+        $extraConfig = $this->cloudapiService->getExtraConfig();
+        $tz = $extraConfig['timezone'];
+        $format = $extraConfig['format'];
         $timezone = new \DateTimeZone($tz);
 
         $account = $this->accountAdapter->get();

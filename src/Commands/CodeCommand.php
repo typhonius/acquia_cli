@@ -61,6 +61,7 @@ class CodeCommand extends AcquiaCommand
      * @aliases c:d
      */
     public function codeDeploy(
+        Code $codeAdapter,
         $uuid,
         $environmentFrom,
         $environmentTo
@@ -85,7 +86,7 @@ class CodeCommand extends AcquiaCommand
             )
         );
 
-        $response = $this->codeAdapter->deploy($environmentFrom->uuid, $environmentTo->uuid);
+        $response = $codeAdapter->deploy($environmentFrom->uuid, $environmentTo->uuid);
         $this->waitForNotification($response);
     }
 
@@ -99,7 +100,7 @@ class CodeCommand extends AcquiaCommand
      * @command code:switch
      * @aliases c:s
      */
-    public function codeSwitch($uuid, $environment, $branch)
+    public function codeSwitch(Code $codeAdapter, $uuid, $environment, $branch)
     {
         if (!$this->confirm(
             sprintf(
@@ -115,7 +116,7 @@ class CodeCommand extends AcquiaCommand
 
         $this->say(sprintf('Switching %s enviroment to %s branch', $environment->label, $branch));
 
-        $response = $this->codeAdapter->switch($environment->uuid, $branch);
+        $response = $codeAdapter->switch($environment->uuid, $branch);
         $this->waitForNotification($response);
     }
 }

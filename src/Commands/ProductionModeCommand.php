@@ -22,13 +22,15 @@ class ProductionModeCommand extends EnvironmentsCommand
      * @command productionmode:enable
      * @aliases pm:enable
      */
-    public function productionModeEnable($uuid, $environment)
+    public function productionModeEnable(Environments $environmentsAdapter, $uuid, $environment)
     {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+
         if ('prod' !== $environment->name) {
             throw new \Exception('Production mode may only be enabled/disabled on the prod environment.');
         }
         $this->say(sprintf('Enabling production mode for %s environment', $environment->label));
-        $this->environmentsAdapter->enableProductionMode($environment->uuid);
+        $environmentsAdapter->enableProductionMode($environment->uuid);
     }
 
     /**
@@ -41,15 +43,17 @@ class ProductionModeCommand extends EnvironmentsCommand
      * @command productionmode:disable
      * @aliases pm:disable
      */
-    public function productionModeDisable($uuid, $environment)
+    public function productionModeDisable(Environments $environmentsAdapter, $uuid, $environment)
     {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+
         if ('prod' !== $environment->name) {
             throw new \Exception('Production mode may only be enabled/disabled on the prod environment.');
         }
 
         if ($this->confirm('Are you sure you want to disable production mode?')) {
             $this->say(sprintf('Disabling production mode for %s environment', $environment->label));
-            $this->environmentsAdapter->disableProductionMode($environment->uuid);
+            $environmentsAdapter->disableProductionMode($environment->uuid);
         }
     }
 }
