@@ -51,6 +51,12 @@ class AcquiaCliTest extends AcquiaCli
         );
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Databases', new \AcquiaCli\Injector\AcquiaCliInjector);
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Domains', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Code', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register(
+            'AcquiaCloudApi\Endpoints\DatabaseBackups',
+            new \AcquiaCli\Injector\AcquiaCliInjector
+        );
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Crons', new \AcquiaCli\Injector\AcquiaCliInjector);
 
         return $container;
     }

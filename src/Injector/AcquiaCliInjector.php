@@ -11,6 +11,8 @@ use AcquiaCloudApi\Endpoints\Databases;
 use AcquiaCloudApi\Endpoints\Servers;
 use AcquiaCloudApi\Endpoints\Domains;
 use AcquiaCloudApi\Endpoints\Code;
+use AcquiaCloudApi\Endpoints\DatabaseBackups;
+use AcquiaCloudApi\Endpoints\Crons;
 
 class AcquiaCliInjector implements ParameterInjector
 {
@@ -45,6 +47,10 @@ class AcquiaCliInjector implements ParameterInjector
                 return new Domains($this->client);
             case 'AcquiaCloudApi\Endpoints\Code':
                 return new Code($this->client);
+            case 'AcquiaCloudApi\Endpoints\DatabaseBackups':
+                return new DatabaseBackups($this->client);
+            case 'AcquiaCloudApi\Endpoints\Crons':
+                return new Crons($this->client);
         }
 
         return null;

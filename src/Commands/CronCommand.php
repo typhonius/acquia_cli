@@ -14,15 +14,6 @@ use Symfony\Component\Console\Helper\Table;
 class CronCommand extends AcquiaCommand
 {
 
-    protected $cronAdapter;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->cronAdapter = new Crons($this->cloudapi);
-    }
-
     /**
      * Shows all cron tasks associated with an environment.
      *
@@ -31,10 +22,11 @@ class CronCommand extends AcquiaCommand
      *
      * @command cron:list
      */
-    public function crons($uuid, $environment)
+    public function crons(Crons $cronAdapter, $uuid, $environment)
     {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
 
-        $crons = $this->cronAdapter->getAll($environment->uuid);
+        $crons = $cronAdapter->getAll($environment->uuid);
 
         $output = $this->output();
         $table = new Table($output);
@@ -69,9 +61,11 @@ class CronCommand extends AcquiaCommand
      * @command cron:create
      * @aliases cron:add
      */
-    public function cronAdd($uuid, $environment, $commandString, $frequency, $label)
+    public function cronAdd(Crons $cronAdapter, $uuid, $environment, $commandString, $frequency, $label)
     {
-        $response = $this->cronAdapter->create($environment->uuid, $commandString, $frequency, $label);
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+        $this->say(sprintf('Adding new cron task on %s environment', $environment->name));
+        $response = $cronAdapter->create($environment->uuid, $commandString, $frequency, $label);
         $this->waitForNotification($response);
     }
 
@@ -85,11 +79,12 @@ class CronCommand extends AcquiaCommand
      * @command cron:delete
      * @aliases cron:remove
      */
-    public function cronDelete($uuid, $environment, $cronId)
+    public function cronDelete(Crons $cronAdapter, $uuid, $environment, $cronId)
     {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
         if ($this->confirm("Are you sure you want to delete the cron task?")) {
             $this->say(sprintf('Deleting cron task %s from %s', $cronId, $environment->label));
-            $response = $this->cronAdapter->delete($environment->uuid, $cronId);
+            $response = $cronAdapter->delete($environment->uuid, $cronId);
             $this->waitForNotification($response);
         }
     }
@@ -103,9 +98,11 @@ class CronCommand extends AcquiaCommand
      *
      * @command cron:enable
      */
-    public function cronEnable($uuid, $environment, $cronId)
+    public function cronEnable(Crons $cronAdapter, $uuid, $environment, $cronId)
     {
-        $response = $this->cronAdapter->enable($environment->uuid, $cronId);
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+        $this->say(sprintf('Enabling cron task %s on %s environment', $cronId, $environment->name));
+        $response = $cronAdapter->enable($environment->uuid, $cronId);
         $this->waitForNotification($response);
     }
 
@@ -118,10 +115,12 @@ class CronCommand extends AcquiaCommand
      *
      * @command cron:disable
      */
-    public function cronDisable($uuid, $environment, $cronId)
+    public function cronDisable(Crons $cronAdapter, $uuid, $environment, $cronId)
     {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
         if ($this->confirm("Are you sure you want to disable the cron task?")) {
-            $response = $this->cronAdapter->disable($environment->uuid, $cronId);
+            $this->say(sprintf('Disabling cron task %s on %s environment', $cronId, $environment->name));
+            $response = $cronAdapter->disable($environment->uuid, $cronId);
             $this->waitForNotification($response);
         }
     }
@@ -135,9 +134,10 @@ class CronCommand extends AcquiaCommand
      *
      * @command cron:info
      */
-    public function cronInfo($uuid, $environment, $cronId)
+    public function cronInfo(Crons $cronAdapter, $uuid, $environment, $cronId)
     {
-        $cron = $this->cronAdapter->get($environment->uuid, $cronId);
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+        $cron = $cronAdapter->get($environment->uuid, $cronId);
 
         $enabled = $cron->flags->enabled ? '✓' : ' ';
         $system = $cron->flags->system ? '✓' : ' ';

@@ -66,6 +66,9 @@ class CodeCommand extends AcquiaCommand
         $environmentFrom,
         $environmentTo
     ) {
+        $environmentFrom = $this->cloudapiService->getEnvironment($uuid, $environmentFrom);
+        $environmentTo = $this->cloudapiService->getEnvironment($uuid, $environmentTo);
+
         if (!$this->confirm(
             sprintf(
                 'Are you sure you want to deploy code from %s to %s?',
@@ -102,6 +105,8 @@ class CodeCommand extends AcquiaCommand
      */
     public function codeSwitch(Code $codeAdapter, $uuid, $environment, $branch)
     {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+
         if (!$this->confirm(
             sprintf(
                 'Are you sure you want to switch code on the %s environment to branch: %s?',

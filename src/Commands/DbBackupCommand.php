@@ -18,18 +18,9 @@ use Symfony\Component\Console\Helper\ProgressBar;
 class DbBackupCommand extends AcquiaCommand
 {
 
-    protected $databaseBackupsAdapter;
-
     private $downloadProgress;
 
     private $lastStep;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->databaseBackupsAdapter = new DatabaseBackups($this->cloudapi);
-    }
 
     /**
      * Backs up all DBs in an environment.
@@ -56,7 +47,7 @@ class DbBackupCommand extends AcquiaCommand
      * @command database:backup:list
      * @aliases db:backup:list
      */
-    public function dbBackupList($uuid, $environment, $dbName = null)
+    public function dbBackupList(DatabaseBackups $databaseBackupsAdapter, $uuid, $environment, $dbName = null)
     {
         $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
 
@@ -71,7 +62,7 @@ class DbBackupCommand extends AcquiaCommand
         $table->setHeaders(['ID', 'Type', 'Timestamp']);
 
         foreach ($databases as $database) {
-            $backups = $this->databaseBackupsAdapter->getAll($environment->uuid, $database->name);
+            $backups = $databaseBackupsAdapter->getAll($environment->uuid, $database->name);
             $table
                 ->addRows(
                     [
@@ -105,7 +96,7 @@ class DbBackupCommand extends AcquiaCommand
      * @command database:backup:restore
      * @aliases db:backup:restore
      */
-    public function dbBackupRestore($uuid, $environment, $dbName, $backupId)
+    public function dbBackupRestore(DatabaseBackups $databaseBackupsAdapter, $uuid, $environment, $dbName, $backupId)
     {
         $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
 
@@ -113,7 +104,7 @@ class DbBackupCommand extends AcquiaCommand
             sprintf('Are you sure you want to restore backup id %s to %s?', $backupId, $environment->label)
         )) {
             $this->say(sprintf('Restoring backup %s to %s on %s', $backupId, $dbName, $environment->label));
-            $response = $this->databaseBackupsAdapter->restore($environment->uuid, $dbName, $backupId);
+            $response = $databaseBackupsAdapter->restore($environment->uuid, $dbName, $backupId);
             $this->waitForNotification($response);
         }
     }
@@ -158,12 +149,17 @@ class DbBackupCommand extends AcquiaCommand
      * @option $backup Select which backup to download by backup ID. If omitted, the latest will be downloaded.
      * @option $path Select a path to download the backup to. If omitted, the system temp directory will be used.
      */
-    public function dbBackupDownload($uuid, $environment, $dbName, $opts = ['backup' => null, 'path' => null])
-    {
+    public function dbBackupDownload(
+        DatabaseBackups $databaseBackupsAdapter,
+        $uuid,
+        $environment,
+        $dbName,
+        $opts = ['backup' => null, 'path' => null]
+    ) {
         if (!$opts['backup']) {
             $this->cloudapi->addQuery('sort', '-created');
             $this->cloudapi->addQuery('limit', 1);
-            $backup = $this->databaseBackupsAdapter->getAll($environment->uuid, $dbName);
+            $backup = $databaseBackupsAdapter->getAll($environment->uuid, $dbName);
             $this->cloudapi->clearQuery();
             if (empty($backup)) {
                 throw new \Exception('Unable to find a database backup to download.');
@@ -204,7 +200,7 @@ class DbBackupCommand extends AcquiaCommand
             $this->lastStep = $downloadedBytes;
         });
 
-        $this->databaseBackupsAdapter->download($environment->uuid, $dbName, $backupId);
+        $databaseBackupsAdapter->download($environment->uuid, $dbName, $backupId);
         $this->downloadProgress->setMessage(sprintf('Database backup downloaded to %s', $location));
         $this->downloadProgress->finish();
 

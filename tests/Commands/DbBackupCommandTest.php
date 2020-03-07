@@ -10,7 +10,7 @@ class DbBackupCommandTest extends AcquiaCliTestCase
     /**
      * @dataProvider dbBackupProvider
      */
-    public function testDbBackupCommands($command, $fixture, $expected)
+    public function testDbBackupCommands($command, $expected)
     {
         $actualResponse = $this->execute($command);
         $this->assertSame($expected, $actualResponse);
@@ -52,21 +52,17 @@ TABLE;
         return [
             [
                 ['database:backup:restore', 'uuid', 'environment', 'dbName', 1234],
-                'DatabaseBackups/restoreDatabaseBackup.json',
                 '>  Restoring backup 1234 to dbName on Mock Env' . PHP_EOL
             ],
             [
                 ['database:backup', 'uuid', 'environment'],
-                'DatabaseBackups/createDatabaseBackup.json',
                 $createBackupText . PHP_EOL
             ],            [
                 ['database:backup:list', 'uuid', 'environment'],
-                'DatabaseBackups/getAllDatabaseBackups.json',
                 $dbBackupList . PHP_EOL
             ],
             [
                 ['database:backup:link', 'uuid', 'environment', 'dbName', 1234],
-                'DatabaseBackups/restoreDatabaseBackup.json',
                 $dbLink . PHP_EOL
             ],
         ];

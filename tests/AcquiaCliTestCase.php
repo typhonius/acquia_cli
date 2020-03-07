@@ -191,7 +191,31 @@ abstract class AcquiaCliTestCase extends TestCase
             ],
             '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/files' => [
                 'post' => 'Environments/copyFiles.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/crons' => [
+                'get' => 'Crons/getAllCrons.json',
+                'post' => 'Crons/createCron.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/crons/cronId' => [
+                'get' => 'Crons/getCron.json',
+                'delete' => 'Crons/deleteCron.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/crons/cronId/actions/enable' => [
+                'post' => 'Crons/enableCron.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/crons/cronId/actions/disable' => [
+                'post' => 'Crons/disableCron.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/code/actions/switch' => [
+                'post' => 'Code/switchCode.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/code' => [
+                'post' => 'Code/deployCode.json'
+            ],
+            '/applications/uuid/code' => [
+                'get' => 'Code/getAllCode.json'
             ]
+            
 
 
         ];

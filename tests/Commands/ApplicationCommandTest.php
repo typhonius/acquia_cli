@@ -10,7 +10,7 @@ class ApplicationCommandTest extends AcquiaCliTestCase
     /**
      * @dataProvider applicationProvider
      */
-    public function testApplicationCommands($command, $fixture, $expected)
+    public function testApplicationCommands($command, $expected)
     {
         $actualResponse = $this->execute($command);
         $this->assertSame($expected, $actualResponse);
@@ -38,23 +38,19 @@ TABLE;
         return [
             [
                 ['application:list'],
-                'Applications/getAllApplications.json',
                 $getAllApplications . PHP_EOL
 
             ],
             [
                 ['application:tags', 'uuid'],
-                'Applications/getAllTags.json',
                 $getTags . PHP_EOL
             ],
             [
                 ['application:tag:create', 'uuid', 'name', 'color'],
-                'Applications/createTag.json',
                 '>  Creating application tag name:color' . PHP_EOL
             ],
             [
                 ['application:tag:delete', 'uuid', 'name'],
-                'Applications/deleteTag.json',
                 '>  Deleting application tag name' . PHP_EOL
             ]
         ];

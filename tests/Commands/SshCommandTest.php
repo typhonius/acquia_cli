@@ -7,21 +7,29 @@ use AcquiaCli\Tests\AcquiaCliTestCase;
 class SshCommandTest extends AcquiaCliTestCase
 {
 
-    public function testSshInfo()
+    /**
+     * @dataProvider sshProvider
+     */
+    public function testSshInfo($command, $expected)
+    {
+        $actualResponse = $this->execute($command);
+        $this->assertSame($expected, $actualResponse);
+    }
+
+    public function sshProvider()
     {
 
-        $command = [
-            'ssh:info',
-            'a47ac10b-58cc-4372-a567-0e02b2c3d470'
-        ];
-
-        $actualResponse = $this->execute($command);
-
-        $expectedResponse = '>  dev: ssh 
+        $infoResponse = <<<INFO
+>  dev: ssh 
 >  prod: ssh 
 >  test: ssh 
-';
+INFO;
 
-        $this->assertSame($expectedResponse, $actualResponse);
+        return [
+            [
+                ['ssh:info', 'a47ac10b-58cc-4372-a567-0e02b2c3d470'],
+                $infoResponse . PHP_EOL
+            ]
+        ];
     }
 }
