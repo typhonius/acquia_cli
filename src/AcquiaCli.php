@@ -108,6 +108,10 @@ class AcquiaCli
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Servers', new \AcquiaCli\Injector\AcquiaCliInjector);
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Domains', new \AcquiaCli\Injector\AcquiaCliInjector);
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Code', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register(
+            'AcquiaCloudApi\Endpoints\DatabaseBackups',
+            new \AcquiaCli\Injector\AcquiaCliInjector
+        );
 
         return $container;
     }
