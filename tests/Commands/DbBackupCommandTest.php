@@ -41,6 +41,14 @@ TABLE;
         $createBackupText = '>  Backing up DB (database1) on Mock Env
 >  Backing up DB (database2) on Mock Env';
 
+        $dbLink = sprintf(
+            '%s/environments/%s/databases/%s/backups/%s/actions/download',
+            '>  https://cloud.acquia.com/api',
+            'bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a',
+            'dbName',
+            1234
+        );
+
         return [
             [
                 ['database:backup:restore', 'uuid', 'environment', 'dbName', 1234],
@@ -59,7 +67,7 @@ TABLE;
             [
                 ['database:backup:link', 'uuid', 'environment', 'dbName', 1234],
                 'DatabaseBackups/restoreDatabaseBackup.json',
-                '>  https://cloud.acquia.com/api/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/databases/dbName/backups/1234/actions/download' . PHP_EOL
+                $dbLink . PHP_EOL
             ],
         ];
     }

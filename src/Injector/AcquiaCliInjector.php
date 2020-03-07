@@ -10,9 +10,14 @@ use AcquiaCloudApi\Endpoints\Environments;
 use AcquiaCloudApi\Endpoints\Databases;
 use AcquiaCloudApi\Endpoints\Servers;
 use AcquiaCloudApi\Endpoints\Domains;
+use AcquiaCloudApi\Endpoints\Code;
 
 class AcquiaCliInjector implements ParameterInjector
 {
+
+    protected $config;
+    protected $cloudapi;
+    protected $client;
 
     public function __construct()
     {
@@ -38,6 +43,8 @@ class AcquiaCliInjector implements ParameterInjector
                 return new Servers($this->client);
             case 'AcquiaCloudApi\Endpoints\Domains':
                 return new Domains($this->client);
+            case 'AcquiaCloudApi\Endpoints\Code':
+                return new Code($this->client);
         }
 
         return null;

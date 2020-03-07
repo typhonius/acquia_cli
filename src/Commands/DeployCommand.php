@@ -27,7 +27,7 @@ class DeployCommand extends AcquiaCommand
         }
 
         if ($environmentFrom === null) {
-            $environmentFrom = $this->getEnvironmentFromEnvironmentName($uuid, 'prod');
+            $environmentFrom = $this->cloudapiService->getEnvironment($uuid, 'prod');
         }
 
         $this->backupAndMoveDbs($uuid, $environmentFrom, $environmentTo);

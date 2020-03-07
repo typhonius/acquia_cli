@@ -34,9 +34,17 @@ class AcquiaCli
      * @param InputInterface|null  $input
      * @param OutputInterface|null $output
      */
-    public function __construct(Config $config, Client $client, InputInterface $input = null, OutputInterface $output = null)
-    {
-        $version = trim(file_get_contents(dirname(__DIR__) . '/VERSION'));
+    public function __construct(
+        Config $config,
+        Client $client,
+        InputInterface $input = null,
+        OutputInterface $output = null
+    ) {
+        if ($file = file_get_contents(dirname(__DIR__) . '/VERSION')) {
+            $version = trim($file);
+        } else {
+            throw new \Exception('No VERSION file');
+        }
 
         // Create application.
         $this->setConfig($config);
@@ -88,11 +96,18 @@ class AcquiaCli
 
         $parameterInjection = $container->get('parameterInjection');
         $parameterInjection->register('AcquiaCli\CloudApi', new \AcquiaCli\Injector\AcquiaCliInjector);
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Applications', new \AcquiaCli\Injector\AcquiaCliInjector);
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Environments', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register(
+            'AcquiaCloudApi\Endpoints\Applications',
+            new \AcquiaCli\Injector\AcquiaCliInjector
+        );
+        $parameterInjection->register(
+            'AcquiaCloudApi\Endpoints\Environments',
+            new \AcquiaCli\Injector\AcquiaCliInjector
+        );
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Databases', new \AcquiaCli\Injector\AcquiaCliInjector);
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Servers', new \AcquiaCli\Injector\AcquiaCliInjector);
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Domains', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Code', new \AcquiaCli\Injector\AcquiaCliInjector);
 
         return $container;
     }

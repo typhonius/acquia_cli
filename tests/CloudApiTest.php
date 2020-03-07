@@ -8,7 +8,6 @@ use Robo\Config\Config;
 use AcquiaCloudApi\Connector\Client;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 
-
 /**
  * Class CloudApi
  * @package AcquiaCli
@@ -18,6 +17,7 @@ class CloudApiTest extends CloudApi
 
     public function __construct(Config $config, Client $client)
     {
+        parent::__construct($config);
         $this->extraConfig = $config->get('extraconfig');
         $this->acquia = $config->get('acquia');
 
@@ -26,14 +26,14 @@ class CloudApiTest extends CloudApi
 
     public function getInstance()
     {
-        return $this->cloudapi;
+        return $this->client;
     }
 
     /**
      * @param string $uuid
      * @param string $environment
      * @return EnvironmentResponse
-     * @throws Exception
+     * @throws \Exception
      */
     public function getEnvironment($uuid, $environment)
     {

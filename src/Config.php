@@ -2,14 +2,12 @@
 
 namespace AcquiaCli;
 
-
 use Consolidation\Config\ConfigInterface;
 use Robo\Config\Config as RoboConfig;
 use Robo\Config\GlobalOptionDefaultValuesInterface;
 
 use Consolidation\Config\Loader\ConfigProcessor;
 use Consolidation\Config\Loader\YamlConfigLoader;
-
 
 /**
  * Class Config
@@ -36,6 +34,6 @@ class Config extends RoboConfig implements GlobalOptionDefaultValuesInterface
         $this->set('config.global', $globalConfig);
         // $this->set('config.root', $root);
 
-        return $this;
+        // return $this;
     }
 }

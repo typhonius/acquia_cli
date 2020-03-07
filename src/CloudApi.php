@@ -6,8 +6,8 @@ use AcquiaCloudApi\Connector\Client;
 use AcquiaCloudApi\Connector\Connector;
 use AcquiaCloudApi\Endpoints\Applications;
 use AcquiaCloudApi\Endpoints\Environments;
+use AcquiaCloudApi\Response\EnvironmentResponse;
 use Robo\Config\Config;
-
 
 /**
  * Class CloudApi
@@ -52,7 +52,7 @@ class CloudApi
      * @param string $uuid
      * @param string $environment
      * @return EnvironmentResponse
-     * @throws Exception
+     * @throws \Exception
      */
     public function getEnvironment($uuid, $environment)
     {
@@ -65,7 +65,7 @@ class CloudApi
             }
         }
 
-        throw new Exception('Unable to find ID for environment');
+        throw new \Exception('Unable to find ID for environment');
     }
 
     public function getClient()

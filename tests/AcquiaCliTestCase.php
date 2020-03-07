@@ -101,7 +101,6 @@ abstract class AcquiaCliTestCase extends TestCase
     /**
      * Mock client class.
      *
-     * @param  mixed  $response
      * @return Client
      */
     protected function getMockClient()

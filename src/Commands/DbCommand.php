@@ -128,11 +128,6 @@ class DbCommand extends AcquiaCommand
             )
         )) {
             $this->backupAndMoveDbs($uuid, $environmentFrom, $environmentTo, $dbName);
-
-            // $this->backupDb($uuid, $environmentTo, $database);
-            // $this->say(sprintf('Copying database (%s) from %s to %s', $dbName, $environmentFrom->label, $environmentTo->label));
-            // $response = $this->databaseAdapter->copy($environmentFrom->uuid, $dbName, $environmentTo->uuid);
-            // $this->waitForNotification($response);
         }
     }
 
