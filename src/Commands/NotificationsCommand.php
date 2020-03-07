@@ -52,8 +52,10 @@ class NotificationsCommand extends AcquiaCommand
         $table = new Table($output);
         $table->setHeaders(['UUID', 'Created', 'Name', 'Status']);
 
-        $tz = $this->extraConfig['timezone'];
-        $format = $this->extraConfig['format'];
+        $extraConfig = $this->cloudapiService->getExtraConfig();
+
+        $tz = $extraConfig['timezone'];
+        $format = $extraConfig['format'];
         $timezone = new \DateTimeZone($tz);
 
         foreach ($notifications as $notification) {
@@ -87,8 +89,9 @@ class NotificationsCommand extends AcquiaCommand
     public function notificationInfo($uuid, $notificationUuid)
     {
 
-        $tz = $this->extraConfig['timezone'];
-        $format = $this->extraConfig['format'];
+        $extraConfig = $this->cloudapiService->getExtraConfig();
+        $tz = $extraConfig['timezone'];
+        $format = $extraConfig['format'];
         $timezone = new \DateTimeZone($tz);
 
         $notification = $this->notificationsAdapter->get($notificationUuid);

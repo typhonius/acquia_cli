@@ -176,10 +176,11 @@ class EnvironmentsCommand extends AcquiaCommand
      * @command environment:rename
      * @alias env:rename,e:rename
      */
-    public function environmentRename($uuid, $environment, $name)
+    public function environmentRename(Environments $environmentsAdapter, $uuid, $environment, $name)
     {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
         $this->say(sprintf('Renaming %s to %s', $environment->label, $name));
-        $environments = $this->environmentsAdapter->rename($environment->uuid, $name);
+        $environments = $environmentsAdapter->rename($environment->uuid, $name);
     }
 
     /**
@@ -191,10 +192,11 @@ class EnvironmentsCommand extends AcquiaCommand
      * @command environment:delete
      * @alias env:delete,e:d,environment:remove,env:remove
      */
-    public function environmentDelete($uuid, $environment)
+    public function environmentDelete(Environments $environmentsAdapter, $uuid, $environment)
     {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
         if ($this->confirm("Are you sure you want to delete this environment?")) {
-            $response = $this->environmentsAdapter->delete($environment->uuid);
+            $response = $environmentsAdapter->delete($environment->uuid);
             $this->waitForNotification($response);
         }
     }

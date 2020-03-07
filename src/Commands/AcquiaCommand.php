@@ -22,7 +22,6 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableStyle;
 
-
 /**
  * Class AcquiaCommand
  * @package AcquiaCli\Commands
