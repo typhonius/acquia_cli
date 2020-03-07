@@ -12,11 +12,7 @@ class ApplicationCommandTest extends AcquiaCliTestCase
      */
     public function testApplicationCommands($command, $fixture, $expected)
     {
-        $psr7Response = $this->getPsr7JsonResponseForFixture($fixture);
-        $client = $this->getMockClient($psr7Response);
-
-        $actualResponse = $this->execute($client, $command);
-
+        $actualResponse = $this->execute($command);
         $this->assertSame($expected, $actualResponse);
     }
 

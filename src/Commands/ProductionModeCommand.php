@@ -22,7 +22,7 @@ class ProductionModeCommand extends EnvironmentsCommand
      * @command productionmode:enable
      * @aliases pm:enable
      */
-    public function productionModeEnable($uuid, EnvironmentResponse $environment)
+    public function productionModeEnable($uuid, $environment)
     {
         if ('prod' !== $environment->name) {
             throw new \Exception('Production mode may only be enabled/disabled on the prod environment.');
@@ -41,7 +41,7 @@ class ProductionModeCommand extends EnvironmentsCommand
      * @command productionmode:disable
      * @aliases pm:disable
      */
-    public function productionModeDisable($uuid, EnvironmentResponse $environment)
+    public function productionModeDisable($uuid, $environment)
     {
         if ('prod' !== $environment->name) {
             throw new \Exception('Production mode may only be enabled/disabled on the prod environment.');

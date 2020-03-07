@@ -116,6 +116,9 @@ class DbCommand extends AcquiaCommand
      */
     public function dbCopy($uuid, $environmentFrom, $environmentTo, $dbName)
     {
+        $environmentFrom = $this->cloudapiService->getEnvironment($uuid, $environmentFrom);
+        $environmentTo = $this->cloudapiService->getEnvironment($uuid, $environmentTo);
+
         if ($this->confirm(
             sprintf(
                 'Are you sure you want to copy database %s from %s to %s?',
@@ -124,8 +127,12 @@ class DbCommand extends AcquiaCommand
                 $environmentTo->label
             )
         )) {
-            $response = $this->databaseAdapter->copy($environmentFrom->uuid, $dbName, $environmentTo->uuid);
-            $this->waitForNotification($response);
+            $this->backupAndMoveDbs($uuid, $environmentFrom, $environmentTo, $dbName);
+
+            // $this->backupDb($uuid, $environmentTo, $database);
+            // $this->say(sprintf('Copying database (%s) from %s to %s', $dbName, $environmentFrom->label, $environmentTo->label));
+            // $response = $this->databaseAdapter->copy($environmentFrom->uuid, $dbName, $environmentTo->uuid);
+            // $this->waitForNotification($response);
         }
     }
 
@@ -139,8 +146,19 @@ class DbCommand extends AcquiaCommand
      * @command database:copy:all
      * @aliases db:copy:all
      */
-    public function dbCopyAll($uuid, EnvironmentResponse $environmentFrom, EnvironmentResponse $environmentTo)
+    public function dbCopyAll($uuid, $environmentFrom, $environmentTo)
     {
-        $this->backupAndMoveDbs($uuid, $environmentFrom, $environmentTo);
+        $environmentFrom = $this->cloudapiService->getEnvironment($uuid, $environmentFrom);
+        $environmentTo = $this->cloudapiService->getEnvironment($uuid, $environmentTo);
+
+        if ($this->confirm(
+            sprintf(
+                'Are you sure you want to copy all databases from %s to %s?',
+                $environmentFrom->label,
+                $environmentTo->label
+            )
+        )) {
+            $this->backupAndMoveDbs($uuid, $environmentFrom, $environmentTo);
+        }
     }
 }

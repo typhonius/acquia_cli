@@ -5,6 +5,7 @@ namespace AcquiaCli\Commands;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use AcquiaCloudApi\Endpoints\Domains;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class DomainCommand
@@ -12,15 +13,6 @@ use Symfony\Component\Console\Helper\Table;
  */
 class DomainCommand extends AcquiaCommand
 {
-
-    protected $domainAdapter;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->domainAdapter = new Domains($this->cloudapi);
-    }
 
     /**
      * Lists domains.
@@ -30,11 +22,11 @@ class DomainCommand extends AcquiaCommand
      *
      * @command domain:list
      */
-    public function domainList($uuid, $environment)
+    public function domainList(OutputInterface $output, Domains $domainAdapter, $uuid, $environment)
     {
-        $domains = $this->domainAdapter->getAll($environment->uuid);
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+        $domains = $domainAdapter->getAll($environment->uuid);
 
-        $output = $this->output();
         $table = new Table($output);
         $table->setHeaders(['Hostname', 'Default', 'Active', 'Uptime']);
         $table->setColumnStyle(1, 'center-align');
@@ -66,11 +58,11 @@ class DomainCommand extends AcquiaCommand
      *
      * @command domain:info
      */
-    public function domainInfo($uuid, $environment, $domain)
+    public function domainInfo(OutputInterface $output, Domains $domainAdapter, $uuid, $environment, $domain)
     {
-        $domain = $this->domainAdapter->status($environment->uuid, $domain);
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+        $domain = $domainAdapter->status($environment->uuid, $domain);
 
-        $output = $this->output();
         $table = new Table($output);
         $table->setHeaders(['Hostname', 'Active', 'DNS Resolves', 'IP Addresses', 'CNAMES']);
         $table
@@ -97,10 +89,11 @@ class DomainCommand extends AcquiaCommand
      * @command domain:create
      * @alias domain:add
      */
-    public function domainCreate($uuid, $environment, $domain)
+    public function domainCreate(Domains $domainAdapter, $uuid, $environment, $domain)
     {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
         $this->say(sprintf('Adding %s to environment %s', $domain, $environment->label));
-        $response = $this->domainAdapter->create($environment->uuid, $domain);
+        $response = $domainAdapter->create($environment->uuid, $domain);
         $this->waitForNotification($response);
     }
 
@@ -114,11 +107,12 @@ class DomainCommand extends AcquiaCommand
      * @command domain:delete
      * @alias domain:remove
      */
-    public function domainDelete($uuid, $environment, $domain)
+    public function domainDelete(Domains $domainAdapter, $uuid, $environment, $domain)
     {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
         if ($this->confirm('Are you sure you want to remove this domain?')) {
             $this->say(sprintf('Removing %s from environment %s', $domain, $environment->label));
-            $response = $this->domainAdapter->delete($environment->uuid, $domain);
+            $response = $domainAdapter->delete($environment->uuid, $domain);
             $this->waitForNotification($response);
         }
     }
@@ -133,8 +127,11 @@ class DomainCommand extends AcquiaCommand
      *
      * @command domain:move
      */
-    public function domainMove($uuid, $domain, $environmentFrom, $environmentTo)
+    public function domainMove(Domains $domainAdapter, $uuid, $domain, $environmentFrom, $environmentTo)
     {
+        $environmentFrom = $this->cloudapiService->getEnvironment($uuid, $environmentFrom);
+        $environmentTo = $this->cloudapiService->getEnvironment($uuid, $environmentTo);
+
         if ($this->confirm(
             sprintf(
                 'Are you sure you want to move %s from environment %s to %s?',
@@ -145,10 +142,10 @@ class DomainCommand extends AcquiaCommand
         )) {
             $this->say(sprintf('Moving %s from %s to %s', $domain, $environmentFrom->label, $environmentTo->label));
 
-            $deleteResponse = $this->domainAdapter->delete($environmentFrom->uuid, $domain);
+            $deleteResponse = $domainAdapter->delete($environmentFrom->uuid, $domain);
             $this->waitForNotification($deleteResponse);
 
-            $addResponse = $this->domainAdapter->create($environmentTo->uuid, $domain);
+            $addResponse = $domainAdapter->create($environmentTo->uuid, $domain);
             $this->waitForNotification($addResponse);
         }
     }
@@ -160,15 +157,17 @@ class DomainCommand extends AcquiaCommand
      *
      * @command domain:purge
      */
-    public function domainPurge($uuid, $environment, $domain = null)
+    public function domainPurge(Domains $domainAdapter, $uuid, $environment, $domain = null)
     {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+
         if ($environment->name === 'prod' &&
             !$this->confirm("Are you sure you want to purge varnish on the production environment?")) {
             return;
         }
 
         if (null === $domain) {
-            $domains = $this->domainAdapter->getAll($environment->uuid);
+            $domains = $domainAdapter->getAll($environment->uuid);
             $domainNames = array_map(function ($domain) {
                 $this->say(sprintf('Purging domain: %s', $domain->hostname));
                 return $domain->hostname;
@@ -178,7 +177,7 @@ class DomainCommand extends AcquiaCommand
             $domainNames = [$domain];
         }
 
-        $response = $this->domainAdapter->purge($environment->uuid, $domainNames);
+        $response = $domainAdapter->purge($environment->uuid, $domainNames);
         $this->waitForNotification($response);
     }
 }

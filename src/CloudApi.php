@@ -6,47 +6,79 @@ use AcquiaCloudApi\Connector\Client;
 use AcquiaCloudApi\Connector\Connector;
 use AcquiaCloudApi\Endpoints\Applications;
 use AcquiaCloudApi\Endpoints\Environments;
+use Robo\Config\Config;
+
 
 /**
  * Class CloudApi
  * @package AcquiaCli
  */
-final class CloudApi
+class CloudApi
 {
 
-    private $cloudapi;
+    protected $client;
 
-    private $extraConfig;
+    protected $extraConfig;
 
-    public function __construct($config)
+    protected $acquia;
+
+    public function __construct(Config $config)
     {
-
         $this->extraConfig = $config->get('extraconfig');
-        $acquia = $config->get('acquia');
+        $this->acquia = $config->get('acquia');
+    }
+
+    public function createClient()
+    {
 
         if (getenv('ACQUIACLI_KEY') && getenv('ACQUIACLI_SECRET')) {
-            $acquia['key'] = getenv('ACQUIACLI_KEY');
-            $acquia['secret'] = getenv('ACQUIACLI_SECRET');
+            $this->acquia['key'] = getenv('ACQUIACLI_KEY');
+            $this->acquia['secret'] = getenv('ACQUIACLI_SECRET');
         }
-
+        
         $connector = new Connector([
-            'key' => $acquia['key'],
-            'secret' => $acquia['secret'],
+            'key' => $this->acquia['key'],
+            'secret' => $this->acquia['secret'],
         ]);
         /** @var \AcquiaCloudApi\Connector\Client $cloudapi */
-        $cloudapi = Client::factory($connector);
+        $client = Client::factory($connector);
 
-        $this->setCloudApi($cloudapi);
+        $this->setClient($client);
+
+        return $client;
     }
 
-    public function getCloudApi()
+    /**
+     * @param string $uuid
+     * @param string $environment
+     * @return EnvironmentResponse
+     * @throws Exception
+     */
+    public function getEnvironment($uuid, $environment)
     {
-        return $this->cloudapi;
+        $environmentsAdapter = new Environments($this->client);
+        $environments = $environmentsAdapter->getAll($uuid);
+
+        foreach ($environments as $e) {
+            if ($environment === $e->name) {
+                return $e;
+            }
+        }
+
+        throw new Exception('Unable to find ID for environment');
     }
 
-    public function setCloudApi($cloudapi)
+    public function getClient()
     {
-        $this->cloudapi = $cloudapi;
+        if (!$this->client) {
+            $this->createClient();
+        }
+        return $this->client;
+    }
+
+    protected function setClient($client)
+    {
+        $this->client = $client;
     }
 
     public function getExtraConfig()

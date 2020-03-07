@@ -9,6 +9,8 @@ use Consolidation\Config\Loader\ConfigProcessor;
 use Consolidation\Config\Loader\YamlConfigLoader;
 use AcquiaCli\AcquiaCli;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Consolidation\AnnotatedCommand\CommandData;
+
 
 use Robo\Robo;
 
@@ -22,6 +24,13 @@ use Psr\Http\Message\StreamInterface;
  */
 abstract class AcquiaCliTestCase extends TestCase
 {
+
+    public $client;
+
+    public function setUp()
+    {
+        $this->client = $this->getMockClient();
+    }
 
     protected function getPsr7StreamForFixture($fixture): StreamInterface
     {
@@ -95,29 +104,98 @@ abstract class AcquiaCliTestCase extends TestCase
      * @param  mixed  $response
      * @return Client
      */
-    protected function getMockClient($response = '')
+    protected function getMockClient()
     {
-        if ($response) {
-            $connector = $this
-                ->getMockBuilder('AcquiaCloudApi\Connector\Connector')
-                ->disableOriginalConstructor()
-                ->setMethods(['sendRequest'])
-                ->getMock();
+        $connector = $this
+            ->getMockBuilder('AcquiaCloudApi\Connector\Connector')
+            ->disableOriginalConstructor()
+            ->setMethods(['sendRequest'])
+            ->getMock();
 
-            $connector
-                ->expects($this->atLeastOnce())
-                ->method('sendRequest')
-                ->willReturn($response);
-        } else {
-            $connector = $this
-                ->getMockBuilder('AcquiaCloudApi\Connector\Connector')
-                ->disableOriginalConstructor()
-                ->getMock();
+        $connector
+            ->expects($this->any())
+            ->method('sendRequest')
+            ->will($this->returnCallback(array($this, 'sendRequestCallback')));
+
+        return Client::factory($connector);
+    }
+
+    public function sendRequestCallback($verb, $path)
+    {
+        //echo sprintf('%s -> %s', $verb, $path) . PHP_EOL;
+        $fixtureMap = self::getFixtureMap();
+
+        if ($fixture = $fixtureMap[$path][$verb]) {
+            return $this->getPsr7JsonResponseForFixture($fixture);
         }
+    }
 
-        $client = Client::factory($connector);
+    public static function getFixtureMap()
+    {
+        return [
+            '/applications' => [
+                'get' => 'Applications/getAllApplications.json',
+            ],
+            '/applications/a47ac10b-58cc-4372-a567-0e02b2c3d470/environments' => [
+                'get' => 'Environments/getAllEnvironments.json'
+            ],
+            '/applications/uuid/tags' => [
+                'get' => 'Applications/getAllTags.json',
+                'post' => 'Applications/createTag.json',
+            ],
+            '/applications/uuid/tags/name' => [
+                'delete' => 'Applications/deleteTag.json',
+            ],
+            '/applications/uuid/databases' => [
+                'get' => 'Databases/getAllDatabases.json',
+                'post' => 'Databases/createDatabases.json',
+            ],
+            '/applications/uuid/databases/dbName/actions/erase' => [
+                'post' => 'Databases/truncateDatabases.json',
+            ],
+            '/applications/uuid/databases/dbName' => [
+                'delete' => 'Databases/deleteDatabases.json'
+            ],
+            '/roles/roleUuid' => [
+                'put' => 'Roles/updateRole.json',
+                'delete' => 'Roles/deleteRole.json'
+            ],
+            '/organizations/organisation/roles' => [
+                'post' => 'Roles/createRole.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/databases/database2/backups' => [
+                'get' => 'DatabaseBackups/getAllDatabaseBackups.json',
+                'post' => 'DatabaseBackups/createDatabaseBackup.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/databases/database1/backups' => [
+                'get' => 'DatabaseBackups/getAllDatabaseBackups.json',
+                'post' => 'DatabaseBackups/createDatabaseBackup.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/databases' => [
+                'post' => 'Databases/copyDatabases.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/databases/dbName/backups/1234/actions/restore' => [
+                'post' => 'DatabaseBackups/restoreDatabaseBackup.json',
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/domains' => [
+                'post' => 'Domains/createDomain.json',
+                'get' => 'Domains/getAllDomains.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/domains/domain' => [
+                'delete' => 'Domains/deleteDomain.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/domains/domain/status' => [
+                'get' => 'Domains/getDomainStatus.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/domains/actions/clear-varnish' => [
+                'post' => 'Domains/purgeVarnish.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/files' => [
+                'post' => 'Environments/copyFiles.json'
+            ]
 
-        return $client;
+
+        ];
     }
 
     protected function getPrivateProperty($className, $propertyName)
@@ -129,13 +207,20 @@ abstract class AcquiaCliTestCase extends TestCase
         return $property;
     }
 
-    public function execute($client, $command)
+    public function execute($command)
     {
+
+        $config = new Config();
+        $loader = new YamlConfigLoader();
+        $processor = new ConfigProcessor();
+        $processor->extend($loader->load(dirname(__DIR__) . '/default.acquiacli.yml'));
+        $config->import($processor->export());
+
         array_unshift($command, 'acquiacli', '--no-wait', '--yes');
         $input = new ArgvInput($command);
         $output = new BufferedOutput();
 
-        $app = new AcquiaCliTest($input, $output, $client);
+        $app = new AcquiaCliTest($config, $this->client, $input, $output);
         $app->run($input, $output);
 
         Robo::unsetContainer();

@@ -6,6 +6,7 @@ use AcquiaCloudApi\Endpoints\Environments;
 use AcquiaCloudApi\Endpoints\Servers;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class EnvironmentsCommand
@@ -13,17 +14,6 @@ use Symfony\Component\Console\Helper\Table;
  */
 class EnvironmentsCommand extends AcquiaCommand
 {
-
-    protected $environmentsAdapter;
-    protected $serversAdapter;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->environmentsAdapter = new Environments($this->cloudapi);
-        $this->serversAdapter = new Servers($this->cloudapi);
-    }
 
     /**
      * Shows list of environments in an application.
@@ -33,12 +23,10 @@ class EnvironmentsCommand extends AcquiaCommand
      * @command environment:list
      * @aliases env:list,e:l
      */
-    public function environmentList($uuid)
+    public function environmentList(Environments $environmentsAdapter, OutputInterface $output, $uuid)
     {
 
-        $environments = $this->environmentsAdapter->getAll($uuid);
-
-        $output = $this->output();
+        $environments = $environmentsAdapter->getAll($uuid);
 
         $table = new Table($output);
         $table->setHeaders([
@@ -73,19 +61,19 @@ class EnvironmentsCommand extends AcquiaCommand
      * @command environment:info
      * @aliases env:info,e:i
      */
-    public function environmentInfo($uuid, $env = null)
+    public function environmentInfo(Environments $environmentsAdapter, Servers $serversAdapter, $uuid, $env = null)
     {
 
         if (null !== $env) {
             $this->cloudapi->addQuery('filter', "name=${env}");
         }
 
-        $environments = $this->environmentsAdapter->getAll($uuid);
+        $environments = $environmentsAdapter->getAll($uuid);
 
         $this->cloudapi->clearQuery();
 
         foreach ($environments as $e) {
-            $this->renderEnvironmentInfo($e);
+            $this->renderEnvironmentInfo($e, $serversAdapter);
         }
 
         $this->say("Web servers not marked 'Active' are out of rotation.");
@@ -96,7 +84,7 @@ class EnvironmentsCommand extends AcquiaCommand
     /**
      * @param EnvironmentResponse $environment
      */
-    protected function renderEnvironmentInfo(EnvironmentResponse $environment)
+    protected function renderEnvironmentInfo(EnvironmentResponse $environment, Servers $serversAdapter)
     {
 
         $this->yell(sprintf('%s environment', $environment->label));
@@ -126,7 +114,7 @@ class EnvironmentsCommand extends AcquiaCommand
                 'EIP'
             ]);
 
-            $servers = $this->serversAdapter->getAll($environment->uuid);
+            $servers = $serversAdapter->getAll($environment->uuid);
 
             foreach ($servers as $server) {
                 $memcache = $server->flags->memcache ? '✓' : ' ';

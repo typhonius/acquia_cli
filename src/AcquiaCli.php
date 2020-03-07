@@ -13,6 +13,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Consolidation\AnnotatedCommand\CommandFileDiscovery;
+use AcquiaCloudApi\Connector\Client;
 
 /**
  * Class AcquiaCli
@@ -27,20 +28,19 @@ class AcquiaCli
 
     const NAME = 'AcquiaCli';
 
-    const VERSION = '2.0.0-dev';
-
     /**
      * AcquiaCli constructor.
      * @param Config               $config
      * @param InputInterface|null  $input
      * @param OutputInterface|null $output
      */
-    public function __construct(Config $config, InputInterface $input = null, OutputInterface $output = null)
+    public function __construct(Config $config, Client $client, InputInterface $input = null, OutputInterface $output = null)
     {
+        $version = trim(file_get_contents(dirname(__DIR__) . '/VERSION'));
 
         // Create application.
         $this->setConfig($config);
-        $application = new Application(self::NAME, self::VERSION);
+        $application = new Application(self::NAME, $version);
 
         $application->getDefinition()->addOptions([
             new InputOption(
@@ -65,9 +65,7 @@ class AcquiaCli
         ]);
 
         // Create and configure container.
-        $container = Robo::createDefaultContainer($input, $output, $application, $config);
-        $container->add('cloudApi', \AcquiaCli\CloudApi::class)
-            ->withArgument('config');
+        $container = $this->getContainer($input, $output, $application, $config, $client);
 
         $discovery = new CommandFileDiscovery();
         $discovery->setSearchPattern('*Command.php');
@@ -77,6 +75,26 @@ class AcquiaCli
         $this->runner = new RoboRunner();
         $this->runner->setContainer($container);
         $this->runner->registerCommandClasses($application, $commandClasses);
+    }
+
+    public function getContainer($input, $output, $application, $config, $client)
+    {
+        $container = Robo::createDefaultContainer($input, $output, $application, $config);
+        $container->add('client', $client);
+
+        $container->add('cloudApi', \AcquiaCli\CloudApi::class)
+            ->withArgument('config')
+            ->withArgument('client');
+
+        $parameterInjection = $container->get('parameterInjection');
+        $parameterInjection->register('AcquiaCli\CloudApi', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Applications', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Environments', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Databases', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Servers', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Domains', new \AcquiaCli\Injector\AcquiaCliInjector);
+
+        return $container;
     }
 
     /**

@@ -12,12 +12,16 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Consolidation\AnnotatedCommand\CommandFileDiscovery;
 use AcquiaCloudApi\Connector\Client;
+use Consolidation\AnnotatedCommand\CommandData;
+use AcquiaCli\AcquiaCli;
+use Consolidation\Config\Loader\ConfigProcessor;
+use Consolidation\Config\Loader\YamlConfigLoader;
 
 /**
  * Class AcquiaCli
  * @package AcquiaCli
  */
-class AcquiaCliTest
+class AcquiaCliTest extends AcquiaCli
 {
 
     use ConfigAwareTrait;
@@ -26,32 +30,8 @@ class AcquiaCliTest
 
     const NAME = 'AcquiaCli TEST';
 
-    const VERSION = '2.0.0-dev';
-
-    /**
-     * AcquiaCliTest constructor.
-     * @param InputInterface|null  $input
-     * @param OutputInterface|null $output
-     */
-    public function __construct(InputInterface $input = null, OutputInterface $output = null, $client)
+    public function getContainer($input, $output, $application, $config, $client)
     {
-        $application = new Application(self::NAME, self::VERSION);
-        $application->getDefinition()->addOptions([
-            new InputOption(
-                '--no-wait',
-                null,
-                InputOption::VALUE_NONE,
-                'Run commands without waiting for tasks to complete (risky).'
-            ),
-            new InputOption(
-                '--yes',
-                '-y',
-                InputOption::VALUE_NONE,
-                'Automatically respond "yes" to all confirmation questions.'
-            )
-        ]);
-
-        // Create and configure container.
         $container = Robo::createDefaultContainer($input, $output, $application);
         $container->add('client', $client);
 
@@ -59,23 +39,14 @@ class AcquiaCliTest
             ->withArgument('config')
             ->withArgument('client');
 
-        $discovery = new CommandFileDiscovery();
-        $discovery->setSearchPattern('*Command.php');
-        $commandClasses = $discovery->discover(dirname(__DIR__) . '/src/Commands', '\AcquiaCli\Commands');
+        $parameterInjection = $container->get('parameterInjection');
+        $parameterInjection->register('AcquiaCli\CloudApi', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Applications', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Environments', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Databases', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Domains', new \AcquiaCli\Injector\AcquiaCliInjector);
 
-        // Instantiate Robo Runner.
-        $this->runner = new RoboRunner();
-        $this->runner->setContainer($container);
-        $this->runner->registerCommandClasses($application, $commandClasses);
+        return $container;
     }
 
-    /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
-     * @return int
-     */
-    public function run(InputInterface $input, OutputInterface $output)
-    {
-        return $this->runner->run($input, $output);
-    }
 }
