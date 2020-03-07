@@ -92,28 +92,35 @@ Some of the following commands have aliases for simplicity e.g. `environment:inf
 [![asciicast](https://asciinema.org/a/178427.png)](https://asciinema.org/a/178427)
 
 ## Command Parameters
-If a command takes an application UUID as a parameter, it can be provided in one of two manners:
-* The Acquia hosting ID (without hosting realm) e.g. acquia
-* The full Acquia hosting realm and ID e.g. prod:acquia
-* The application UUID
+*Application UUID*
+If a command takes an application UUID as a parameter, it can be provided in one of three ways - see below for a description of hosting realm:
+* The Acquia hosting ID on its own e.g. myacquiasite
+* The full Acquia hosting realm and ID e.g. prod:myacquiasite
+* The application UUID e.g. 8ff6c046-ec64-4ce4-bea6-27845ec18600
 
-Both the UUID and the hosting ID (with realm) for your applications may be discovered by running `./bin/acquiacli application:list`
+*Hosting Realms*
+Acquia uses the concept of a 'realm' to differentiate between customers on the two tiers of hosting offered:
+* prod: The 'prod' realm is exclusively for Acquia Cloud Enterprise (ACE) customers.
+* devcloud: The 'devcloud' realm is exclusively for Acquia Cloud Professional (ACP) customers.
 
 If no hosting realm is provided, prod is used by default. This can be overridden in the command by specifying a realm e.g. `--realm=devcloud`
 
+Both the UUID and the hosting ID (with realm) for your applications may be discovered by running `./bin/acquiacli application:list`
+
+*Other parameters*
 Environment parameters take the label name of the environment e.g. dev
+Organization parameters take the label name of the organization e.g. mycompany
 
 All other parameters are currently provided in the UUID form, including but not limited to:
 * Role ID
 * Team ID
-* Organization ID
 
 Commands using the following parameters will be automatically converted by the Acquia Cli tool using the SDK. This is achieved in the `validateUuidHook` method in the `AcquiaCommand` class using a `@hook validate` [annotation](https://github.com/consolidation/annotated-command).
 * `$uuid` is converted to the UUID of the application
 * `$environment` is converted into an EnvironmentResponse object
 * `$environmentFrom` is converted into an EnvironmentResponse object
 * `$environmentTo` is converted into an EnvironmentResponse object
-
+* `$organization` is converted into an OrganizationResponse object
 
 ## Creating a Phar
 A phar archive can be created to run Acquia Cli instead of utilising the entire codebase. Because some of Acquia Cli relies on user configuration of email/password, it is currently most appropriate to allow users to generate their own phar files inclusive of their own configuration.

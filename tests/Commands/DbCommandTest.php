@@ -12,11 +12,7 @@ class DbCommandTest extends AcquiaCliTestCase
      */
     public function testDbCommands($command, $fixture, $expected)
     {
-        $psr7Response = $this->getPsr7JsonResponseForFixture($fixture);
-        $client = $this->getMockClient($psr7Response);
-
-        $actualResponse = $this->execute($client, $command);
-
+        $actualResponse = $this->execute($command);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -31,6 +27,13 @@ class DbCommandTest extends AcquiaCliTestCase
 | database2 |
 +-----------+
 TABLE;
+
+        $dbCopy = <<<TEXT
+>  Backing up DB (database1) on Mock Env
+>  Moving DB (database1) from Mock Env to Mock Env
+>  Backing up DB (database2) on Mock Env
+>  Moving DB (database2) from Mock Env to Mock Env
+TEXT;
 
         return [
             [
@@ -52,6 +55,16 @@ TABLE;
                 ['database:truncate', 'uuid', 'dbName'],
                 'Databases/truncateDatabases.json',
                 '>  Truncate database (dbName)' . PHP_EOL
+            ],
+            [
+                ['database:copy', 'uuid', 'environmentFrom', 'environmentTo', 'dbName'],
+                'Databases/copyDatabases.json',
+                $dbCopy . PHP_EOL
+            ],
+            [
+                ['database:copy:all', 'uuid', 'environmentFrom', 'environmentTo'],
+                'Databases/copyDatabases.json',
+                $dbCopy . PHP_EOL
             ]
         ];
     }

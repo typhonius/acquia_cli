@@ -2,44 +2,43 @@
 
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
-use Robo\Config\Config;
-use Consolidation\Config\Loader\ConfigProcessor;
-use Consolidation\Config\Loader\YamlConfigLoader;
-use AcquiaCli\AcquiaCli;
 
-if (strpos(basename(__FILE__), 'phar')) {
+use AcquiaCli\Config;
+use AcquiaCli\AcquiaCli;
+use AcquiaCli\CloudApi;
+
+use AcquiaCloudApi\Connector\Connector;
+use AcquiaCloudApi\Connector\Client;
+
+$pharPath = \Phar::running(true);
+if ($pharPath) {
     $root = __DIR__;
-    require_once 'phar://acquiacli.phar/vendor/autoload.php';
+    $autoloaderPath = "$pharPath/vendor/autoload.php";
 } else {
     if (file_exists(dirname(__DIR__).'/vendor/autoload.php')) {
         $root = dirname(__DIR__);
-        require_once dirname(__DIR__) . '/vendor/autoload.php';
-    } elseif (file_exists(dirname(__DIR__) . '/../../autoload.php')) {
+        $autoloaderPath = dirname(__DIR__).'/vendor/autoload.php';
+    } elseif (file_exists(dirname(__DIR__).'/../../autoload.php')) {
         $root = dirname(__DIR__) . '/../../..';
-        require_once dirname(__DIR__) . '/../../autoload.php';
+        $autoloaderPath = dirname(__DIR__) . '/../../autoload.php';
     } else {
-        $root = __DIR__;
-        require_once 'phar://acquiacli.phar/vendor/autoload.php';
+        die("Could not find autoloader. Run 'composer install'.");
     }
 }
+$classLoader = require $autoloaderPath;
 
-$config = new Config();
-$loader = new YamlConfigLoader();
-$processor = new ConfigProcessor();
+$config = new Config($root);
 
-$globalConfig = getenv('HOME') . '/.acquiacli/acquiacli.yml';
-$projectConfig = $root . '/acquiacli.yml';
+// Instantiate CloudApi client
+$cloudapi = new CloudApi($config);
+$client = $cloudapi->createClient();
 
-$processor->extend($loader->load(dirname(__DIR__) . '/default.acquiacli.yml'));
-$processor->extend($loader->load($globalConfig));
-$processor->extend($loader->load($projectConfig));
-
-$config->import($processor->export());
-$config->set('config.project', $projectConfig);
-$config->set('config.global', $globalConfig);
-
+// Set up input and output parameters
+$argv = $_SERVER['argv'];
 $input = new ArgvInput($argv);
 $output = new ConsoleOutput();
-$app = new AcquiaCli($config, $input, $output);
+
+// Create and run AcquiaCli instance
+$app = new AcquiaCli($config, $client, $input, $output);
 $statusCode = $app->run($input, $output);
 exit($statusCode);

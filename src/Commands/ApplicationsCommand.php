@@ -8,6 +8,9 @@ use AcquiaCloudApi\Endpoints\Applications;
 use AcquiaCloudApi\Endpoints\Environments;
 use AcquiaCloudApi\Endpoints\Databases;
 
+use Symfony\Component\Console\Output\OutputInterface;
+use AcquiaCli\CloudApi;
+
 /**
  * Class ApplicationsCommand
  * @package AcquiaCli\Commands
@@ -15,28 +18,16 @@ use AcquiaCloudApi\Endpoints\Databases;
 class ApplicationsCommand extends AcquiaCommand
 {
 
-    protected $applicationsAdapter;
-    protected $environmentsAdapter;
-    protected $databasesAdapter;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->applicationsAdapter = new Applications($this->getCloudApi());
-        $this->environmentsAdapter = new Environments($this->getCloudApi());
-        $this->databasesAdapter = new Databases($this->getCloudApi());
-    }
-
     /**
      * Shows all sites a user has access to.
      *
      * @command application:list
      * @aliases app:list,a:l
      */
-    public function applications()
+    public function applications(Applications $applicationsAdapter)
     {
-        $applications = $this->applicationsAdapter->getAll();
+
+        $applications = $applicationsAdapter->getAll();
 
         $output = $this->output();
         $table = new Table($output);
@@ -62,15 +53,15 @@ class ApplicationsCommand extends AcquiaCommand
      * @command application:info
      * @aliases app:info,a:i
      */
-    public function applicationInfo($uuid)
+    public function applicationInfo(Environments $environmentsAdapter, Databases $databasesAdapter, $uuid)
     {
-        $environments = $this->environmentsAdapter->getAll($uuid);
+        $environments = $environmentsAdapter->getAll($uuid);
 
         $output = $this->output();
         $table = new Table($output);
         $table->setHeaders(['Environment', 'ID', 'Branch/Tag', 'Domain(s)', 'Database(s)']);
 
-        $databases = $this->databasesAdapter->getAll($uuid);
+        $databases = $databasesAdapter->getAll($uuid);
 
         $dbNames = array_map(function ($database) {
             return $database->name;
@@ -116,11 +107,10 @@ class ApplicationsCommand extends AcquiaCommand
      * @command application:tags
      * @aliases app:tags
      */
-    public function applicationsTags($uuid)
+    public function applicationsTags(Applications $applicationsAdapter, OutputInterface $output, $uuid)
     {
-        $tags = $this->applicationsAdapter->getAllTags($uuid);
+        $tags = $applicationsAdapter->getAllTags($uuid);
 
-        $output = $this->output();
         $table = new Table($output);
         $table->setHeaders(['Name', 'Color']);
         foreach ($tags as $tag) {
@@ -145,10 +135,10 @@ class ApplicationsCommand extends AcquiaCommand
      * @command application:tag:create
      * @aliases app:tag:create
      */
-    public function applicationTagCreate($uuid, $name, $color)
+    public function applicationTagCreate(Applications $applicationsAdapter, $uuid, $name, $color)
     {
         $this->say(sprintf('Creating application tag %s:%s', $name, $color));
-        $response = $this->applicationsAdapter->createTag($uuid, $name, $color);
+        $response = $applicationsAdapter->createTag($uuid, $name, $color);
         $this->waitForNotification($response);
     }
 
@@ -161,10 +151,10 @@ class ApplicationsCommand extends AcquiaCommand
      * @command application:tag:delete
      * @aliases app:tag:delete
      */
-    public function applicationTagDelete($uuid, $name)
+    public function applicationTagDelete(Applications $applicationsAdapter, $uuid, $name)
     {
         $this->say(sprintf('Deleting application tag %s', $name));
-        $response = $this->applicationsAdapter->deleteTag($uuid, $name);
+        $response = $applicationsAdapter->deleteTag($uuid, $name);
         $this->waitForNotification($response);
     }
 }

@@ -22,6 +22,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableStyle;
 
+
 /**
  * Class AcquiaCommand
  * @package AcquiaCli\Commands
@@ -31,8 +32,7 @@ abstract class AcquiaCommand extends Tasks
     // @TODO https://github.com/boedah/robo-drush/issues/18
     //use \Boedah\Robo\Task\Drush\loadTasks;
 
-    /** Additional configuration. */
-    protected $extraConfig;
+    protected $cloudapiService;
 
     /** Regex for a valid UUID string. */
     const UUIDV4 = '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i';
@@ -54,8 +54,10 @@ abstract class AcquiaCommand extends Tasks
      */
     public function __construct()
     {
-        $config = Robo::config();
-        $this->extraConfig = $config->get('extraconfig');
+
+        $cloudapiService = Robo::service('cloudApi');
+        $this->cloudapiService = $cloudapiService;
+        $this->cloudapi = $cloudapiService->getClient();
 
         $this->setTableStyles();
     }
@@ -125,23 +127,23 @@ abstract class AcquiaCommand extends Tasks
             }
 
             // Convert environment parameters to an EnvironmentResponse
-            if ($commandData->input()->hasArgument('environment')) {
-                $environmentName = $commandData->input()->getArgument('environment');
-                if (null !== $environmentName) {
-                    $environment = $this->getEnvironmentFromEnvironmentName($uuid, $environmentName);
-                    $commandData->input()->setArgument('environment', $environment);
-                }
-            }
-            if ($commandData->input()->hasArgument('environmentFrom')) {
-                $environmentFromName = $commandData->input()->getArgument('environmentFrom');
-                $environmentFrom = $this->getEnvironmentFromEnvironmentName($uuid, $environmentFromName);
-                $commandData->input()->setArgument('environmentFrom', $environmentFrom);
-            }
-            if ($commandData->input()->hasArgument('environmentTo')) {
-                $environmentToName = $commandData->input()->getArgument('environmentTo');
-                $environmentTo = $this->getEnvironmentFromEnvironmentName($uuid, $environmentToName);
-                $commandData->input()->setArgument('environmentTo', $environmentTo);
-            }
+            // if ($commandData->input()->hasArgument('environment')) {
+            //     $environmentName = $commandData->input()->getArgument('environment');
+            //     if (null !== $environmentName) {
+            //         $environment = $this->getEnvironmentFromEnvironmentName($uuid, $environmentName);
+            //         $commandData->input()->setArgument('environment', $environment);
+            //     }
+            // }
+            // if ($commandData->input()->hasArgument('environmentFrom')) {
+            //     $environmentFromName = $commandData->input()->getArgument('environmentFrom');
+            //     $environmentFrom = $this->getEnvironmentFromEnvironmentName($uuid, $environmentFromName);
+            //     $commandData->input()->setArgument('environmentFrom', $environmentFrom);
+            // }
+            // if ($commandData->input()->hasArgument('environmentTo')) {
+            //     $environmentToName = $commandData->input()->getArgument('environmentTo');
+            //     $environmentTo = $this->getEnvironmentFromEnvironmentName($uuid, $environmentToName);
+            //     $commandData->input()->setArgument('environmentTo', $environmentTo);
+            // }
         }
         // Convert Organization name to UUID.
         if ($commandData->input()->hasArgument('organization')) {
@@ -157,19 +159,19 @@ abstract class AcquiaCommand extends Tasks
      * @return EnvironmentResponse
      * @throws Exception
      */
-    protected function getEnvironmentFromEnvironmentName($uuid, $environment)
-    {
-        $environmentsAdapter = $this->getEnvironments();
-        $environments = $environmentsAdapter->getAll($uuid);
+    // protected function getEnvironmentFromEnvironmentName($uuid, $environment)
+    // {
+    //     $environmentsAdapter = new Environments($this->cloudapi);
+    //     $environments = $environmentsAdapter->getAll($uuid);
 
-        foreach ($environments as $e) {
-            if ($environment === $e->name) {
-                return $e;
-            }
-        }
+    //     foreach ($environments as $e) {
+    //         if ($environment === $e->name) {
+    //             return $e;
+    //         }
+    //     }
 
-        throw new Exception('Unable to find ID for environment');
-    }
+    //     throw new Exception('Unable to find ID for environment');
+    // }
 
     /**
      * @param string $organizationName
@@ -228,8 +230,9 @@ abstract class AcquiaCommand extends Tasks
         }
         $notificationUuid = end($notificationArray);
 
-        $sleep = $this->extraConfig['taskwait'];
-        $timeout = $this->extraConfig['timeout'];
+        $extraConfig = $this->cloudapiService->getExtraConfig();
+        $sleep = $extraConfig['taskwait'];
+        $timeout = $extraConfig['timeout'];
 
         $timezone = new \DateTimeZone('UTC');
         $start = new \DateTime(date('c'));
@@ -288,10 +291,20 @@ abstract class AcquiaCommand extends Tasks
      * @param EnvironmentResponse $environmentFrom
      * @param EnvironmentResponse $environmentTo
      */
-    protected function backupAndMoveDbs($uuid, $environmentFrom, $environmentTo)
+    protected function backupAndMoveDbs($uuid, $environmentFrom, $environmentTo, $dbName = null)
     {
+<<<<<<< HEAD
         $dbAdapter = new Databases($this->getCloudApi());
+=======
+        if (null !== $dbName) {
+            $this->cloudapi->addQuery('filter', "name=${dbName}");
+        }
+
+        $dbAdapter = new Databases($this->cloudapi);
+>>>>>>> Various updates to the code and more tests.
         $databases = $dbAdapter->getAll($uuid);
+        $this->cloudapi->clearQuery();
+
         foreach ($databases as $database) {
             $this->backupDb($uuid, $environmentTo, $database);
 
@@ -315,10 +328,16 @@ abstract class AcquiaCommand extends Tasks
      * @param string              $uuid
      * @param EnvironmentResponse $environment
      */
-    protected function backupAllEnvironmentDbs($uuid, EnvironmentResponse $environment)
+    protected function backupAllEnvironmentDbs($uuid, $environment)
     {
+<<<<<<< HEAD
         $dbAdapter = new Databases($this->getCloudApi());
+=======
+        $dbAdapter = new Databases($this->cloudapi);
+        // var_dump($dbAdapter);
+>>>>>>> Various updates to the code and more tests.
         $databases = $dbAdapter->getAll($uuid);
+        // var_dump($databases);
         foreach ($databases as $database) {
             $this->backupDb($uuid, $environment, $database);
         }
@@ -329,8 +348,9 @@ abstract class AcquiaCommand extends Tasks
      * @param EnvironmentResponse $environment
      * @param DatabaseResponse    $database
      */
-    protected function backupDb($uuid, EnvironmentResponse $environment, DatabaseResponse $database)
+    protected function backupDb($uuid, $environment, $database)
     {
+        // var_dump($database);
         // Run database backups.
         $this->say(sprintf('Backing up DB (%s) on %s', $database->name, $environment->label));
         $dbAdapter = new DatabaseBackups($this->getCloudApi());
