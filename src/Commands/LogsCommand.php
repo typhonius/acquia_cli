@@ -63,13 +63,14 @@ class LogsCommand extends AcquiaCommand
     /**
      * Shows available log files.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
+     * @param string $uuid
+     * @param string $environment
      *
      * @command log:list
      */
-    public function logList($uuid, EnvironmentResponse $environment)
+    public function logList($uuid, $environment)
     {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
         $logs = $this->logsAdapter->getAll($environment->uuid);
 
         $output = $this->output();

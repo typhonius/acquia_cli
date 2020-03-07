@@ -21,8 +21,11 @@ class FilesCommand extends AcquiaCommand
      * @command files:copy
      * @aliases f:c
      */
-    public function filesCopy($uuid, EnvironmentResponse $environmentFrom, EnvironmentResponse $environmentTo)
+    public function filesCopy($uuid, $environmentFrom, $environmentTo)
     {
+        $environmentFrom = $this->cloudapiService->getEnvironment($uuid, $environmentFrom);
+        $environmentTo = $this->cloudapiService->getEnvironment($uuid, $environmentTo);
+
         if ($this->confirm(
             sprintf(
                 'Are you sure you want to copy files from %s to %s?',

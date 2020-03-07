@@ -42,6 +42,7 @@ class DbBackupCommand extends AcquiaCommand
      */
     public function dbBackup($uuid, $environment)
     {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
         $this->backupAllEnvironmentDbs($uuid, $environment);
     }
 
@@ -57,6 +58,8 @@ class DbBackupCommand extends AcquiaCommand
      */
     public function dbBackupList($uuid, $environment, $dbName = null)
     {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+
         if (null !== $dbName) {
             $this->cloudapi->addQuery('filter', "name=${dbName}");
         }
@@ -104,9 +107,12 @@ class DbBackupCommand extends AcquiaCommand
      */
     public function dbBackupRestore($uuid, $environment, $dbName, $backupId)
     {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+
         if ($this->confirm(
             sprintf('Are you sure you want to restore backup id %s to %s?', $backupId, $environment->label)
         )) {
+            $this->say(sprintf('Restoring backup %s to %s on %s', $backupId, $dbName, $environment->label));
             $response = $this->databaseBackupsAdapter->restore($environment->uuid, $dbName, $backupId);
             $this->waitForNotification($response);
         }
@@ -125,6 +131,8 @@ class DbBackupCommand extends AcquiaCommand
      */
     public function dbBackupLink($uuid, $environment, $dbName, $backupId)
     {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+
         $this->say(
             sprintf(
                 '%s/environments/%s/databases/%s/backups/%s/actions/download',
