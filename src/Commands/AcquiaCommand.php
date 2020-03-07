@@ -292,15 +292,12 @@ abstract class AcquiaCommand extends Tasks
      */
     protected function backupAndMoveDbs($uuid, $environmentFrom, $environmentTo, $dbName = null)
     {
-<<<<<<< HEAD
-        $dbAdapter = new Databases($this->getCloudApi());
-=======
+
         if (null !== $dbName) {
             $this->cloudapi->addQuery('filter', "name=${dbName}");
         }
 
         $dbAdapter = new Databases($this->cloudapi);
->>>>>>> Various updates to the code and more tests.
         $databases = $dbAdapter->getAll($uuid);
         $this->cloudapi->clearQuery();
 

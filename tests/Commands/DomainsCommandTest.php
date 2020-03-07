@@ -10,7 +10,7 @@ class DomainsCommandTest extends AcquiaCliTestCase
     /**
      * @dataProvider domainsProvider
      */
-    public function testDomainsCommands($command, $fixture, $expected)
+    public function testDomainsCommands($command, $expected)
     {
         $actualResponse = $this->execute($command);
         $this->assertSame($expected, $actualResponse);
@@ -40,32 +40,26 @@ TABLE;
         return [
             [
                 ['domain:create', 'uuid', 'environment', 'domain'],
-                'Domains/createDomain.json',
                 '>  Adding domain to environment Mock Env' . PHP_EOL
             ],
             [
                 ['domain:delete', 'uuid', 'environment', 'domain'],
-                'Domains/deleteRole.json',
                 '>  Removing domain from environment Mock Env' . PHP_EOL
             ],
             [
                 ['domain:info', 'uuid', 'environment', 'domain'],
-                'Domains/updateRole.json',
                 $domainInfo . PHP_EOL
             ],
             [
                 ['domain:list', 'uuid', 'environment'],
-                'Domains/updateRole.json',
                 $domainsList . PHP_EOL
             ],
             [
                 ['domain:move', 'uuid', 'domain', 'environmentFrom', 'environmentTo'],
-                'Domains/updateRole.json',
                 '>  Moving domain from Mock Env to Mock Env' . PHP_EOL
             ],
             [
                 ['domain:purge', 'uuid', 'environment', 'www.domain1.com'],
-                'Domains/purgeVarnish.json',
                 '>  Purging domain: www.domain1.com' . PHP_EOL
             ]
         ];

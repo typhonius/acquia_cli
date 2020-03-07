@@ -10,7 +10,7 @@ class FilesCommandTest extends AcquiaCliTestCase
     /**
      * @dataProvider filesProvider
      */
-    public function testFilesCommands($command, $fixture, $expected)
+    public function testFilesCommands($command, $expected)
     {
         $actualResponse = $this->execute($command);
         $this->assertSame($expected, $actualResponse);
@@ -22,7 +22,6 @@ class FilesCommandTest extends AcquiaCliTestCase
         return [
             [
                 ['files:copy', 'uuid', 'environmentFrom', 'environmentTo'],
-                'Environments/copyFiles.json',
                 '>  Copying files from Mock Env to Mock Env' . PHP_EOL
             ]
         ];
