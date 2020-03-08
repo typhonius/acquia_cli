@@ -6,6 +6,7 @@ use AcquiaCloudApi\Response\BranchResponse;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use Symfony\Component\Console\Helper\Table;
 use AcquiaCloudApi\Endpoints\Code;
+use AcquiaCloudApi\Connector\Client;
 
 /**
  * Class CodeCommand
@@ -23,13 +24,13 @@ class CodeCommand extends AcquiaCommand
      * @command code:list
      * @aliases c:l
      */
-    public function code(Code $codeAdapter, $uuid, $match = null)
+    public function code(Client $client, Code $codeAdapter, $uuid, $match = null)
     {
         if (null !== $match) {
-            $this->cloudapi->addQuery('filter', "name=@*${match}*");
+            $client->addQuery('filter', "name=@*${match}*");
         }
         $branches = $codeAdapter->getAll($uuid);
-        $this->cloudapi->clearQuery();
+        $client->clearQuery();
 
         $output = $this->output();
         $table = new Table($output);
