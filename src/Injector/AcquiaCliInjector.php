@@ -19,6 +19,8 @@ use AcquiaCloudApi\Endpoints\Roles;
 use AcquiaCloudApi\Endpoints\Teams;
 use AcquiaCloudApi\Endpoints\Variables;
 use AcquiaCloudApi\Endpoints\Logs;
+use AcquiaCloudApi\Endpoints\Notifications;
+use AcquiaCloudApi\Endpoints\Insights;
 
 class AcquiaCliInjector implements ParameterInjector
 {
@@ -71,6 +73,10 @@ class AcquiaCliInjector implements ParameterInjector
                 return new Variables($this->client);
             case 'AcquiaCloudApi\Endpoints\Logs':
                 return new Logs($this->client);
+            case 'AcquiaCloudApi\Endpoints\Notifications':
+                return new Notifications($this->client);
+            case 'AcquiaCloudApi\Endpoints\Insights':
+                return new Insights($this->client);
         }
     }
 }

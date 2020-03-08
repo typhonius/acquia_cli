@@ -25,10 +25,11 @@ class CloudApi
 
     protected $acquia;
 
-    public function __construct(Config $config)
+    public function __construct(Config $config, Client $client = null)
     {
         $this->extraConfig = $config->get('extraconfig');
         $this->acquia = $config->get('acquia');
+        $this->client = $client;
     }
 
     public function createClient()
@@ -48,6 +49,24 @@ class CloudApi
         $this->setClient($client);
 
         return $client;
+    }
+
+    /**
+     * @param string $name
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getApplicationUuid($name)
+    {
+        $app = new Applications($this->client);
+        $applications = $app->getAll();
+
+        foreach ($applications as $application) {
+            if ($name === $application->hosting->id) {
+                return $application->uuid;
+            }
+        }
+        throw new \Exception('Unable to find UUID for application');
     }
 
     /**

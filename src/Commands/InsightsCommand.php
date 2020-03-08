@@ -8,6 +8,7 @@ use AcquiaCloudApi\Response\InsightResponse;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use AcquiaCloudApi\Endpoints\Insights;
 use Symfony\Component\Console\Helper\Table;
+use AcquiaCli\CloudApi;
 
 /**
  * Class InsightsCommand
@@ -16,30 +17,22 @@ use Symfony\Component\Console\Helper\Table;
 class InsightsCommand extends AcquiaCommand
 {
 
-    protected $insightsAdapter;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->insightsAdapter = new Insights($this->getCloudApi());
-    }
-
     /**
      * Shows Insights information for specified applications.
      *
      * @param string $uuid
-     * @param EnvironmentResponse $environment
+     * @param string $environment
      *
      * @command insights:info
      */
-    public function insightsInfo($uuid, $environment = null)
+    public function insightsInfo(CloudApi $cloudapi, Insights $insightsAdapter, $uuid, $environment = null)
     {
 
         if (null === $environment) {
-            $insights = $this->insightsAdapter->getAll($uuid);
+            $insights = $insightsAdapter->getAll($uuid);
         } else {
-            $insights = $this->insightsAdapter->getEnvironment($environment->uuid);
+            $environment = $cloudapi->getEnvironment($uuid, $environment);
+            $insights = $insightsAdapter->getEnvironment($environment->uuid);
         }
         foreach ($insights as $insight) {
             /** @var InsightResponse $insight */
@@ -56,9 +49,9 @@ class InsightsCommand extends AcquiaCommand
      *
      * @command insights:alerts:list
      */
-    public function insightsAlertsList($siteId, $options = ['failed' => null])
+    public function insightsAlertsList(Insights $insightsAdapter, $siteId, $options = ['failed' => null])
     {
-        $alerts = $this->insightsAdapter->getAllAlerts($siteId);
+        $alerts = $insightsAdapter->getAllAlerts($siteId);
 
         $output = $this->output();
         $table = new Table($output);
@@ -97,9 +90,9 @@ class InsightsCommand extends AcquiaCommand
      *
      * @command insights:alerts:get
      */
-    public function insightsAlertsGet($siteId, $alertUuid)
+    public function insightsAlertsGet(Insights $insightsAdapter, $siteId, $alertUuid)
     {
-        $alert = $this->insightsAdapter->getAlert($siteId, $alertUuid);
+        $alert = $insightsAdapter->getAlert($siteId, $alertUuid);
 
         $this->say(sprintf('UUID: %s', $alert->uuid));
         $this->say(sprintf('Name: %s', $alert->name));
@@ -115,9 +108,12 @@ class InsightsCommand extends AcquiaCommand
      *
      * @command insights:modules
      */
-    public function insightsModules($siteId, $options = ['enabled' => null, 'upgradeable' => null])
-    {
-        $modules = $this->insightsAdapter->getModules($siteId);
+    public function insightsModules(
+        Insights $insightsAdapter,
+        $siteId,
+        $options = ['enabled' => null, 'upgradeable' => null]
+    ) {
+        $modules = $insightsAdapter->getModules($siteId);
 
         $output = $this->output();
         $table = new Table($output);
