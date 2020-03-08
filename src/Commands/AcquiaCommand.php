@@ -141,53 +141,10 @@ abstract class AcquiaCommand extends Tasks
                         $uuid = $commandData->input()->getOption('realm') . ':' . $uuid;
                     }
                 }
-                $uuid = $this->getUuidFromHostingName($uuid);
+                $uuid = $this->cloudapiService->getApplicationUuid($uuid);
                 $commandData->input()->setArgument('uuid', $uuid);
             }
         }
-        // Convert Organization name to UUID.
-        if ($commandData->input()->hasArgument('organization')) {
-            $organizationName = $commandData->input()->getArgument('organization');
-            $organization = $this->getOrganizationFromOrganizationName($organizationName);
-            $commandData->input()->setArgument('organization', $organization);
-        }
-    }
-
-    /**
-     * @param string $organizationName
-     * @return OrganizationResponse
-     * @throws Exception
-     */
-    protected function getOrganizationFromOrganizationName($organizationName)
-    {
-        $org = new Organizations($this->cloudapi);
-        $organizations = $org->getAll();
-
-        foreach ($organizations as $organization) {
-            if ($organizationName === $organization->name) {
-                return $organization;
-            }
-        }
-
-        throw new Exception('Unable to find ID for environment');
-    }
-
-    /**
-     * @param string $name
-     * @return mixed
-     * @throws Exception
-     */
-    protected function getUuidFromHostingName($name)
-    {
-        $app = new Applications($this->cloudapi);
-        $applications = $app->getAll();
-
-        foreach ($applications as $application) {
-            if ($name === $application->hosting->id) {
-                return $application->uuid;
-            }
-        }
-        throw new Exception('Unable to find UUID for application');
     }
 
     /**

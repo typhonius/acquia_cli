@@ -298,6 +298,18 @@ abstract class AcquiaCliTestCase extends TestCase
             ],
             '/organizations/g47ac10b-58cc-4372-a567-0e02b2c3d472/members' => [
                 'get' => 'Organizations/getMembers.json'
+            ],
+            '/insight/siteId/modules' => [
+                'get' => 'Insights/getModules.json'
+            ],
+            '/insight/siteId/alerts' => [
+                'get' => 'Insights/getAllAlerts.json'
+            ],
+            '/insight/siteId/alerts/alertUuid' => [
+                'get' => 'Insights/getAlert.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/insight' => [
+                'get' => 'Insights/getEnvironment.json'
             ]
         ];
     }

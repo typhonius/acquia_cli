@@ -14,15 +14,6 @@ use Symfony\Component\Console\Helper\Table;
 class NotificationsCommand extends AcquiaCommand
 {
 
-    protected $notificationsAdapter;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->notificationsAdapter = new Notifications($this->cloudapi);
-    }
-
     /**
      * Gets all notifications associated with a site.
      *
@@ -35,8 +26,14 @@ class NotificationsCommand extends AcquiaCommand
      * @command notification:list
      * @alias n:l
      */
-    public function notificationList(Client $client, $uuid, $limit = 50, $filter = null, $sort = '~created_at')
-    {
+    public function notificationList(
+        Client $client,
+        Notifications $notificationsAdapter,
+        $uuid,
+        $limit = 50,
+        $filter = null,
+        $sort = '~created_at'
+    ) {
 
         // Allows for limits and sort criteria.
         $sort = str_replace('~', '-', $sort);
@@ -46,7 +43,7 @@ class NotificationsCommand extends AcquiaCommand
             $client->addQuery('filter', "name=${filter}");
         }
 
-        $notifications = $this->notificationsAdapter->getAll($uuid);
+        $notifications = $notificationsAdapter->getAll($uuid);
         $client->clearQuery();
 
         $output = $this->output();
@@ -87,7 +84,7 @@ class NotificationsCommand extends AcquiaCommand
      * @alias n:i
      * @throws \Exception
      */
-    public function notificationInfo($uuid, $notificationUuid)
+    public function notificationInfo(Notifications $notificationsAdapter, $uuid, $notificationUuid)
     {
 
         $extraConfig = $this->cloudapiService->getExtraConfig();
@@ -95,7 +92,7 @@ class NotificationsCommand extends AcquiaCommand
         $format = $extraConfig['format'];
         $timezone = new \DateTimeZone($tz);
 
-        $notification = $this->notificationsAdapter->get($notificationUuid);
+        $notification = $notificationsAdapter->get($notificationUuid);
 
         $createdDate = new \DateTime($notification->created_at);
         $createdDate->setTimezone($timezone);

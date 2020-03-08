@@ -154,6 +154,11 @@ the field should be sorted in a descending order. Not all fields are sortable.'
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Teams', new \AcquiaCli\Injector\AcquiaCliInjector);
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Variables', new \AcquiaCli\Injector\AcquiaCliInjector);
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Logs', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register(
+            'AcquiaCloudApi\Endpoints\Notifications',
+            new \AcquiaCli\Injector\AcquiaCliInjector
+        );
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Insights', new \AcquiaCli\Injector\AcquiaCliInjector);
     }
 
     /**
