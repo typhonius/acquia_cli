@@ -122,25 +122,6 @@ abstract class AcquiaCommand extends Tasks
                 $uuid = $this->getUuidFromHostingName($uuid);
                 $commandData->input()->setArgument('uuid', $uuid);
             }
-
-            // Convert environment parameters to an EnvironmentResponse
-            // if ($commandData->input()->hasArgument('environment')) {
-            //     $environmentName = $commandData->input()->getArgument('environment');
-            //     if (null !== $environmentName) {
-            //         $environment = $this->getEnvironmentFromEnvironmentName($uuid, $environmentName);
-            //         $commandData->input()->setArgument('environment', $environment);
-            //     }
-            // }
-            // if ($commandData->input()->hasArgument('environmentFrom')) {
-            //     $environmentFromName = $commandData->input()->getArgument('environmentFrom');
-            //     $environmentFrom = $this->getEnvironmentFromEnvironmentName($uuid, $environmentFromName);
-            //     $commandData->input()->setArgument('environmentFrom', $environmentFrom);
-            // }
-            // if ($commandData->input()->hasArgument('environmentTo')) {
-            //     $environmentToName = $commandData->input()->getArgument('environmentTo');
-            //     $environmentTo = $this->getEnvironmentFromEnvironmentName($uuid, $environmentToName);
-            //     $commandData->input()->setArgument('environmentTo', $environmentTo);
-            // }
         }
         // Convert Organization name to UUID.
         if ($commandData->input()->hasArgument('organization')) {
@@ -149,26 +130,6 @@ abstract class AcquiaCommand extends Tasks
             $commandData->input()->setArgument('organization', $organization);
         }
     }
-
-    /**
-     * @param string $uuid
-     * @param string $environment
-     * @return EnvironmentResponse
-     * @throws Exception
-     */
-    // protected function getEnvironmentFromEnvironmentName($uuid, $environment)
-    // {
-    //     $environmentsAdapter = new Environments($this->cloudapi);
-    //     $environments = $environmentsAdapter->getAll($uuid);
-
-    //     foreach ($environments as $e) {
-    //         if ($environment === $e->name) {
-    //             return $e;
-    //         }
-    //     }
-
-    //     throw new Exception('Unable to find ID for environment');
-    // }
 
     /**
      * @param string $organizationName

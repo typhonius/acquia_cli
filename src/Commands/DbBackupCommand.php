@@ -3,6 +3,7 @@
 namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\Connector\Connector;
+use AcquiaCloudApi\Connector\Client;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use AcquiaCloudApi\Endpoints\Databases;
 use AcquiaCloudApi\Endpoints\DatabaseBackups;
@@ -47,16 +48,21 @@ class DbBackupCommand extends AcquiaCommand
      * @command database:backup:list
      * @aliases db:backup:list
      */
-    public function dbBackupList(DatabaseBackups $databaseBackupsAdapter, $uuid, $environment, $dbName = null)
-    {
+    public function dbBackupList(
+        Client $client,
+        DatabaseBackups $databaseBackupsAdapter,
+        $uuid,
+        $environment,
+        $dbName = null
+    ) {
         $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
 
         if (null !== $dbName) {
-            $this->cloudapi->addQuery('filter', "name=${dbName}");
+            $client->addQuery('filter', "name=${dbName}");
         }
         $dbAdapter = new Databases($this->cloudapi);
         $databases = $dbAdapter->getAll($uuid);
-        $this->cloudapi->clearQuery();
+        $client->clearQuery();
 
         $table = new Table($this->output());
         $table->setHeaders(['ID', 'Type', 'Timestamp']);
@@ -148,19 +154,24 @@ class DbBackupCommand extends AcquiaCommand
      * @aliases db:backup:download
      * @option $backup Select which backup to download by backup ID. If omitted, the latest will be downloaded.
      * @option $path Select a path to download the backup to. If omitted, the system temp directory will be used.
+     * @option $filename Choose a filename to call the backup. If omitted, the name will be automatically generated.
      */
     public function dbBackupDownload(
+        Client $client,
         DatabaseBackups $databaseBackupsAdapter,
         $uuid,
         $environment,
         $dbName,
-        $opts = ['backup' => null, 'path' => null]
+        $opts = ['backup' => null, 'path' => null, 'filename' => null]
     ) {
+
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+
         if (!$opts['backup']) {
-            $this->cloudapi->addQuery('sort', '-created');
-            $this->cloudapi->addQuery('limit', 1);
+            $client->addQuery('sort', '-created');
+            $client->addQuery('limit', 1);
             $backup = $databaseBackupsAdapter->getAll($environment->uuid, $dbName);
-            $this->cloudapi->clearQuery();
+            $client->clearQuery();
             if (empty($backup)) {
                 throw new \Exception('Unable to find a database backup to download.');
             }
@@ -169,7 +180,11 @@ class DbBackupCommand extends AcquiaCommand
             $backupId = $opts['backup'];
         }
 
-        $backupName = sprintf('%s-%s-%s', $environment->name, $dbName, $backupId);
+        if (null === $opts['filename']) {
+            $backupName = sprintf('%s-%s-%s', $environment->name, $dbName, $backupId);
+        } else {
+            $backupName = $opts['filename'];
+        }
 
         if (null === $opts['path']) {
             $location = tempnam(sys_get_temp_dir(), $backupName) . '.sql.gz';
@@ -183,9 +198,13 @@ class DbBackupCommand extends AcquiaCommand
         $this->downloadProgress->start();
         $this->downloadProgress->setMessage(sprintf('Downloading database backup to %s', $location));
 
-        $this->cloudapi->addOption('sink', $location);
-        $this->cloudapi->addOption('curl.options', ['CURLOPT_RETURNTRANSFER' => true, 'CURLOPT_FILE' => $location]);
-        $this->cloudapi->addOption('progress', function (
+        $client->addOption('sink', $location);
+        $client->addOption(
+            'curl.options',
+            ['CURLOPT_RETURNTRANSFER' => true, 'CURLOPT_FILE' => $location]
+        );
+
+        $client->addOption('progress', function (
             $downloadTotal,
             $downloadedBytes
         ) {

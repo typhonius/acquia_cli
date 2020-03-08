@@ -2,6 +2,7 @@
 
 namespace AcquiaCli\Commands;
 
+use AcquiaCloudApi\Connector\Client;
 use AcquiaCloudApi\Endpoints\Notifications;
 use AcquiaCloudApi\Endpoints\Organizations;
 use Symfony\Component\Console\Helper\Table;
@@ -34,19 +35,19 @@ class NotificationsCommand extends AcquiaCommand
      * @command notification:list
      * @alias n:l
      */
-    public function notificationList($uuid, $limit = 50, $filter = null, $sort = '~created_at')
+    public function notificationList(Client $client, $uuid, $limit = 50, $filter = null, $sort = '~created_at')
     {
 
         // Allows for limits and sort criteria.
         $sort = str_replace('~', '-', $sort);
-        $this->cloudapi->addQuery('limit', $limit);
-        $this->cloudapi->addQuery('sort', $sort);
+        $client->addQuery('limit', $limit);
+        $client->addQuery('sort', $sort);
         if (null !== $filter) {
-            $this->cloudapi->addQuery('filter', "name=${filter}");
+            $client->addQuery('filter', "name=${filter}");
         }
 
         $notifications = $this->notificationsAdapter->getAll($uuid);
-        $this->cloudapi->clearQuery();
+        $client->clearQuery();
 
         $output = $this->output();
         $table = new Table($output);

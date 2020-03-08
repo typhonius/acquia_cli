@@ -36,6 +36,8 @@ class AcquiaCliInjector implements ParameterInjector
                 return $this->cloudapi;
             case 'AcquiaCli\Config':
                 return $this->config;
+            case 'AcquiaCloudApi\Connector\Client':
+                return $this->client;
             case 'AcquiaCloudApi\Endpoints\Applications':
                 return new Applications($this->client);
             case 'AcquiaCloudApi\Endpoints\Environments':
