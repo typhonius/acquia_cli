@@ -132,6 +132,9 @@ abstract class AcquiaCliTestCase extends TestCase
     public static function getFixtureMap()
     {
         return [
+            '/account' => [
+                'get' => 'Account/getAccount.json'
+            ],
             '/applications' => [
                 'get' => 'Applications/getAllApplications.json',
             ],
@@ -161,6 +164,12 @@ abstract class AcquiaCliTestCase extends TestCase
             ],
             '/organizations/organisation/roles' => [
                 'post' => 'Roles/createRole.json'
+            ],
+            '/applications/uuid/environments' => [
+                'get' => 'Environments/getAllEnvironments.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a' => [
+                'delete' => 'Environments/deleteCDEnvironment.json'
             ],
             '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/databases/database2/backups' => [
                 'get' => 'DatabaseBackups/getAllDatabaseBackups.json',
@@ -214,8 +223,31 @@ abstract class AcquiaCliTestCase extends TestCase
             ],
             '/applications/uuid/code' => [
                 'get' => 'Code/getAllCode.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/livedev/actions/disable' => [
+                'post' => 'Environments/disableLiveDev.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/livedev/actions/enable' => [
+                'post' => 'Environments/enableLiveDev.json'
+            ],
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/servers' => [
+                'get' => 'Servers/getAllServers.json'
+            ],
+            '/environments/15-a47ac10b-58cc-4372-a567-0e02b2c3d470/servers' => [
+                'get' => 'Servers/getAllServers.json'
+            ],
+            '/environments/32-a47ac10b-58cc-4372-a567-0e02b2c3d470/servers' => [
+                'get' => 'Servers/getAllServers.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/actions/change-label' => [
+                'post' => 'Environments/renameEnvironment.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/production-mode/actions/disable' => [
+                'post' => 'Environments/disableProductionMode.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/production-mode/actions/enable' => [
+                'post' => 'Environments/disableProductionMode.json'
             ]
-            
 
 
         ];

@@ -32,7 +32,7 @@ class AcquiaCliTest extends AcquiaCli
 
     public function getContainer($input, $output, $application, $config, $client)
     {
-        $container = Robo::createDefaultContainer($input, $output, $application);
+        $container = Robo::createDefaultContainer($input, $output, $application, $config);
         $container->add('client', $client);
 
         $container->add('cloudApi', \AcquiaCli\Tests\CloudApiTest::class)
@@ -50,6 +50,7 @@ class AcquiaCliTest extends AcquiaCli
             new \AcquiaCli\Injector\AcquiaCliInjector
         );
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Databases', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Servers', new \AcquiaCli\Injector\AcquiaCliInjector);
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Domains', new \AcquiaCli\Injector\AcquiaCliInjector);
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Code', new \AcquiaCli\Injector\AcquiaCliInjector);
         $parameterInjection->register(
@@ -57,6 +58,7 @@ class AcquiaCliTest extends AcquiaCli
             new \AcquiaCli\Injector\AcquiaCliInjector
         );
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Crons', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Account', new \AcquiaCli\Injector\AcquiaCliInjector);
 
         return $container;
     }

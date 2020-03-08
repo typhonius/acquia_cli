@@ -15,13 +15,14 @@ use AcquiaCloudApi\Response\EnvironmentResponse;
 class CloudApiTest extends CloudApi
 {
 
+
     public function __construct(Config $config, Client $client)
     {
-        parent::__construct($config);
         $this->extraConfig = $config->get('extraconfig');
         $this->acquia = $config->get('acquia');
 
         $this->setClient($client);
+        parent::__construct($config);
     }
 
     public function getInstance()

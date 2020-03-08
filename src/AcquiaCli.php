@@ -48,6 +48,7 @@ class AcquiaCli
 
         // Create application.
         $this->setConfig($config);
+
         $application = new Application(self::NAME, $version);
 
         $application->getDefinition()->addOptions([
@@ -112,6 +113,9 @@ class AcquiaCli
             'AcquiaCloudApi\Endpoints\DatabaseBackups',
             new \AcquiaCli\Injector\AcquiaCliInjector
         );
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Crons', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Account', new \AcquiaCli\Injector\AcquiaCliInjector);
+
 
         return $container;
     }
