@@ -2,6 +2,7 @@
 
 namespace AcquiaCli\Commands;
 
+use AcquiaCloudApi\Connector\Client;
 use AcquiaCloudApi\Endpoints\Environments;
 use AcquiaCloudApi\Endpoints\Servers;
 use AcquiaCloudApi\Response\EnvironmentResponse;
@@ -61,16 +62,21 @@ class EnvironmentsCommand extends AcquiaCommand
      * @command environment:info
      * @aliases env:info,e:i
      */
-    public function environmentInfo(Environments $environmentsAdapter, Servers $serversAdapter, $uuid, $env = null)
-    {
+    public function environmentInfo(
+        Client $client,
+        Environments $environmentsAdapter,
+        Servers $serversAdapter,
+        $uuid,
+        $env = null
+    ) {
 
         if (null !== $env) {
-            $this->cloudapi->addQuery('filter', "name=${env}");
+            $client->addQuery('filter', "name=${env}");
         }
 
         $environments = $environmentsAdapter->getAll($uuid);
 
-        $this->cloudapi->clearQuery();
+        $client->clearQuery();
 
         foreach ($environments as $e) {
             $this->renderEnvironmentInfo($e, $serversAdapter);

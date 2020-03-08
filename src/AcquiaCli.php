@@ -97,6 +97,7 @@ class AcquiaCli
 
         $parameterInjection = $container->get('parameterInjection');
         $parameterInjection->register('AcquiaCli\CloudApi', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Connector\Client', new \AcquiaCli\Injector\AcquiaCliInjector);
         $parameterInjection->register(
             'AcquiaCloudApi\Endpoints\Applications',
             new \AcquiaCli\Injector\AcquiaCliInjector
