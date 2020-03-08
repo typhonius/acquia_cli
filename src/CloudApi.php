@@ -10,6 +10,7 @@ use AcquiaCloudApi\Endpoints\Organizations;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use AcquiaCloudApi\Response\OrganizationResponse;
 use Robo\Config\Config;
+use Symfony\Component\Console\Input\InputInterface;
 
 /**
  * Class CloudApi
