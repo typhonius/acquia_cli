@@ -257,18 +257,28 @@ abstract class AcquiaCliTestCase extends TestCase
                 'get' => 'Variables/getAllVariables.json',
                 'post' => 'Variables/createVariable.json'
             ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/logs' => [
+                'get' => 'Logs/getAllLogs.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/logs/apache-access' => [
+                'post' => 'Logs/createLogSnapshot.json'
+            ],
             '/teams/teamUuid/invites' => [
                 'post' => 'Teams/invite.json'
             ],
             '/organizations/organizationUuid/teams' => [
                 'post' => 'Teams/createTeam.json'
             ],
+            '/organizations/g47ac10b-58cc-4372-a567-0e02b2c3d472/roles' => [
+                'get' => 'Roles/getAllRoles.json'
+            ],
             '/teams/teamUuid/applications' => [
                 'post' => 'Teams/addApplication.json'
             ],
             '/permissions' => [
                 'get' => 'Permissions/getPermissions.json'
-            ]
+            ],
+            
 
 
         ];

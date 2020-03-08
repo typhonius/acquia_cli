@@ -19,6 +19,20 @@ class RolesCommandTest extends AcquiaCliTestCase
     public function roleProvider()
     {
 
+        $roleList = <<<TABLE
+>  Team Lead: 312c0121-906b-4498-8402-7b479172768c
+>  Senior Developer: 5f7da0a9-9ff0-4db8-802e-9d2b9969efc2
+>  Developer: d33cd9ff-281d-4bcf-9f89-b10b249caa35
++--------------------+-----------+------------------+-----------+
+| Permission         | Team Lead | Senior Developer | Developer |
++--------------------+-----------+------------------+-----------+
+| administer alerts  |           |                  |           |
+| deploy to non-prod |           |                  |           |
+| deploy to prod     |           |                  |           |
+| pull from prod     |           |                  |           |
++--------------------+-----------+------------------+-----------+
+TABLE;
+
         return [
             [
                 ['role:add', 'organisation', 'name', 'permissions'],
@@ -27,6 +41,10 @@ class RolesCommandTest extends AcquiaCliTestCase
             [
                 ['role:delete', 'roleUuid'],
                 '>  Deleting role' . PHP_EOL
+            ],
+            [
+                ['role:list', 'organisation'],
+                $roleList . PHP_EOL
             ],
             [
                 ['role:update:permissions', 'roleUuid', 'permissions'],

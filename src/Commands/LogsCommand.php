@@ -8,6 +8,7 @@ use AcquiaLogstream\LogstreamManager;
 use Robo\Common\InputAwareTrait;
 use Robo\Common\OutputAwareTrait;
 use Symfony\Component\Console\Helper\Table;
+use AcquiaCli\CloudApi;
 
 /**
  * Class LogsCommand
@@ -18,15 +19,6 @@ class LogsCommand extends AcquiaCommand
 
     use InputAwareTrait;
     use OutputAwareTrait;
-
-    protected $logsAdapter;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->logsAdapter = new Logs($this->cloudapi);
-    }
 
     /**
      * Streams logs from an environment.
@@ -41,15 +33,16 @@ class LogsCommand extends AcquiaCommand
      * @command log:stream
      */
     public function logStream(
+        Logs $logsAdapter,
         $uuid,
-        EnvironmentResponse $environment,
+        $environment,
         $opts = [
             'colourise|c' => false,
             'logtypes|t' => [],
             'servers|s' => []
         ]
     ) {
-        $stream = $this->logsAdapter->stream($environment->uuid);
+        $stream = $logsAdapter->stream($environment->uuid);
         $params = $stream->logstream->params;
         $logstream = new LogstreamManager($this->input(), $this->output(), $params);
         if ($opts['colourise']) {
@@ -68,10 +61,10 @@ class LogsCommand extends AcquiaCommand
      *
      * @command log:list
      */
-    public function logList($uuid, $environment)
+    public function logList(CloudApi $cloudapi, Logs $logsAdapter, $uuid, $environment)
     {
-        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
-        $logs = $this->logsAdapter->getAll($environment->uuid);
+        $environment = $cloudapi->getEnvironment($uuid, $environment);
+        $logs = $logsAdapter->getAll($environment->uuid);
 
         $output = $this->output();
         $table = new Table($output);
@@ -93,35 +86,38 @@ class LogsCommand extends AcquiaCommand
     /**
      * Creates a log snapshot.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
-     * @param string              $logType
+     * @param string  $uuid
+     * @param string  $environment
+     * @param string  $logType
      *
      * @command log:snapshot
      */
-    public function logSnapshot($uuid, $environment, $logType)
+    public function logSnapshot(CloudApi $cloudapi, Logs $logsAdapter, $uuid, $environment, $logType)
     {
+        $environment = $cloudapi->getEnvironment($uuid, $environment);
         $this->say(sprintf('Creating snapshot for %s in %s environment', $logType, $environment->label));
-        $this->logsAdapter->snapshot($environment->uuid, $logType);
+        $logsAdapter->snapshot($environment->uuid, $logType);
     }
 
     /**
      * Downloads a log file.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
-     * @param string              $logType
-     * @param string              $path
+     * @param string  $uuid
+     * @param string  $environment
+     * @param string  $logType
+     * @param string  $path
      *
      * @command log:download
      */
-    public function logDownload($uuid, $environment, $logType, $path = null)
+    public function logDownload(CloudApi $cloudapi, Logs $logsAdapter, $uuid, $environment, $logType, $path = null)
     {
+        $environment = $cloudapi->getEnvironment($uuid, $environment);
+
         $label = $environment->label;
         $envName = $environment->name;
         $backupName = "${envName}-${logType}";
 
-        $log = $this->logsAdapter->download($environment->uuid, $logType);
+        $log = $logsAdapter->download($environment->uuid, $logType);
 
         if (null === $path) {
             $location = tempnam(sys_get_temp_dir(), $backupName) . '.tar.gz';

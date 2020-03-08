@@ -130,6 +130,7 @@ class AcquiaCli
         );
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Teams', new \AcquiaCli\Injector\AcquiaCliInjector);
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Variables', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Logs', new \AcquiaCli\Injector\AcquiaCliInjector);
     }
 
     /**

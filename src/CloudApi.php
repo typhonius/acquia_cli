@@ -6,7 +6,9 @@ use AcquiaCloudApi\Connector\Client;
 use AcquiaCloudApi\Connector\Connector;
 use AcquiaCloudApi\Endpoints\Applications;
 use AcquiaCloudApi\Endpoints\Environments;
+use AcquiaCloudApi\Endpoints\Organizations;
 use AcquiaCloudApi\Response\EnvironmentResponse;
+use AcquiaCloudApi\Response\OrganizationResponse;
 use Robo\Config\Config;
 
 /**
@@ -66,6 +68,25 @@ class CloudApi
         }
 
         throw new \Exception('Unable to find ID for environment');
+    }
+
+    /**
+     * @param string $organizationName
+     * @return OrganizationResponse
+     * @throws \Exception
+     */
+    public function getOrganization($organizationName)
+    {
+        $org = new Organizations($this->client);
+        $organizations = $org->getAll();
+
+        foreach ($organizations as $organization) {
+            if ($organizationName === $organization->name) {
+                return $organization;
+            }
+        }
+
+        throw new \Exception('Unable to find ID for organization');
     }
 
     public function getClient()

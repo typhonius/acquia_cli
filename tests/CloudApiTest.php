@@ -7,6 +7,7 @@ use AcquiaCli\CloudApi;
 use Robo\Config\Config;
 use AcquiaCloudApi\Connector\Client;
 use AcquiaCloudApi\Response\EnvironmentResponse;
+use AcquiaCloudApi\Response\OrganizationResponse;
 
 /**
  * Class CloudApi
@@ -55,5 +56,33 @@ class CloudApiTest extends CloudApi
         $env->_links = 'id';
 
         return new EnvironmentResponse($env);
+    }
+
+    /**
+     * @param string $organization
+     * @return OrganizationResponse
+     * @throws \Exception
+     */
+    public function getOrganization($organization)
+    {
+        $org = new \stdClass();
+        $org->id = '4841';
+        $org->uuid = 'g47ac10b-58cc-4372-a567-0e02b2c3d472';
+        $org->name = 'Sample organization 3';
+        $org->owner = new \stdClass();
+        $org->owner->uuid = 'u47ac10b-58cc-4372-a567-0e02b2c3d470';
+        $org->owner->first_name = 'First';
+        $org->owner->last_name = 'Last';
+        $org->owner->picture_url = 'https://accounts.acquia.com/path/to/image.png';
+        $org->owner->username = 'user.name';
+        $org->owner->mail = 'user.name@domain.com';
+        $org->subscriptions_total = 4;
+        $org->admins_total = 0;
+        $org->users_total = 0;
+        $org->teams_total = 0;
+        $org->roles_total = 0;
+        $org->_links = [];
+
+        return new OrganizationResponse($org);
     }
 }
