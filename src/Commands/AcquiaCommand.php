@@ -21,6 +21,8 @@ use Exception;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableStyle;
+use Consolidation\AnnotatedCommand\AnnotationData;
+use Symfony\Component\Console\Input\InputInterface;
 
 /**
  * Class AcquiaCommand
@@ -55,9 +57,8 @@ abstract class AcquiaCommand extends Tasks
      */
     public function __construct()
     {
-        $cloudapiService = Robo::service('cloudApi');
-        $this->cloudapiService = $cloudapiService;
-        $this->cloudapi = $cloudapiService->getClient();
+        $this->cloudapi = Robo::service('client');
+        $this->cloudapiService = Robo::service('cloudApi');
 
         $this->setTableStyles();
     }
@@ -79,6 +80,27 @@ abstract class AcquiaCommand extends Tasks
         }
 
         return parent::confirm($question, $default);
+    }
+
+    /**
+     * Adds sort, limit, and filer options to the CloudAPI request.
+     *
+     * @hook init
+     *
+     * @param InputInterface $input
+     * @param AnnotationData $annotationData
+     */
+    public function initApiOptionsHook(InputInterface $input, AnnotationData $annotationData)
+    {
+        if ($limit = $input->getOption('limit')) {
+            $this->cloudapi->addQuery('limit', $limit);
+        }
+        if ($sort = $input->getOption('sort')) {
+            $this->cloudapi->addQuery('sort', $sort);
+        }
+        if ($filter = $input->getOption('filter')) {
+            $this->cloudapi->addQuery('filter', $filter);
+        }
     }
 
     /**
@@ -319,6 +341,19 @@ abstract class AcquiaCommand extends Tasks
         $this->say(sprintf('Copying files from %s to %s', $environmentFrom->label, $environmentTo->label));
         $response = $environmentsAdapter->copyFiles($environmentFrom->uuid, $environmentTo->uuid);
         $this->waitForNotification($response);
+    }
+
+    protected function setClientOptions()
+    {
+        // if ($sort = $this->input()->getOption('sort')) {
+        //     var_dump($sort);
+        // }
+        // if ($this->input()->getOption('filter')) {
+        // }
+        // $x= $this->input();
+        // $x->getOption('limit');
+        // if ($this->input()->getOption('limit')) {
+        // }
     }
 
     protected function setTableStyles()

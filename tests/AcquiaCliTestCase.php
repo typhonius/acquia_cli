@@ -168,6 +168,9 @@ abstract class AcquiaCliTestCase extends TestCase
             '/applications/uuid/environments' => [
                 'get' => 'Environments/getAllEnvironments.json'
             ],
+            '/applications/uuid/notifications' => [
+                'get' => 'Notifications/getAllNotifications.json'
+            ],
             '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a' => [
                 'delete' => 'Environments/deleteCDEnvironment.json'
             ],
@@ -278,9 +281,24 @@ abstract class AcquiaCliTestCase extends TestCase
             '/permissions' => [
                 'get' => 'Permissions/getPermissions.json'
             ],
-            
-
-
+            '/notifications/f4b37e3c-1g96-4ed4-ad20-3081fe0f9545' => [
+                'get' => 'Notifications/getNotification.json'
+            ],
+            '/organizations' => [
+                'get' => 'Organizations/getAllOrganizations.json'
+            ],
+            '/organizations/g47ac10b-58cc-4372-a567-0e02b2c3d472/admins' => [
+                'get' => 'Organizations/getAdmins.json'
+            ],
+            '/organizations/g47ac10b-58cc-4372-a567-0e02b2c3d472/teams' => [
+                'get' => 'Organizations/getTeams.json'
+            ],
+            '/organizations/g47ac10b-58cc-4372-a567-0e02b2c3d472/applications' => [
+                'get' => 'Organizations/getApplications.json'
+            ],
+            '/organizations/g47ac10b-58cc-4372-a567-0e02b2c3d472/members' => [
+                'get' => 'Organizations/getMembers.json'
+            ]
         ];
     }
 

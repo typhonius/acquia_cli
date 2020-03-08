@@ -69,6 +69,8 @@ class OrganizationsCommand extends AcquiaCommand
      */
     public function organizationApplications($organization)
     {
+        $organization = $this->cloudapiService->getOrganization($organization);
+
         $organizationUuid = $organization->uuid;
         $applications = $this->organizationsAdapter->getApplications($organizationUuid);
 
@@ -101,6 +103,8 @@ class OrganizationsCommand extends AcquiaCommand
      */
     public function organizationTeams($organization)
     {
+        $organization = $this->cloudapiService->getOrganization($organization);
+
         $organizationUuid = $organization->uuid;
         $teams = $this->organizationsAdapter->getTeams($organizationUuid);
 
@@ -131,6 +135,7 @@ class OrganizationsCommand extends AcquiaCommand
      */
     public function members($organization)
     {
+        $organization = $this->cloudapiService->getOrganization($organization);
         $organizationUuid = $organization->uuid;
         $admins = $this->organizationsAdapter->getAdmins($organizationUuid);
         $members = $this->organizationsAdapter->getMembers($organizationUuid);
