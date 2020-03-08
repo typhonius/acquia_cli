@@ -17,9 +17,9 @@ class DrushAliasesCommand extends AccountCommand
      *
      * @command drush:aliases
      */
-    public function downloadDrushAliases($options = ['install' => false])
+    public function downloadDrushAliases(Account $accountAdapter, $options = ['install' => false])
     {
-        $aliases = $this->accountAdapter->getDrushAliases();
+        $aliases = $accountAdapter->getDrushAliases();
         $drushArchive = tempnam(sys_get_temp_dir(), 'AcquiaDrushAliases') . '.tar.gz';
         $this->say(sprintf('Acquia Cloud Drush Aliases archive downloaded to %s', $drushArchive));
         if (file_put_contents($drushArchive, $aliases, LOCK_EX)) {

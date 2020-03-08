@@ -11,28 +11,19 @@ use AcquiaCloudApi\Endpoints\Account;
 class AccountCommand extends AcquiaCommand
 {
 
-    protected $accountAdapter;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->accountAdapter = new Account($this->getCloudApi());
-    }
-
     /**
      * Gets information about the user's account.
      *
      * @command account
      */
-    public function account()
+    public function account(Account $accountAdapter)
     {
         $extraConfig = $this->cloudapiService->getExtraConfig();
         $tz = $extraConfig['timezone'];
         $format = $extraConfig['format'];
         $timezone = new \DateTimeZone($tz);
 
-        $account = $this->accountAdapter->get();
+        $account = $accountAdapter->get();
 
         $lastLogin = new \DateTime($account->last_login_at);
         $lastLogin->setTimezone($timezone);
