@@ -147,6 +147,7 @@ class TeamsCommand extends AcquiaCommand
      */
     public function showRoles(Roles $rolesAdapter, Permissions $permissionsAdapter, $organization)
     {
+        $organization = $this->cloudapiService->getOrganization($organization);
 
         $organizationUuid = $organization->uuid;
         $roles = $rolesAdapter->getAll($organizationUuid);
