@@ -14,6 +14,10 @@ use AcquiaCloudApi\Endpoints\Code;
 use AcquiaCloudApi\Endpoints\DatabaseBackups;
 use AcquiaCloudApi\Endpoints\Crons;
 use AcquiaCloudApi\Endpoints\Account;
+use AcquiaCloudApi\Endpoints\Permissions;
+use AcquiaCloudApi\Endpoints\Roles;
+use AcquiaCloudApi\Endpoints\Teams;
+use AcquiaCloudApi\Endpoints\Variables;
 
 class AcquiaCliInjector implements ParameterInjector
 {
@@ -56,6 +60,14 @@ class AcquiaCliInjector implements ParameterInjector
                 return new Crons($this->client);
             case 'AcquiaCloudApi\Endpoints\Account':
                 return new Account($this->client);
+            case 'AcquiaCloudApi\Endpoints\Roles':
+                return new Roles($this->client);
+            case 'AcquiaCloudApi\Endpoints\Permissions':
+                return new Permissions($this->client);
+            case 'AcquiaCloudApi\Endpoints\Teams':
+                return new Teams($this->client);
+            case 'AcquiaCloudApi\Endpoints\Variables':
+                return new Variables($this->client);
         }
 
         return null;

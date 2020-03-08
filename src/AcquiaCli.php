@@ -76,6 +76,8 @@ class AcquiaCli
         // Create and configure container.
         $container = $this->getContainer($input, $output, $application, $config, $client);
 
+        $this->injectParameters($container);
+
         $discovery = new CommandFileDiscovery();
         $discovery->setSearchPattern('*Command.php');
         $commandClasses = $discovery->discover(__DIR__ . '/Commands', '\AcquiaCli\Commands');
@@ -95,6 +97,11 @@ class AcquiaCli
             ->withArgument('config')
             ->withArgument('client');
 
+        return $container;
+    }
+
+    public function injectParameters($container)
+    {
         $parameterInjection = $container->get('parameterInjection');
         $parameterInjection->register('AcquiaCli\CloudApi', new \AcquiaCli\Injector\AcquiaCliInjector);
         $parameterInjection->register('AcquiaCloudApi\Connector\Client', new \AcquiaCli\Injector\AcquiaCliInjector);
@@ -116,9 +123,13 @@ class AcquiaCli
         );
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Crons', new \AcquiaCli\Injector\AcquiaCliInjector);
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Account', new \AcquiaCli\Injector\AcquiaCliInjector);
-
-
-        return $container;
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Roles', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register(
+            'AcquiaCloudApi\Endpoints\Permissions',
+            new \AcquiaCli\Injector\AcquiaCliInjector
+        );
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Teams', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Variables', new \AcquiaCli\Injector\AcquiaCliInjector);
     }
 
     /**

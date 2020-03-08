@@ -247,6 +247,27 @@ abstract class AcquiaCliTestCase extends TestCase
             ],
             '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/production-mode/actions/enable' => [
                 'post' => 'Environments/disableProductionMode.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/variables/variable_one' => [
+                'put' => 'Variables/updateVariable.json',
+                'get' => 'Variables/getVariable.json',
+                'delete' => 'Variables/deleteVariable.json'
+            ],
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/variables' => [
+                'get' => 'Variables/getAllVariables.json',
+                'post' => 'Variables/createVariable.json'
+            ],
+            '/teams/teamUuid/invites' => [
+                'post' => 'Teams/invite.json'
+            ],
+            '/organizations/organizationUuid/teams' => [
+                'post' => 'Teams/createTeam.json'
+            ],
+            '/teams/teamUuid/applications' => [
+                'post' => 'Teams/addApplication.json'
+            ],
+            '/permissions' => [
+                'get' => 'Permissions/getPermissions.json'
             ]
 
 
