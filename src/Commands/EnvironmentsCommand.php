@@ -151,6 +151,16 @@ class EnvironmentsCommand extends AcquiaCommand
             'APCu',
             'Sendmail Path'
         ]);
+
+        if (!isset($environment->configuration->php)) {
+            $environment->configuration = new \stdClass();
+            $environment->configuration->php = new \stdClass();
+            $environment->configuration->php->version = ' ';
+            $environment->configuration->php->memory_limit = ' ';
+            $environment->configuration->php->opcache = ' ';
+            $environment->configuration->php->apcu = ' ';
+            $environment->configuration->php->sendmail_path = ' ';
+        }
         $environmentTable
             ->addRows([
                 [
@@ -196,6 +206,7 @@ class EnvironmentsCommand extends AcquiaCommand
     {
         $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
         if ($this->confirm("Are you sure you want to delete this environment?")) {
+            $this->say(sprintf('Deleting %s environment', $environment->label));
             $response = $environmentsAdapter->delete($environment->uuid);
             $this->waitForNotification($response);
         }
