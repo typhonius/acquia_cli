@@ -7,6 +7,7 @@ use AcquiaCloudApi\Response\EnvironmentResponse;
 use Symfony\Component\Console\Helper\Table;
 use AcquiaCloudApi\Endpoints\Code;
 use AcquiaCloudApi\Connector\Client;
+use AcquiaCli\CloudApi;
 
 /**
  * Class CodeCommand
@@ -97,16 +98,16 @@ class CodeCommand extends AcquiaCommand
     /**
      * Switches code branch on an environment.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
-     * @param string              $branch
+     * @param string  $uuid
+     * @param string  $environment
+     * @param string  $branch
      *
      * @command code:switch
      * @aliases c:s
      */
-    public function codeSwitch(Code $codeAdapter, $uuid, $environment, $branch)
+    public function codeSwitch(CloudApi $cloudapi, Code $codeAdapter, $uuid, $environment, $branch)
     {
-        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+        $environment = $cloudapi->getEnvironment($uuid, $environment);
 
         if (!$this->confirm(
             sprintf(
