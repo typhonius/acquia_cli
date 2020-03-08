@@ -71,6 +71,29 @@ class AcquiaCli
                 InputOption::VALUE_NONE,
                 'Automatically respond "yes" to all confirmation questions.'
             ),
+            new InputOption(
+                '--limit',
+                '-l',
+                InputOption::VALUE_REQUIRED,
+                'The maximum number of items to return.'
+            ),
+            new InputOption(
+                '--filter',
+                '-f',
+                InputOption::VALUE_REQUIRED,
+                'The filters query string parameter restricts the data
+returned from your request. Filtered queries restrict the rows that do
+(or do not) get included in the result by testing each row in the result
+against the filters. Not all fields are filterable.'
+            ),
+            new InputOption(
+                '--sort',
+                '-s',
+                InputOption::VALUE_REQUIRED,
+                'A comma-delimited string with fields used for sorting.
+The order of the fields is significant. A leading - in the field indicates
+the field should be sorted in a descending order. Not all fields are sortable.'
+            ),
         ]);
 
         // Create and configure container.
