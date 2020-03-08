@@ -4,7 +4,7 @@ namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
 
-class RoleCommandTest extends AcquiaCliTestCase
+class RolesCommandTest extends AcquiaCliTestCase
 {
 
     /**
