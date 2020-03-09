@@ -10,7 +10,7 @@ class InsightsCommandTest extends AcquiaCliTestCase
     /**
      * @dataProvider insightsProvider
      */
-    public function testLogsCommands($command, $expected)
+    public function testInsightsCommands($command, $expected)
     {
         $actualResponse = $this->execute($command);
         $this->assertSame($expected, $actualResponse);
@@ -48,7 +48,7 @@ TABLE;
 +--------------------------------------+------------------------------+--------+----------+---------+
 ALERTS;
 
-        $insightInfo = <<<INFO
+        $insightEnvironmentInfo = <<<INFO
                                                                  
     Example local development (local.example.com:8443) Score: 62 
                                                                  
@@ -75,6 +75,33 @@ ALERTS;
 +----------------+------+------+---------+-------+----+
 INFO;
 
+        $insightApplicationInfo = <<<INFO
+                                                                 
+    Example local development (local.example.com:8443) Score: 62 
+                                                                 
+>  Site ID: 1bc0b462-2665-11e9-ab14-d663bd873d93
+>  Status: ok
++----------------+------+------+---------+-------+----+
+| Type           | Pass | Fail | Ignored | Total | %  |
++----------------+------+------+---------+-------+----+
+| Best Practices | 5    | 1    | 0       | 6     | 83 |
+| Performance    | 9    | 10   | 0       | 19    | 47 |
+| Security       | 10   | 10   | 0       | 20    | 50 |
++----------------+------+------+---------+-------+----+
+                                                 
+    Test Site: prod (test.example.com) Score: 62 
+                                                 
+>  Site ID: 63645c1a-2665-11e9-ab14-d663bd873d93
+>  Status: ok
++----------------+------+------+---------+-------+----+
+| Type           | Pass | Fail | Ignored | Total | %  |
++----------------+------+------+---------+-------+----+
+| Best Practices | 5    | 1    | 0       | 6     | 83 |
+| Performance    | 10   | 9    | 0       | 19    | 53 |
+| Security       | 11   | 9    | 0       | 20    | 55 |
++----------------+------+------+---------+-------+----+
+INFO;
+
 
         return [
             [
@@ -86,8 +113,12 @@ INFO;
                 $insightAlerts . PHP_EOL
             ],
             [
-                ['insights:info', 'uuid', 'environment'],
-                $insightInfo . PHP_EOL
+                ['insights:info', 'uuid', 'dev'],
+                $insightEnvironmentInfo . PHP_EOL
+            ],
+            [
+                ['insights:info', 'uuid'],
+                $insightApplicationInfo . PHP_EOL
             ],
             [
                 ['insights:modules', 'siteId'],

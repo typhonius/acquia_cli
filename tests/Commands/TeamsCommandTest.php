@@ -25,7 +25,7 @@ class TeamsCommandTest extends AcquiaCliTestCase
                 '>  Adding application to team.' . PHP_EOL
             ],
             [
-                ['team:create', 'organizationUuid', 'name'],
+                ['team:create', 'Sample organization', 'name'],
                 '>  Creating new team.' . PHP_EOL
             ],
             [

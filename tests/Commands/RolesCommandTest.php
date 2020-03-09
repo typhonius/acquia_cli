@@ -35,7 +35,7 @@ TABLE;
 
         return [
             [
-                ['role:add', 'organisation', 'name', 'permissions'],
+                ['role:add', 'Sample organization', 'name', 'permissions'],
                 '>  Creating new role (name) and adding it to organisation.' . PHP_EOL
             ],
             [
@@ -43,7 +43,7 @@ TABLE;
                 '>  Deleting role' . PHP_EOL
             ],
             [
-                ['role:list', 'organisation'],
+                ['role:list', 'Sample organization'],
                 $roleList . PHP_EOL
             ],
             [

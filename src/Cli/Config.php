@@ -1,6 +1,6 @@
 <?php
 
-namespace AcquiaCli;
+namespace AcquiaCli\Cli;
 
 use Consolidation\Config\ConfigInterface;
 use Robo\Config\Config as RoboConfig;
@@ -25,15 +25,12 @@ class Config extends RoboConfig implements GlobalOptionDefaultValuesInterface
         $globalConfig = getenv('HOME') . '/.acquiacli/acquiacli.yml';
         $projectConfig = $root . '/acquiacli.yml';
 
-        $processor->extend($loader->load(dirname(__DIR__) . '/default.acquiacli.yml'));
+        $processor->extend($loader->load(dirname(dirname(__DIR__)) . '/default.acquiacli.yml'));
         $processor->extend($loader->load($globalConfig));
         $processor->extend($loader->load($projectConfig));
 
         $this->import($processor->export());
         $this->set('config.project', $projectConfig);
         $this->set('config.global', $globalConfig);
-        // $this->set('config.root', $root);
-
-        // return $this;
     }
 }

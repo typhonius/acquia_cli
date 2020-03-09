@@ -7,9 +7,8 @@ use Symfony\Component\Console\Helper\Table;
 use AcquiaCloudApi\Endpoints\Applications;
 use AcquiaCloudApi\Endpoints\Environments;
 use AcquiaCloudApi\Endpoints\Databases;
-
 use Symfony\Component\Console\Output\OutputInterface;
-use AcquiaCli\CloudApi;
+use AcquiaCli\Cli\CloudApi;
 
 /**
  * Class ApplicationsCommand
@@ -53,11 +52,14 @@ class ApplicationsCommand extends AcquiaCommand
      * @command application:info
      * @aliases app:info,a:i
      */
-    public function applicationInfo(Environments $environmentsAdapter, Databases $databasesAdapter, $uuid)
-    {
+    public function applicationInfo(
+        OutputInterface $output,
+        Environments $environmentsAdapter,
+        Databases $databasesAdapter,
+        $uuid
+    ) {
         $environments = $environmentsAdapter->getAll($uuid);
 
-        $output = $this->output();
         $table = new Table($output);
         $table->setHeaders(['Environment', 'ID', 'Branch/Tag', 'Domain(s)', 'Database(s)']);
 
@@ -107,7 +109,7 @@ class ApplicationsCommand extends AcquiaCommand
      * @command application:tags
      * @aliases app:tags
      */
-    public function applicationsTags(Applications $applicationsAdapter, OutputInterface $output, $uuid)
+    public function applicationsTags(OutputInterface $output, Applications $applicationsAdapter, $uuid)
     {
         $tags = $applicationsAdapter->getAllTags($uuid);
 

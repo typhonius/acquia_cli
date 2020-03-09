@@ -37,29 +37,39 @@ TABLE;
 +-------------------+---------+--------+--------+
 TABLE;
 
+        $domainPurge = <<<PURGE
+>  Purging domain: www.example.com
+>  Purging domain: other.example.com
+>  Purging domain: *.example.com
+PURGE;
+
         return [
             [
-                ['domain:create', 'uuid', 'environment', 'domain'],
-                '>  Adding domain to environment Mock Env' . PHP_EOL
+                ['domain:create', 'uuid', 'dev', 'domain'],
+                '>  Adding domain to environment Dev' . PHP_EOL
             ],
             [
-                ['domain:delete', 'uuid', 'environment', 'domain'],
-                '>  Removing domain from environment Mock Env' . PHP_EOL
+                ['domain:delete', 'uuid', 'test', 'domain'],
+                '>  Removing domain from environment Stage' . PHP_EOL
             ],
             [
-                ['domain:info', 'uuid', 'environment', 'domain'],
+                ['domain:info', 'uuid', 'prod', 'domain'],
                 $domainInfo . PHP_EOL
             ],
             [
-                ['domain:list', 'uuid', 'environment'],
+                ['domain:list', 'uuid', 'dev'],
                 $domainsList . PHP_EOL
             ],
             [
-                ['domain:move', 'uuid', 'domain', 'environmentFrom', 'environmentTo'],
-                '>  Moving domain from Mock Env to Mock Env' . PHP_EOL
+                ['domain:move', 'uuid', 'domain', 'dev', 'test'],
+                '>  Moving domain from Dev to Stage' . PHP_EOL
             ],
             [
-                ['domain:purge', 'uuid', 'environment', 'www.domain1.com'],
+                ['domain:purge', 'uuid', 'dev'],
+                $domainPurge . PHP_EOL
+            ],
+            [
+                ['domain:purge', 'uuid', 'dev', 'www.domain1.com'],
                 '>  Purging domain: www.domain1.com' . PHP_EOL
             ]
         ];

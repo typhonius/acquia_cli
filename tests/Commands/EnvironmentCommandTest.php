@@ -89,16 +89,16 @@ TABLE;
                 $getAllEnvironments . PHP_EOL
             ],
             [
-                ['environment:info', 'uuid', 'environment'],
+                ['environment:info', 'uuid', 'dev'],
                 $getEnvironmentInfo . PHP_EOL
             ],
             [
-                ['environment:rename', 'uuid', 'environment', 'name'],
-                '>  Renaming Mock Env to name' . PHP_EOL
+                ['environment:rename', 'uuid', 'dev', 'name'],
+                '>  Renaming Dev to name' . PHP_EOL
             ],
             [
-                ['environment:delete', 'uuid', 'environment'],
-                '>  Deleting Mock Env environment' . PHP_EOL
+                ['environment:delete', 'uuid', 'dev'],
+                '>  Deleting Dev environment' . PHP_EOL
             ]
         ];
     }

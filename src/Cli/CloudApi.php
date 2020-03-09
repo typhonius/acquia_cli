@@ -1,6 +1,6 @@
 <?php
 
-namespace AcquiaCli;
+namespace AcquiaCli\Cli;
 
 use AcquiaCloudApi\Connector\Client;
 use AcquiaCloudApi\Connector\Connector;
@@ -21,32 +21,30 @@ class CloudApi
 
     protected $client;
 
-    protected $extraConfig;
+    protected $config;
 
-    protected $acquia;
-
-    public function __construct(Config $config, Client $client = null)
+    public function __construct(Config $config, Client $client)
     {
-        $this->extraConfig = $config->get('extraconfig');
-        $this->acquia = $config->get('acquia');
-        $this->client = $client;
+        $this->config = $config;
+        $this->setClient($client);
     }
 
-    public function createClient()
+    public static function createClient(Config $config)
     {
+
+        $acquia = $config->get('acquia');
+
         if (getenv('ACQUIACLI_KEY') && getenv('ACQUIACLI_SECRET')) {
-            $this->acquia['key'] = getenv('ACQUIACLI_KEY');
-            $this->acquia['secret'] = getenv('ACQUIACLI_SECRET');
+            $acquia['key'] = getenv('ACQUIACLI_KEY');
+            $acquia['secret'] = getenv('ACQUIACLI_SECRET');
         }
         
         $connector = new Connector([
-            'key' => $this->acquia['key'],
-            'secret' => $this->acquia['secret'],
+            'key' => $acquia['key'],
+            'secret' => $acquia['secret'],
         ]);
         /** @var \AcquiaCloudApi\Connector\Client $cloudapi */
         $client = Client::factory($connector);
-
-        $this->setClient($client);
 
         return $client;
     }
@@ -111,18 +109,19 @@ class CloudApi
     public function getClient()
     {
         if (!$this->client) {
-            $this->createClient();
+            $client = self::createClient($this->config);
+            $this->setClient($client);
         }
         return $this->client;
     }
 
-    protected function setClient($client)
+    public function setClient($client)
     {
         $this->client = $client;
     }
 
     public function getExtraConfig()
     {
-        return $this->extraConfig;
+        return $this->config->get('extraconfig');
     }
 }
