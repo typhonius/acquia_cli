@@ -35,6 +35,10 @@ INFO;
 >  Copying files from Production to Stage
 INFO;
 
+        $deployResponseProd = <<<INFO
+ [error]  Cannot use deploy:prepare on the production environment 
+INFO;
+
         return [
             [
                 ['deploy:prepare', 'uuid', 'dev', 'prod'],
@@ -43,6 +47,10 @@ INFO;
             [
                 ['deploy:prepare', 'uuid', 'test'],
                 $deployResponseTest . PHP_EOL
+            ],
+            [
+                ['deploy:prepare', 'uuid', 'prod'],
+                $deployResponseProd . PHP_EOL
             ]
         ];
     }
