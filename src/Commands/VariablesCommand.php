@@ -7,7 +7,7 @@ use AcquiaCloudApi\Response\VariableResponse;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use AcquiaCloudApi\Endpoints\Variables;
 use Symfony\Component\Console\Helper\Table;
-use AcquiaCli\CloudApi;
+use AcquiaCli\Cli\CloudApi;
 
 /**
  * Class VariablesCommand

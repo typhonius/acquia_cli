@@ -7,14 +7,10 @@ use Symfony\Component\Console\Input\ArgvInput;
 use Robo\Config\Config;
 use Consolidation\Config\Loader\ConfigProcessor;
 use Consolidation\Config\Loader\YamlConfigLoader;
-use AcquiaCli\AcquiaCli;
+use AcquiaCli\Tests\Cli\AcquiaCliTest;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Consolidation\AnnotatedCommand\CommandData;
-
-
 use Robo\Robo;
-
-
 use GuzzleHttp\Psr7;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamInterface;
@@ -44,27 +40,6 @@ abstract class AcquiaCliTestCase extends TestCase
         $this->assertInstanceOf(Psr7\Stream::class, $stream);
 
         return $stream;
-    }
-
-    /**
-     * Returns a PSR7 Stream for a given fixture.
-     *
-     * @param  string     $fixture The fixture to create the stream for.
-     * @return Psr7\Stream
-     */
-    protected function getPhpSdkResponse($fixture): object
-    {
-        $path = sprintf(
-            '%s/vendor/typhonius/acquia-php-sdk-v2/tests/Fixtures/Endpoints/%s',
-            dirname(__DIR__),
-            $fixture
-        );
-        $this->assertFileExists($path);
-        if ($contents = file_get_contents($path)) {
-            return json_decode($contents);
-        } else {
-            throw new \Exception(sprintf('Fixture file %s not able to be opened.', $path));
-        }
     }
 
     /**
@@ -121,10 +96,16 @@ abstract class AcquiaCliTestCase extends TestCase
 
     public function sendRequestCallback($verb, $path)
     {
-        //echo sprintf('%s -> %s', $verb, $path) . PHP_EOL;
         $fixtureMap = self::getFixtureMap();
 
         if ($fixture = $fixtureMap[$path][$verb]) {
+            // Add in overrides for fixtures which should be downloaded
+            // rather than responded to e.g. log:download
+            if ($fixture === 'Logs/downloadLog.dat' ||
+                $fixture === 'DatabaseBackups/downloadDatabaseBackup.dat' ||
+                $fixture === 'Account/getDrushAliases.dat') {
+                return $this->getPsr7GzipResponseForFixture($fixture);
+            }
             return $this->getPsr7JsonResponseForFixture($fixture);
         }
     }
@@ -134,6 +115,9 @@ abstract class AcquiaCliTestCase extends TestCase
         return [
             '/account' => [
                 'get' => 'Account/getAccount.json'
+            ],
+            '/account/drush-aliases/download' => [
+                'get' => 'Account/getDrushAliases.dat'
             ],
             '/applications' => [
                 'get' => 'Applications/getAllApplications.json',
@@ -162,75 +146,107 @@ abstract class AcquiaCliTestCase extends TestCase
                 'put' => 'Roles/updateRole.json',
                 'delete' => 'Roles/deleteRole.json'
             ],
-            '/organizations/organisation/roles' => [
-                'post' => 'Roles/createRole.json'
-            ],
             '/applications/uuid/environments' => [
                 'get' => 'Environments/getAllEnvironments.json'
             ],
             '/applications/uuid/notifications' => [
                 'get' => 'Notifications/getAllNotifications.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a' => [
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470' => [
                 'delete' => 'Environments/deleteCDEnvironment.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/databases/database2/backups' => [
+            '/environments/32-a47ac10b-58cc-4372-a567-0e02b2c3d470/databases/database1/backups' => [
                 'get' => 'DatabaseBackups/getAllDatabaseBackups.json',
                 'post' => 'DatabaseBackups/createDatabaseBackup.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/databases/database1/backups' => [
+            '/environments/32-a47ac10b-58cc-4372-a567-0e02b2c3d470/databases/database2/backups' => [
                 'get' => 'DatabaseBackups/getAllDatabaseBackups.json',
                 'post' => 'DatabaseBackups/createDatabaseBackup.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/databases' => [
+            '/environments/15-a47ac10b-58cc-4372-a567-0e02b2c3d470/databases/database1/backups' => [
+                'get' => 'DatabaseBackups/getAllDatabaseBackups.json',
+                'post' => 'DatabaseBackups/createDatabaseBackup.json'
+            ],
+            '/environments/15-a47ac10b-58cc-4372-a567-0e02b2c3d470/databases/database2/backups' => [
+                'get' => 'DatabaseBackups/getAllDatabaseBackups.json',
+                'post' => 'DatabaseBackups/createDatabaseBackup.json'
+            ],
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/databases/database1/backups' => [
+                'get' => 'DatabaseBackups/getAllDatabaseBackups.json',
+                'post' => 'DatabaseBackups/createDatabaseBackup.json'
+            ],
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/databases/database2/backups' => [
+                'get' => 'DatabaseBackups/getAllDatabaseBackups.json',
+                'post' => 'DatabaseBackups/createDatabaseBackup.json'
+            ],
+            '/environments/32-a47ac10b-58cc-4372-a567-0e02b2c3d470/databases' => [
                 'post' => 'Databases/copyDatabases.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/databases/dbName/backups/1234/actions/restore' => [
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/databases' => [
+                'post' => 'Databases/copyDatabases.json'
+            ],
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/databases/dbName/backups/1234/actions/restore' => [
                 'post' => 'DatabaseBackups/restoreDatabaseBackup.json',
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/domains' => [
+            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/databases/database2/backups/1/actions/download' => [
+                'get' => 'DatabaseBackups/downloadDatabaseBackup.dat'
+            ],
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/domains' => [
                 'post' => 'Domains/createDomain.json',
                 'get' => 'Domains/getAllDomains.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/domains/domain' => [
+            '/environments/32-a47ac10b-58cc-4372-a567-0e02b2c3d470/domains' => [
+                'post' => 'Domains/createDomain.json',
+                'get' => 'Domains/getAllDomains.json'
+            ],
+            '/environments/32-a47ac10b-58cc-4372-a567-0e02b2c3d470/domains/domain' => [
                 'delete' => 'Domains/deleteDomain.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/domains/domain/status' => [
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/domains/domain' => [
+                'delete' => 'Domains/deleteDomain.json'
+            ],
+            '/environments/15-a47ac10b-58cc-4372-a567-0e02b2c3d470/domains/domain/status' => [
                 'get' => 'Domains/getDomainStatus.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/domains/actions/clear-varnish' => [
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/domains/actions/clear-varnish' => [
                 'post' => 'Domains/purgeVarnish.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/files' => [
+            '/environments/32-a47ac10b-58cc-4372-a567-0e02b2c3d470/files' => [
                 'post' => 'Environments/copyFiles.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/crons' => [
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/files' => [
+                'post' => 'Environments/copyFiles.json'
+            ],
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/crons' => [
                 'get' => 'Crons/getAllCrons.json',
                 'post' => 'Crons/createCron.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/crons/cronId' => [
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/crons/cronId' => [
                 'get' => 'Crons/getCron.json',
                 'delete' => 'Crons/deleteCron.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/crons/cronId/actions/enable' => [
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/crons/cronId/actions/enable' => [
                 'post' => 'Crons/enableCron.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/crons/cronId/actions/disable' => [
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/crons/cronId/actions/disable' => [
                 'post' => 'Crons/disableCron.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/code/actions/switch' => [
+            '/environments/15-a47ac10b-58cc-4372-a567-0e02b2c3d470/code/actions/switch' => [
                 'post' => 'Code/switchCode.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/code' => [
+            '/environments/32-a47ac10b-58cc-4372-a567-0e02b2c3d470/code' => [
                 'post' => 'Code/deployCode.json'
             ],
             '/applications/uuid/code' => [
                 'get' => 'Code/getAllCode.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/livedev/actions/disable' => [
+            '/applications/uuid/insight' => [
+                'get' => 'Insights/getAllInsights.json'
+            ],
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/livedev/actions/disable' => [
                 'post' => 'Environments/disableLiveDev.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/livedev/actions/enable' => [
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/livedev/actions/enable' => [
                 'post' => 'Environments/enableLiveDev.json'
             ],
             '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/servers' => [
@@ -242,38 +258,33 @@ abstract class AcquiaCliTestCase extends TestCase
             '/environments/32-a47ac10b-58cc-4372-a567-0e02b2c3d470/servers' => [
                 'get' => 'Servers/getAllServers.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/actions/change-label' => [
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/actions/change-label' => [
                 'post' => 'Environments/renameEnvironment.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/production-mode/actions/disable' => [
+            '/environments/15-a47ac10b-58cc-4372-a567-0e02b2c3d470/production-mode/actions/disable' => [
                 'post' => 'Environments/disableProductionMode.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/production-mode/actions/enable' => [
+            '/environments/15-a47ac10b-58cc-4372-a567-0e02b2c3d470/production-mode/actions/enable' => [
                 'post' => 'Environments/disableProductionMode.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/variables/variable_one' => [
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/variables/variable_one' => [
                 'put' => 'Variables/updateVariable.json',
                 'get' => 'Variables/getVariable.json',
                 'delete' => 'Variables/deleteVariable.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/variables' => [
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/variables' => [
                 'get' => 'Variables/getAllVariables.json',
                 'post' => 'Variables/createVariable.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/logs' => [
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/logs' => [
                 'get' => 'Logs/getAllLogs.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/logs/apache-access' => [
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/logs/apache-access' => [
+                'get' => 'Logs/downloadLog.dat',
                 'post' => 'Logs/createLogSnapshot.json'
             ],
             '/teams/teamUuid/invites' => [
                 'post' => 'Teams/invite.json'
-            ],
-            '/organizations/organizationUuid/teams' => [
-                'post' => 'Teams/createTeam.json'
-            ],
-            '/organizations/g47ac10b-58cc-4372-a567-0e02b2c3d472/roles' => [
-                'get' => 'Roles/getAllRoles.json'
             ],
             '/teams/teamUuid/applications' => [
                 'post' => 'Teams/addApplication.json'
@@ -287,17 +298,22 @@ abstract class AcquiaCliTestCase extends TestCase
             '/organizations' => [
                 'get' => 'Organizations/getAllOrganizations.json'
             ],
-            '/organizations/g47ac10b-58cc-4372-a567-0e02b2c3d472/admins' => [
+            '/organizations/g47ac10b-58cc-4372-a567-0e02b2c3d470/admins' => [
                 'get' => 'Organizations/getAdmins.json'
             ],
-            '/organizations/g47ac10b-58cc-4372-a567-0e02b2c3d472/teams' => [
-                'get' => 'Organizations/getTeams.json'
+            '/organizations/g47ac10b-58cc-4372-a567-0e02b2c3d470/teams' => [
+                'get' => 'Organizations/getTeams.json',
+                'post' => 'Teams/createTeam.json'
             ],
-            '/organizations/g47ac10b-58cc-4372-a567-0e02b2c3d472/applications' => [
+            '/organizations/g47ac10b-58cc-4372-a567-0e02b2c3d470/applications' => [
                 'get' => 'Organizations/getApplications.json'
             ],
-            '/organizations/g47ac10b-58cc-4372-a567-0e02b2c3d472/members' => [
+            '/organizations/g47ac10b-58cc-4372-a567-0e02b2c3d470/members' => [
                 'get' => 'Organizations/getMembers.json'
+            ],
+            '/organizations/g47ac10b-58cc-4372-a567-0e02b2c3d470/roles' => [
+                'get' => 'Roles/getAllRoles.json',
+                'post' => 'Roles/createRole.json'
             ],
             '/insight/siteId/modules' => [
                 'get' => 'Insights/getModules.json'
@@ -308,7 +324,7 @@ abstract class AcquiaCliTestCase extends TestCase
             '/insight/siteId/alerts/alertUuid' => [
                 'get' => 'Insights/getAlert.json'
             ],
-            '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/insight' => [
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/insight' => [
                 'get' => 'Insights/getEnvironment.json'
             ]
         ];

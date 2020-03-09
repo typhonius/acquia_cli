@@ -29,7 +29,7 @@ class OrganizationsCommandTest extends AcquiaCliTestCase
 TABLE;
 
         $organizationTeams = <<<TABLE
->  Teams in organisation: g47ac10b-58cc-4372-a567-0e02b2c3d472
+>  Teams in organisation: g47ac10b-58cc-4372-a567-0e02b2c3d470
 +--------------------------------------+-------------+
 | UUID                                 | Name        |
 +--------------------------------------+-------------+
@@ -39,7 +39,7 @@ TABLE;
 TABLE;
 
         $organizationMembers = <<<TABLE
->  Members in organisation: g47ac10b-58cc-4372-a567-0e02b2c3d472
+>  Members in organisation: g47ac10b-58cc-4372-a567-0e02b2c3d470
 +--------------------------------------+-----------------+-----------------------------+-------------------------+
 |                 UUID                 | Username        | Mail                        | Teams(s)                |
 +--------------------------------------+-----------------+-----------------------------+-------------------------+
@@ -58,7 +58,7 @@ TABLE;
 TABLE;
 
         $organizationApplications = <<<TABLE
->  Applications in organisation: g47ac10b-58cc-4372-a567-0e02b2c3d472
+>  Applications in organisation: g47ac10b-58cc-4372-a567-0e02b2c3d470
 +--------------------------------------+----------------------+------+--------------------+
 | UUID                                 | Name                 | Type | Hosting ID         |
 +--------------------------------------+----------------------+------+--------------------+
@@ -69,7 +69,7 @@ TABLE;
 
         return [
             [
-                ['organization:applications', 'organization'],
+                ['organization:applications', 'Sample organization'],
                 $organizationApplications . PHP_EOL
             ],
             [
@@ -77,11 +77,11 @@ TABLE;
                 $getOrganizations . PHP_EOL
             ],
             [
-                ['organization:members', 'organization'],
+                ['organization:members', 'Sample organization'],
                 $organizationMembers . PHP_EOL
             ],
             [
-                ['organization:teams', 'organization'],
+                ['organization:teams', 'Sample organization'],
                 $organizationTeams . PHP_EOL
             ]
         ];

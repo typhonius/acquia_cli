@@ -4,7 +4,7 @@ namespace AcquiaCli\Injector;
 
 use Consolidation\AnnotatedCommand\ParameterInjector;
 use Consolidation\AnnotatedCommand\CommandData;
-use AcquiaCli\CloudApi;
+use AcquiaCli\Cli\CloudApi;
 use AcquiaCloudApi\Endpoints\Applications;
 use AcquiaCloudApi\Endpoints\Environments;
 use AcquiaCloudApi\Endpoints\Databases;
@@ -25,13 +25,11 @@ use AcquiaCloudApi\Endpoints\Insights;
 class AcquiaCliInjector implements ParameterInjector
 {
 
-    protected $config;
     protected $cloudapi;
     protected $client;
 
     public function __construct()
     {
-        $this->config = \Robo\Robo::config();
         $this->cloudapi = \Robo\Robo::service('cloudApi');
         $this->client = \Robo\Robo::service('client');
     }
@@ -39,10 +37,8 @@ class AcquiaCliInjector implements ParameterInjector
     public function get(CommandData $commandData, $interfaceName)
     {
         switch ($interfaceName) {
-            case 'AcquiaCli\CloudApi':
+            case 'AcquiaCli\Cli\CloudApi':
                 return $this->cloudapi;
-            case 'AcquiaCli\Config':
-                return $this->config;
             case 'AcquiaCloudApi\Connector\Client':
                 return $this->client;
             case 'AcquiaCloudApi\Endpoints\Applications':

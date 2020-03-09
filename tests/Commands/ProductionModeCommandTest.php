@@ -10,7 +10,7 @@ class ProductionModeCommandTest extends AcquiaCliTestCase
     /**
      * @dataProvider productionModeProvider
      */
-    public function testLiveDevInfo($command, $expected)
+    public function testProductionModeCommands($command, $expected)
     {
         $actualResponse = $this->execute($command);
         $this->assertSame($expected, $actualResponse);
@@ -26,20 +26,20 @@ class ProductionModeCommandTest extends AcquiaCliTestCase
 INFO;
         return [
             [
-                ['productionmode:enable', 'uuid', 'environment'],
+                ['productionmode:enable', 'uuid', 'dev'],
                 ' [error]  Production mode may only be enabled/disabled on the prod environment. ' . PHP_EOL
             ],
             [
-                ['productionmode:disable', 'uuid', 'environment'],
+                ['productionmode:disable', 'uuid', 'dev'],
                 ' [error]  Production mode may only be enabled/disabled on the prod environment. ' . PHP_EOL
             ],
             [
                 ['productionmode:enable', 'uuid', 'prod'],
-                '>  Enabling production mode for Mock Env environment' . PHP_EOL
+                '>  Enabling production mode for Production environment' . PHP_EOL
             ],
             [
                 ['productionmode:disable', 'uuid', 'prod'],
-                '>  Disabling production mode for Mock Env environment' . PHP_EOL
+                '>  Disabling production mode for Production environment' . PHP_EOL
             ]
         ];
     }

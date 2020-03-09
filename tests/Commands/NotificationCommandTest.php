@@ -8,15 +8,15 @@ class NotificationCommandTest extends AcquiaCliTestCase
 {
 
     /**
-     * @dataProvider applicationProvider
+     * @dataProvider notificationProvider
      */
-    public function testApplicationCommands($command, $expected)
+    public function testNotificationCommands($command, $expected)
     {
         $actualResponse = $this->execute($command);
         $this->assertSame($expected, $actualResponse);
     }
 
-    public function applicationProvider()
+    public function notificationProvider()
     {
         $getAllNotifictions = <<<TABLE
 +--------------------------------------+---------------------+-----------------------------------+-----------+

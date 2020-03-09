@@ -1,6 +1,6 @@
 <?php
 
-namespace AcquiaCli\Tests;
+namespace AcquiaCli\Tests\Cli;
 
 use Robo\Robo;
 use Robo\Config\Config;
@@ -13,7 +13,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Consolidation\AnnotatedCommand\CommandFileDiscovery;
 use AcquiaCloudApi\Connector\Client;
 use Consolidation\AnnotatedCommand\CommandData;
-use AcquiaCli\AcquiaCli;
+use AcquiaCli\Cli\AcquiaCli;
+use AcquiaCli\Cli\CloudApi;
 use Consolidation\Config\Loader\ConfigProcessor;
 use Consolidation\Config\Loader\YamlConfigLoader;
 
@@ -35,7 +36,7 @@ class AcquiaCliTest extends AcquiaCli
         $container = Robo::createDefaultContainer($input, $output, $application, $config);
         $container->add('client', $client);
 
-        $container->add('cloudApi', \AcquiaCli\Tests\CloudApiTest::class)
+        $container->add('cloudApi', CloudApi::class)
             ->withArgument('config')
             ->withArgument('client');
 

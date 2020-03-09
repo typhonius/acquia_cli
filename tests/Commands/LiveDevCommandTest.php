@@ -21,12 +21,12 @@ class LiveDevCommandTest extends AcquiaCliTestCase
 
         return [
             [
-                ['livedev:enable', 'uuid', 'environment'],
-                '>  Enabling livedev for Mock Env environment' . PHP_EOL
+                ['livedev:enable', 'uuid', 'dev'],
+                '>  Enabling livedev for Dev environment' . PHP_EOL
             ],
             [
-                ['livedev:disable', 'uuid', 'environment'],
-                '>  Disabling livedev for Mock Env environment' . PHP_EOL
+                ['livedev:disable', 'uuid', 'dev'],
+                '>  Disabling livedev for Dev environment' . PHP_EOL
             ]
         ];
     }

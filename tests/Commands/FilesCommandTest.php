@@ -21,8 +21,8 @@ class FilesCommandTest extends AcquiaCliTestCase
 
         return [
             [
-                ['files:copy', 'uuid', 'environmentFrom', 'environmentTo'],
-                '>  Copying files from Mock Env to Mock Env' . PHP_EOL
+                ['files:copy', 'uuid', 'dev', 'test'],
+                '>  Copying files from Dev to Stage' . PHP_EOL
             ]
         ];
     }

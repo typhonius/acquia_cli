@@ -10,7 +10,7 @@ class CodeCommandTest extends AcquiaCliTestCase
     /**
      * @dataProvider codeProvider
      */
-    public function testCronCommands($command, $expected)
+    public function testCodeCommands($command, $expected)
     {
         $actualResponse = $this->execute($command);
         $this->assertSame($expected, $actualResponse);
@@ -30,17 +30,17 @@ class CodeCommandTest extends AcquiaCliTestCase
 +-------------------+-----+
 LIST;
 
-        $codeDeploy = '>  Backing up DB (database1) on Mock Env
->  Backing up DB (database2) on Mock Env
->  Deploying code from the Mock Env environment to the Mock Env environment';
+        $codeDeploy = '>  Backing up DB (database1) on Stage
+>  Backing up DB (database2) on Stage
+>  Deploying code from the Dev environment to the Stage environment';
 
-        $codeSwitch = '>  Backing up DB (database1) on Mock Env
->  Backing up DB (database2) on Mock Env
->  Switching Mock Env enviroment to branch branch';
+        $codeSwitch = '>  Backing up DB (database1) on Production
+>  Backing up DB (database2) on Production
+>  Switching Production enviroment to master branch';
 
         return [
             [
-                ['code:deploy', 'uuid', 'environmentFrom', 'environmentTo'],
+                ['code:deploy', 'uuid', 'dev', 'test'],
                 $codeDeploy . PHP_EOL
             ],
             [
@@ -48,7 +48,11 @@ LIST;
                 $codeList . PHP_EOL
             ],
             [
-                ['code:switch', 'uuid', 'environment', 'branch'],
+                ['code:list', 'uuid', 'master'],
+                $codeList . PHP_EOL
+            ],
+            [
+                ['code:switch', 'uuid', 'prod', 'master'],
                 $codeSwitch . PHP_EOL
             ]
         ];

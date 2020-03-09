@@ -42,27 +42,27 @@ INFO;
 
         return [
             [
-                ['cron:create', 'uuid', 'environment', 'commandString', 'frequency', 'label'],
-                '>  Adding new cron task on mock environment' . PHP_EOL
+                ['cron:create', 'uuid', 'dev', 'commandString', 'frequency', 'label'],
+                '>  Adding new cron task on dev environment' . PHP_EOL
             ],
             [
-                ['cron:delete', 'uuid', 'environment', 'cronId'],
-                '>  Deleting cron task cronId from Mock Env' . PHP_EOL
+                ['cron:delete', 'uuid', 'dev', 'cronId'],
+                '>  Deleting cron task cronId from Dev' . PHP_EOL
             ],
             [
-                ['cron:disable', 'uuid', 'environment', 'cronId'],
-                '>  Disabling cron task cronId on mock environment' . PHP_EOL
+                ['cron:disable', 'uuid', 'dev', 'cronId'],
+                '>  Disabling cron task cronId on dev environment' . PHP_EOL
             ],
             [
-                ['cron:enable', 'uuid', 'environment', 'cronId'],
-                '>  Enabling cron task cronId on mock environment' . PHP_EOL
+                ['cron:enable', 'uuid', 'dev', 'cronId'],
+                '>  Enabling cron task cronId on dev environment' . PHP_EOL
             ],
             [
-                ['cron:info', 'uuid', 'environment', 'cronId'],
+                ['cron:info', 'uuid', 'dev', 'cronId'],
                 $cronInfo . PHP_EOL
             ],
             [
-                ['cron:list', 'uuid', 'environment'],
+                ['cron:list', 'uuid', 'dev'],
                 $cronList . PHP_EOL
             ]
         ];

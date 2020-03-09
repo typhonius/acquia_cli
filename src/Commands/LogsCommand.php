@@ -8,7 +8,7 @@ use AcquiaLogstream\LogstreamManager;
 use Robo\Common\InputAwareTrait;
 use Robo\Common\OutputAwareTrait;
 use Symfony\Component\Console\Helper\Table;
-use AcquiaCli\CloudApi;
+use AcquiaCli\Cli\CloudApi;
 
 /**
  * Class LogsCommand
@@ -120,7 +120,7 @@ class LogsCommand extends AcquiaCommand
         $log = $logsAdapter->download($environment->uuid, $logType);
 
         if (null === $path) {
-            $location = tempnam(sys_get_temp_dir(), $backupName) . '.tar.gz';
+            $location = tempnam(sys_get_temp_dir(), sprintf('%s-', $backupName)) . '.tar.gz';
         } else {
             // @TODO do we want to put in a tempnam here or allow
             // for full definition of the path?

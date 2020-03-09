@@ -8,7 +8,7 @@ use AcquiaCloudApi\Response\InsightResponse;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use AcquiaCloudApi\Endpoints\Insights;
 use Symfony\Component\Console\Helper\Table;
-use AcquiaCli\CloudApi;
+use AcquiaCli\Cli\CloudApi;
 
 /**
  * Class InsightsCommand

@@ -1,6 +1,6 @@
 <?php
 
-namespace AcquiaCli;
+namespace AcquiaCli\Cli;
 
 use Robo\Robo;
 use Robo\Config\Config;
@@ -14,6 +14,8 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Consolidation\AnnotatedCommand\CommandFileDiscovery;
 use AcquiaCloudApi\Connector\Client;
+use AcquiaCli\Injector\AcquiaCliInjector;
+use AcquiaCli\Cli\CloudApi;
 
 /**
  * Class AcquiaCli
@@ -40,7 +42,10 @@ class AcquiaCli
         InputInterface $input = null,
         OutputInterface $output = null
     ) {
-        if ($file = file_get_contents(dirname(__DIR__) . '/VERSION')) {
+        if (!file_exists(dirname(dirname(__DIR__)) . '/VERSION')) {
+            throw new \Exception('No blah file');
+        }
+        if ($file = file_get_contents(dirname(dirname(__DIR__)) . '/VERSION')) {
             $version = trim($file);
         } else {
             throw new \Exception('No VERSION file');
@@ -103,7 +108,7 @@ the field should be sorted in a descending order. Not all fields are sortable.'
 
         $discovery = new CommandFileDiscovery();
         $discovery->setSearchPattern('*Command.php');
-        $commandClasses = $discovery->discover(__DIR__ . '/Commands', '\AcquiaCli\Commands');
+        $commandClasses = $discovery->discover(dirname(__DIR__) . '/Commands', '\AcquiaCli\Commands');
 
         // Instantiate Robo Runner.
         $this->runner = new RoboRunner();
@@ -116,7 +121,7 @@ the field should be sorted in a descending order. Not all fields are sortable.'
         $container = Robo::createDefaultContainer($input, $output, $application, $config);
         $container->add('client', $client);
 
-        $container->add('cloudApi', \AcquiaCli\CloudApi::class)
+        $container->add('cloudApi', CloudApi::class)
             ->withArgument('config')
             ->withArgument('client');
 
@@ -126,39 +131,24 @@ the field should be sorted in a descending order. Not all fields are sortable.'
     public function injectParameters($container)
     {
         $parameterInjection = $container->get('parameterInjection');
-        $parameterInjection->register('AcquiaCli\CloudApi', new \AcquiaCli\Injector\AcquiaCliInjector);
-        $parameterInjection->register('AcquiaCloudApi\Connector\Client', new \AcquiaCli\Injector\AcquiaCliInjector);
-        $parameterInjection->register(
-            'AcquiaCloudApi\Endpoints\Applications',
-            new \AcquiaCli\Injector\AcquiaCliInjector
-        );
-        $parameterInjection->register(
-            'AcquiaCloudApi\Endpoints\Environments',
-            new \AcquiaCli\Injector\AcquiaCliInjector
-        );
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Databases', new \AcquiaCli\Injector\AcquiaCliInjector);
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Servers', new \AcquiaCli\Injector\AcquiaCliInjector);
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Domains', new \AcquiaCli\Injector\AcquiaCliInjector);
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Code', new \AcquiaCli\Injector\AcquiaCliInjector);
-        $parameterInjection->register(
-            'AcquiaCloudApi\Endpoints\DatabaseBackups',
-            new \AcquiaCli\Injector\AcquiaCliInjector
-        );
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Crons', new \AcquiaCli\Injector\AcquiaCliInjector);
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Account', new \AcquiaCli\Injector\AcquiaCliInjector);
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Roles', new \AcquiaCli\Injector\AcquiaCliInjector);
-        $parameterInjection->register(
-            'AcquiaCloudApi\Endpoints\Permissions',
-            new \AcquiaCli\Injector\AcquiaCliInjector
-        );
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Teams', new \AcquiaCli\Injector\AcquiaCliInjector);
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Variables', new \AcquiaCli\Injector\AcquiaCliInjector);
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Logs', new \AcquiaCli\Injector\AcquiaCliInjector);
-        $parameterInjection->register(
-            'AcquiaCloudApi\Endpoints\Notifications',
-            new \AcquiaCli\Injector\AcquiaCliInjector
-        );
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Insights', new \AcquiaCli\Injector\AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCli\Cli\CloudApi', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Connector\Client', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Applications', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Environments', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Databases', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Servers', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Domains', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Code', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\DatabaseBackups', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Crons', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Account', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Roles', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Permissions', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Teams', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Variables', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Logs', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Notifications', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Insights', new AcquiaCliInjector);
     }
 
     /**

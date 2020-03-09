@@ -7,7 +7,7 @@ use AcquiaCloudApi\Response\EnvironmentResponse;
 use Symfony\Component\Console\Helper\Table;
 use AcquiaCloudApi\Endpoints\Code;
 use AcquiaCloudApi\Connector\Client;
-use AcquiaCli\CloudApi;
+use AcquiaCli\Cli\CloudApi;
 
 /**
  * Class CodeCommand
