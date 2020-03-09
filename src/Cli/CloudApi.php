@@ -84,7 +84,7 @@ class CloudApi
             }
         }
 
-        throw new \Exception('Unable to find ID for environment');
+        throw new \Exception('Unable to find environment from environment name');
     }
 
     /**
@@ -103,7 +103,7 @@ class CloudApi
             }
         }
 
-        throw new \Exception('Unable to find ID for organization');
+        throw new \Exception('Unable to find organization from organization name');
     }
 
     public function getClient()
