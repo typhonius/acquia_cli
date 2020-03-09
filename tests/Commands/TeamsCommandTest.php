@@ -21,7 +21,7 @@ class TeamsCommandTest extends AcquiaCliTestCase
 
         return [
             [
-                ['team:addapplication', 'uuid', 'teamUuid'],
+                ['team:addapplication', 'devcloud:devcloud2', 'teamUuid'],
                 '>  Adding application to team.' . PHP_EOL
             ],
             [

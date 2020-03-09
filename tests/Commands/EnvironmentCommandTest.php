@@ -85,19 +85,19 @@ TABLE;
 
         return [
             [
-                ['environment:list', 'uuid'],
+                ['environment:list', 'devcloud:devcloud2'],
                 $getAllEnvironments . PHP_EOL
             ],
             [
-                ['environment:info', 'uuid', 'dev'],
+                ['environment:info', 'devcloud:devcloud2', 'dev'],
                 $getEnvironmentInfo . PHP_EOL
             ],
             [
-                ['environment:rename', 'uuid', 'dev', 'name'],
+                ['environment:rename', 'devcloud:devcloud2', 'dev', 'name'],
                 '>  Renaming Dev to name' . PHP_EOL
             ],
             [
-                ['environment:delete', 'uuid', 'dev'],
+                ['environment:delete', 'devcloud:devcloud2', 'dev'],
                 '>  Deleting Dev environment' . PHP_EOL
             ]
         ];

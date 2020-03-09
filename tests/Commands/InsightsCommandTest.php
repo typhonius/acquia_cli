@@ -113,11 +113,11 @@ INFO;
                 $insightAlerts . PHP_EOL
             ],
             [
-                ['insights:info', 'uuid', 'dev'],
+                ['insights:info', 'devcloud:devcloud2', 'dev'],
                 $insightEnvironmentInfo . PHP_EOL
             ],
             [
-                ['insights:info', 'uuid'],
+                ['insights:info', 'devcloud:devcloud2'],
                 $insightApplicationInfo . PHP_EOL
             ],
             [

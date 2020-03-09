@@ -21,7 +21,7 @@ class FilesCommandTest extends AcquiaCliTestCase
 
         return [
             [
-                ['files:copy', 'uuid', 'dev', 'test'],
+                ['files:copy', 'devcloud:devcloud2', 'dev', 'test'],
                 '>  Copying files from Dev to Stage' . PHP_EOL
             ]
         ];

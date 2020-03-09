@@ -59,19 +59,19 @@ TABLE;
                 $getAllApplications . PHP_EOL
             ],
             [
-                ['application:info', 'uuid'],
+                ['application:info', 'devcloud:devcloud2'],
                 $applicationInfo . PHP_EOL
             ],
             [
-                ['application:tags', 'uuid'],
+                ['application:tags', 'devcloud:devcloud2'],
                 $getTags . PHP_EOL
             ],
             [
-                ['application:tag:create', 'uuid', 'name', 'color'],
+                ['application:tag:create', 'devcloud:devcloud2', 'name', 'color'],
                 '>  Creating application tag name:color' . PHP_EOL
             ],
             [
-                ['application:tag:delete', 'uuid', 'name'],
+                ['application:tag:delete', 'devcloud:devcloud2', 'name'],
                 '>  Deleting application tag name' . PHP_EOL
             ]
         ];

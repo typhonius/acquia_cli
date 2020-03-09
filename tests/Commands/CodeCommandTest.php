@@ -40,19 +40,19 @@ LIST;
 
         return [
             [
-                ['code:deploy', 'uuid', 'dev', 'test'],
+                ['code:deploy', 'devcloud:devcloud2', 'dev', 'test'],
                 $codeDeploy . PHP_EOL
             ],
             [
-                ['code:list', 'uuid'],
+                ['code:list', 'devcloud:devcloud2'],
                 $codeList . PHP_EOL
             ],
             [
-                ['code:list', 'uuid', 'master'],
+                ['code:list', 'devcloud:devcloud2', 'master'],
                 $codeList . PHP_EOL
             ],
             [
-                ['code:switch', 'uuid', 'prod', 'master'],
+                ['code:switch', 'devcloud:devcloud2', 'prod', 'master'],
                 $codeSwitch . PHP_EOL
             ]
         ];

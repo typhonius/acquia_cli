@@ -21,11 +21,11 @@ class LiveDevCommandTest extends AcquiaCliTestCase
 
         return [
             [
-                ['livedev:enable', 'uuid', 'dev'],
+                ['livedev:enable', 'devcloud:devcloud2', 'dev'],
                 '>  Enabling livedev for Dev environment' . PHP_EOL
             ],
             [
-                ['livedev:disable', 'uuid', 'dev'],
+                ['livedev:disable', 'devcloud:devcloud2', 'dev'],
                 '>  Disabling livedev for Dev environment' . PHP_EOL
             ]
         ];

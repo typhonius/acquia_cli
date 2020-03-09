@@ -42,27 +42,27 @@ INFO;
 
         return [
             [
-                ['cron:create', 'uuid', 'dev', 'commandString', 'frequency', 'label'],
+                ['cron:create', 'devcloud:devcloud2', 'dev', 'commandString', 'frequency', 'label'],
                 '>  Adding new cron task on dev environment' . PHP_EOL
             ],
             [
-                ['cron:delete', 'uuid', 'dev', 'cronId'],
+                ['cron:delete', 'devcloud:devcloud2', 'dev', 'cronId'],
                 '>  Deleting cron task cronId from Dev' . PHP_EOL
             ],
             [
-                ['cron:disable', 'uuid', 'dev', 'cronId'],
+                ['cron:disable', 'devcloud:devcloud2', 'dev', 'cronId'],
                 '>  Disabling cron task cronId on dev environment' . PHP_EOL
             ],
             [
-                ['cron:enable', 'uuid', 'dev', 'cronId'],
+                ['cron:enable', 'devcloud:devcloud2', 'dev', 'cronId'],
                 '>  Enabling cron task cronId on dev environment' . PHP_EOL
             ],
             [
-                ['cron:info', 'uuid', 'dev', 'cronId'],
+                ['cron:info', 'devcloud:devcloud2', 'dev', 'cronId'],
                 $cronInfo . PHP_EOL
             ],
             [
-                ['cron:list', 'uuid', 'dev'],
+                ['cron:list', 'devcloud:devcloud2', 'dev'],
                 $cronList . PHP_EOL
             ]
         ];
