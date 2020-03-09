@@ -2,13 +2,9 @@
 
 use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Output\ConsoleOutput;
-
-use AcquiaCli\Config;
-use AcquiaCli\AcquiaCli;
-use AcquiaCli\CloudApi;
-
-use AcquiaCloudApi\Connector\Connector;
-use AcquiaCloudApi\Connector\Client;
+use AcquiaCli\Cli\Config;
+use AcquiaCli\Cli\AcquiaCli;
+use AcquiaCli\Cli\CloudApi;
 
 $pharPath = \Phar::running(true);
 if ($pharPath) {
@@ -30,8 +26,8 @@ $classLoader = require $autoloaderPath;
 $config = new Config($root);
 
 // Instantiate CloudApi client
-$cloudapi = new CloudApi($config);
-$client = $cloudapi->createClient();
+$client = CloudApi::createClient($config);
+$cloudapi = new CloudApi($config, $client);
 
 // Set up input and output parameters
 $argv = $_SERVER['argv'];

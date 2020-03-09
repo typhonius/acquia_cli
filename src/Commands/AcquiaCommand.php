@@ -148,12 +148,12 @@ abstract class AcquiaCommand extends Tasks
             $uuid = $input->getArgument('uuid');
 
             // Detect if a UUID has been passed in or a sitename.
-            if (!preg_match(self::UUIDV4, $uuid)) {
+            if (is_string($uuid) && !preg_match(self::UUIDV4, $uuid)) {
                 // Detect if this is not a fully qualified Acquia sitename e.g. prod:acquia
                 if (strpos($uuid, ':') === false) {
                     // Use a realm passed in from the command line e.g. --realm=devcloud.
                     // If no realm is specified, 'prod:' will be prepended by default.
-                    if ($input->hasOption('realm')) {
+                    if ($input->hasOption('realm') && is_string($input->getOption('realm'))) {
                         $uuid = $input->getOption('realm') . ':' . $uuid;
                     }
                 }

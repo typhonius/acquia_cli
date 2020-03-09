@@ -29,10 +29,10 @@ class DbCommandTest extends AcquiaCliTestCase
 TABLE;
 
         $dbCopy = <<<TEXT
->  Backing up DB (database1) on Mock Env
->  Moving DB (database1) from Mock Env to Mock Env
->  Backing up DB (database2) on Mock Env
->  Moving DB (database2) from Mock Env to Mock Env
+>  Backing up DB (database1) on Dev
+>  Moving DB (database1) from Stage to Dev
+>  Backing up DB (database2) on Dev
+>  Moving DB (database2) from Stage to Dev
 TEXT;
 
         return [
@@ -53,11 +53,11 @@ TEXT;
                 '>  Truncate database (dbName)' . PHP_EOL
             ],
             [
-                ['database:copy', 'uuid', 'environmentFrom', 'environmentTo', 'dbName'],
+                ['database:copy', 'uuid', 'test', 'dev', 'dbName'],
                 $dbCopy . PHP_EOL
             ],
             [
-                ['database:copy:all', 'uuid', 'environmentFrom', 'environmentTo'],
+                ['database:copy:all', 'uuid', 'test', 'dev'],
                 $dbCopy . PHP_EOL
             ]
         ];

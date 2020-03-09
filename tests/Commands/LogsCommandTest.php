@@ -7,6 +7,31 @@ use AcquiaCli\Tests\AcquiaCliTestCase;
 class LogsCommandTest extends AcquiaCliTestCase
 {
 
+    public function testDownloadLogsCommands()
+    {
+        $command = ['log:download', 'uuid', 'dev', 'apache-access'];
+        $actualResponse = $this->execute($command);
+
+        $this->assertEquals(
+            preg_match('@>  Log downloaded to ((\S+)dev-apache-access-(\w+).tar.gz)@', $actualResponse, $matches),
+            1
+        );
+
+        $this->assertStringStartsWith('>  Log downloaded to ', $actualResponse);
+        $this->assertStringContainsString(sys_get_temp_dir(), $matches[2]);
+
+        $path = sprintf(
+            '%s/vendor/typhonius/acquia-php-sdk-v2/tests/Fixtures/Endpoints/%s',
+            dirname(dirname(__DIR__)),
+            'Logs/downloadLog.dat'
+        );
+        $this->assertFileExists($path);
+        $contents = file_get_contents($path);
+        if ($contents) {
+            $this->assertStringEqualsFile($matches[1], $contents);
+        }
+    }
+
     /**
      * @dataProvider logsProvider
      */
@@ -34,13 +59,13 @@ TABLE;
 
         return [
             [
-                ['log:list', 'uuid', 'environment'],
+                ['log:list', 'uuid', 'dev'],
                 $logsList . PHP_EOL
             ],
             [
-                ['log:snapshot', 'uuid', 'environment', 'apache-access'],
-                '>  Creating snapshot for apache-access in Mock Env environment' . PHP_EOL
-            ]
+                ['log:snapshot', 'uuid', 'dev', 'apache-access'],
+                '>  Creating snapshot for apache-access in Dev environment' . PHP_EOL
+            ],
         ];
     }
 }

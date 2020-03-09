@@ -20,15 +20,16 @@ class TeamsCommand extends AcquiaCommand
     /**
      * Creates a new team within an organization.
      *
-     * @param string $organizationUuid
+     * @param string $organization
      * @param string $name
      *
      * @command team:create
      */
-    public function teamCreate(Teams $teamsAdapter, $organizationUuid, $name)
+    public function teamCreate(Teams $teamsAdapter, $organization, $name)
     {
+        $organization = $this->cloudapiService->getOrganization($organization);
         $this->say('Creating new team.');
-        $teamsAdapter->create($organizationUuid, $name);
+        $teamsAdapter->create($organization->uuid, $name);
     }
 
     /**
@@ -91,7 +92,7 @@ class TeamsCommand extends AcquiaCommand
     /**
      * Adds a new role to an organization.
      *
-     * @param string      $organizationUuid
+     * @param string      $organization
      * @param string      $name             A human readable role name e.g. 'Release Managers'
      * @param string      $permissions      A comma separated list of permissions a role should have
      * e.g. 'administer domain non-prod,administer ssh keys,deploy to non-prod'
@@ -100,11 +101,12 @@ class TeamsCommand extends AcquiaCommand
      *
      * @command role:add
      */
-    public function addRole(Roles $rolesAdapter, $organizationUuid, $name, $permissions, $description = null)
+    public function addRole(Roles $rolesAdapter, $organization, $name, $permissions, $description = null)
     {
+        $organization = $this->cloudapiService->getOrganization($organization);
         $permissionsArray = explode(',', $permissions);
         $this->say(sprintf('Creating new role (%s) and adding it to organisation.', $name));
-        $rolesAdapter->create($organizationUuid, $name, $permissionsArray, $description);
+        $rolesAdapter->create($organization->uuid, $name, $permissionsArray, $description);
     }
 
     /**

@@ -31,24 +31,24 @@ TABLE;
 
         return [
             [
-                ['variable:create', 'uuid', 'environment', 'variable_one', 'Sample Value One'],
-                '>  Adding variable variable_one:Sample Value One to Mock Env environment' . PHP_EOL
+                ['variable:create', 'uuid', 'dev', 'variable_one', 'Sample Value One'],
+                '>  Adding variable variable_one:Sample Value One to Dev environment' . PHP_EOL
             ],
             [
-                ['variable:delete', 'uuid', 'environment', 'variable_one'],
-                '>  Removing variable variable_one from Mock Env environment' . PHP_EOL
+                ['variable:delete', 'uuid', 'dev', 'variable_one'],
+                '>  Removing variable variable_one from Dev environment' . PHP_EOL
             ],
             [
-                ['variable:info', 'uuid', 'environment', 'variable_one'],
+                ['variable:info', 'uuid', 'dev', 'variable_one'],
                 '>  Sample Value One' . PHP_EOL
             ],
             [
-                ['variable:list', 'uuid', 'environment'],
+                ['variable:list', 'uuid', 'dev'],
                 $variablesList . PHP_EOL
             ],
             [
-                ['variable:update', 'uuid', 'environment', 'variable_one', 'Sample Value One'],
-                '>  Updating variable variable_one:Sample Value One on Mock Env environment' . PHP_EOL
+                ['variable:update', 'uuid', 'dev', 'variable_one', 'Sample Value One'],
+                '>  Updating variable variable_one:Sample Value One on Dev environment' . PHP_EOL
             ]
         ];
     }
