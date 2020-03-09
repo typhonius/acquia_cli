@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\ArgvInput;
 use Robo\Config\Config;
 use Consolidation\Config\Loader\ConfigProcessor;
 use Consolidation\Config\Loader\YamlConfigLoader;
-use AcquiaCli\Tests\Cli\AcquiaCliTest;
+use AcquiaCli\Cli\AcquiaCli;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Consolidation\AnnotatedCommand\CommandData;
 use Robo\Robo;
@@ -326,6 +326,13 @@ abstract class AcquiaCliTestCase extends TestCase
             ],
             '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/insight' => [
                 'get' => 'Insights/getEnvironment.json'
+            ],
+            '/applications/foobar/environments' => [
+                'get' => 'Environments/getAllEnvironments.json'
+            ],
+            '/applications/foobar/databases' => [
+                'get' => 'Databases/getAllDatabases.json',
+                'post' => 'Databases/createDatabases.json',
             ]
         ];
     }
@@ -352,7 +359,7 @@ abstract class AcquiaCliTestCase extends TestCase
         $input = new ArgvInput($command);
         $output = new BufferedOutput();
 
-        $app = new AcquiaCliTest($config, $this->client, $input, $output);
+        $app = new AcquiaCli($config, $this->client, $input, $output);
         $app->run($input, $output);
 
         Robo::unsetContainer();

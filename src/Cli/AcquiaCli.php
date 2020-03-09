@@ -42,9 +42,6 @@ class AcquiaCli
         InputInterface $input = null,
         OutputInterface $output = null
     ) {
-        if (!file_exists(dirname(dirname(__DIR__)) . '/VERSION')) {
-            throw new \Exception('No blah file');
-        }
         if ($file = file_get_contents(dirname(dirname(__DIR__)) . '/VERSION')) {
             $version = trim($file);
         } else {
