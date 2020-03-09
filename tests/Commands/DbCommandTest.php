@@ -37,27 +37,27 @@ TEXT;
 
         return [
             [
-                ['database:create', 'uuid', 'dbName'],
+                ['database:create', 'devcloud:devcloud2', 'dbName'],
                 '>  Creating database (dbName)' . PHP_EOL
             ],
             [
-                ['database:delete', 'uuid', 'dbName'],
+                ['database:delete', 'devcloud:devcloud2', 'dbName'],
                 '>  Deleting database (dbName)' . PHP_EOL
             ],
             [
-                ['database:list', 'uuid'],
+                ['database:list', 'devcloud:devcloud2'],
                 $dbTable . PHP_EOL
             ],
             [
-                ['database:truncate', 'uuid', 'dbName'],
+                ['database:truncate', 'devcloud:devcloud2', 'dbName'],
                 '>  Truncate database (dbName)' . PHP_EOL
             ],
             [
-                ['database:copy', 'uuid', 'test', 'dev', 'dbName'],
+                ['database:copy', 'devcloud:devcloud2', 'test', 'dev', 'dbName'],
                 $dbCopy . PHP_EOL
             ],
             [
-                ['database:copy:all', 'uuid', 'test', 'dev'],
+                ['database:copy:all', 'devcloud:devcloud2', 'test', 'dev'],
                 $dbCopy . PHP_EOL
             ]
         ];

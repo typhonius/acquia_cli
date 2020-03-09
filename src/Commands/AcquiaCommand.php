@@ -130,20 +130,6 @@ abstract class AcquiaCommand extends Tasks
     public function initUuidHook(InputInterface $input, AnnotationData $annotationData)
     {
 
-        // Not super ideal to use this, however this is required until I can work
-        // out a better way.
-        // We need to exit early if we're running tests as we don't want this step
-        // to fire on each command tested. This makes it really hard to mock because
-        // the input to our command changes from what the user specifies based on
-        // this validate hook.
-        // This is great functionality for the user as they don't need to remember
-        // UUIDs, however it's difficult to test.
-        // @TODO see if there is a way to dynamically turn off hooks in
-        // consolidation/annotated-command
-        if (defined('PHPUNIT_ACQUIACLI_TESTSUITE') && PHPUNIT_ACQUIACLI_TESTSUITE) {
-            return;
-        }
-
         if ($input->hasArgument('uuid')) {
             $uuid = $input->getArgument('uuid');
 
@@ -319,19 +305,6 @@ abstract class AcquiaCommand extends Tasks
         $this->say(sprintf('Copying files from %s to %s', $environmentFrom->label, $environmentTo->label));
         $response = $environmentsAdapter->copyFiles($environmentFrom->uuid, $environmentTo->uuid);
         $this->waitForNotification($response);
-    }
-
-    protected function setClientOptions()
-    {
-        // if ($sort = $this->input()->getOption('sort')) {
-        //     var_dump($sort);
-        // }
-        // if ($this->input()->getOption('filter')) {
-        // }
-        // $x= $this->input();
-        // $x->getOption('limit');
-        // if ($this->input()->getOption('limit')) {
-        // }
     }
 
     protected function setTableStyles()

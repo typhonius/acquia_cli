@@ -37,11 +37,11 @@ INFO;
 
         return [
             [
-                ['notification:list', 'uuid'],
+                ['notification:list', 'devcloud:devcloud2'],
                 $getAllNotifictions . PHP_EOL
             ],
             [
-                ['notification:info', 'uuid', 'f4b37e3c-1g96-4ed4-ad20-3081fe0f9545'],
+                ['notification:info', 'devcloud:devcloud2', 'f4b37e3c-1g96-4ed4-ad20-3081fe0f9545'],
                 $getNotification . PHP_EOL
             ]
         ];
