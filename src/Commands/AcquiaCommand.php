@@ -99,22 +99,21 @@ abstract class AcquiaCommand extends Tasks
     }
 
     /**
-     * Adds sort, limit, and filer options to the CloudAPI request.
+     * Adds sort, limit, and filter options to the CloudAPI request.
      *
-     * @hook init
+     * @hook validate
      *
-     * @param InputInterface $input
-     * @param AnnotationData $annotationData
+     * @param CommandData $commandData
      */
-    public function initApiOptionsHook(InputInterface $input, AnnotationData $annotationData)
+    public function validateApiOptionsHook(CommandData $commandData)
     {
-        if ($limit = $input->getOption('limit')) {
+        if ($limit = $commandData->input()->getOption('limit')) {
             $this->cloudapi->addQuery('limit', $limit);
         }
-        if ($sort = $input->getOption('sort')) {
+        if ($sort = $commandData->input()->getOption('sort')) {
             $this->cloudapi->addQuery('sort', $sort);
         }
-        if ($filter = $input->getOption('filter')) {
+        if ($filter = $commandData->input()->getOption('filter')) {
             $this->cloudapi->addQuery('filter', $filter);
         }
     }
@@ -123,14 +122,30 @@ abstract class AcquiaCommand extends Tasks
      * Replace application names and environment names with UUIDs before
      * commands run.
      *
-     * @hook validate
+     * @hook init
      *
-     * @param CommandData $commandData
+     * @param InputInterface $input
+     * @param AnnotationData $annotationData
      */
-    public function validateUuidHook(CommandData $commandData)
+    public function initUuidHook(InputInterface $input, AnnotationData $annotationData)
     {
-        if ($commandData->input()->hasArgument('uuid')) {
-            $uuid = $commandData->input()->getArgument('uuid');
+
+        // Not super ideal to use this, however this is required until I can work
+        // out a better way.
+        // We need to exit early if we're running tests as we don't want this step
+        // to fire on each command tested. This makes it really hard to mock because
+        // the input to our command changes from what the user specifies based on
+        // this validate hook.
+        // This is great functionality for the user as they don't need to remember
+        // UUIDs, however it's difficult to test.
+        // @TODO see if there is a way to dynamically turn off hooks in
+        // consolidation/annotated-command
+        if (defined('PHPUNIT_ACQUIACLI_TESTSUITE') && PHPUNIT_ACQUIACLI_TESTSUITE) {
+            return;
+        }
+
+        if ($input->hasArgument('uuid')) {
+            $uuid = $input->getArgument('uuid');
 
             // Detect if a UUID has been passed in or a sitename.
             if (!preg_match(self::UUIDV4, $uuid)) {
@@ -138,12 +153,12 @@ abstract class AcquiaCommand extends Tasks
                 if (strpos($uuid, ':') === false) {
                     // Use a realm passed in from the command line e.g. --realm=devcloud.
                     // If no realm is specified, 'prod:' will be prepended by default.
-                    if ($commandData->input()->hasOption('realm')) {
-                        $uuid = $commandData->input()->getOption('realm') . ':' . $uuid;
+                    if ($input->hasOption('realm')) {
+                        $uuid = $input->getOption('realm') . ':' . $uuid;
                     }
                 }
                 $uuid = $this->cloudapiService->getApplicationUuid($uuid);
-                $commandData->input()->setArgument('uuid', $uuid);
+                $input->setArgument('uuid', $uuid);
             }
         }
     }
