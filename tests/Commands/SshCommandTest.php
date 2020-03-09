@@ -27,7 +27,7 @@ INFO;
 
         return [
             [
-                ['ssh:info', 'a47ac10b-58cc-4372-a567-0e02b2c3d470'],
+                ['ssh:info', 'devcloud:devcloud2'],
                 $infoResponse . PHP_EOL
             ]
         ];

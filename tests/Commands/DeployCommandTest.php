@@ -41,15 +41,15 @@ INFO;
 
         return [
             [
-                ['deploy:prepare', 'uuid', 'dev', 'prod'],
+                ['deploy:prepare', 'devcloud:devcloud2', 'dev', 'prod'],
                 $deployResponseDev . PHP_EOL
             ],
             [
-                ['deploy:prepare', 'uuid', 'test'],
+                ['deploy:prepare', 'devcloud:devcloud2', 'test'],
                 $deployResponseTest . PHP_EOL
             ],
             [
-                ['deploy:prepare', 'uuid', 'prod'],
+                ['deploy:prepare', 'devcloud:devcloud2', 'prod'],
                 $deployResponseProd . PHP_EOL
             ]
         ];

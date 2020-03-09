@@ -62,7 +62,7 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
             $this->assertSame('Unable to find UUID for application', $e->getMessage());
         }
 
-        $environment = $cloudApi->getEnvironment('uuid', 'dev');
+        $environment = $cloudApi->getEnvironment('a47ac10b-58cc-4372-a567-0e02b2c3d470', 'dev');
         $this->assertInstanceOf('\AcquiaCloudApi\Response\EnvironmentResponse', $environment);
         $this->assertSame('24-a47ac10b-58cc-4372-a567-0e02b2c3d470', $environment->uuid);
         $this->assertSame('dev', $environment->name);
@@ -71,7 +71,7 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
         $this->assertSame('normal', $environment->status);
 
         try {
-            $environmentError = $cloudApi->getEnvironment('uuid', 'foobar');
+            $environmentError = $cloudApi->getEnvironment('a47ac10b-58cc-4372-a567-0e02b2c3d470', 'foobar');
         } catch (\Exception $e) {
             $this->assertSame('Unable to find environment from environment name', $e->getMessage());
         }

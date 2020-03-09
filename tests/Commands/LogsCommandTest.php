@@ -9,7 +9,7 @@ class LogsCommandTest extends AcquiaCliTestCase
 
     public function testDownloadLogsCommands()
     {
-        $command = ['log:download', 'uuid', 'dev', 'apache-access'];
+        $command = ['log:download', 'devcloud:devcloud2', 'dev', 'apache-access'];
         $actualResponse = $this->execute($command);
 
         $this->assertEquals(
@@ -59,11 +59,11 @@ TABLE;
 
         return [
             [
-                ['log:list', 'uuid', 'dev'],
+                ['log:list', 'devcloud:devcloud2', 'dev'],
                 $logsList . PHP_EOL
             ],
             [
-                ['log:snapshot', 'uuid', 'dev', 'apache-access'],
+                ['log:snapshot', 'devcloud:devcloud2', 'dev', 'apache-access'],
                 '>  Creating snapshot for apache-access in Dev environment' . PHP_EOL
             ],
         ];

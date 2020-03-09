@@ -9,7 +9,7 @@ class DbBackupCommandTest extends AcquiaCliTestCase
 
     public function testDownloadDatabaseBackupsCommands()
     {
-        $command = ['database:backup:download', 'uuid', 'dev', 'database2'];
+        $command = ['database:backup:download', 'devcloud:devcloud2', 'dev', 'database2'];
         $actualResponse = $this->execute($command);
 
         $this->assertEquals(
@@ -78,18 +78,18 @@ TABLE;
 
         return [
             [
-                ['database:backup:restore', 'uuid', 'dev', 'dbName', 1234],
+                ['database:backup:restore', 'devcloud:devcloud2', 'dev', 'dbName', 1234],
                 '>  Restoring backup 1234 to dbName on Dev' . PHP_EOL
             ],
             [
-                ['database:backup', 'uuid', 'dev'],
+                ['database:backup', 'devcloud:devcloud2', 'dev'],
                 $createBackupText . PHP_EOL
             ],            [
-                ['database:backup:list', 'uuid', 'dev'],
+                ['database:backup:list', 'devcloud:devcloud2', 'dev'],
                 $dbBackupList . PHP_EOL
             ],
             [
-                ['database:backup:link', 'uuid', 'dev', 'dbName', 1234],
+                ['database:backup:link', 'devcloud:devcloud2', 'dev', 'dbName', 1234],
                 $dbLink . PHP_EOL
             ],
         ];

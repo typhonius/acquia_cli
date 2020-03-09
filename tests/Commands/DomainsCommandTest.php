@@ -45,31 +45,31 @@ PURGE;
 
         return [
             [
-                ['domain:create', 'uuid', 'dev', 'domain'],
+                ['domain:create', 'devcloud:devcloud2', 'dev', 'domain'],
                 '>  Adding domain to environment Dev' . PHP_EOL
             ],
             [
-                ['domain:delete', 'uuid', 'test', 'domain'],
+                ['domain:delete', 'devcloud:devcloud2', 'test', 'domain'],
                 '>  Removing domain from environment Stage' . PHP_EOL
             ],
             [
-                ['domain:info', 'uuid', 'prod', 'domain'],
+                ['domain:info', 'devcloud:devcloud2', 'prod', 'domain'],
                 $domainInfo . PHP_EOL
             ],
             [
-                ['domain:list', 'uuid', 'dev'],
+                ['domain:list', 'devcloud:devcloud2', 'dev'],
                 $domainsList . PHP_EOL
             ],
             [
-                ['domain:move', 'uuid', 'domain', 'dev', 'test'],
+                ['domain:move', 'devcloud:devcloud2', 'domain', 'dev', 'test'],
                 '>  Moving domain from Dev to Stage' . PHP_EOL
             ],
             [
-                ['domain:purge', 'uuid', 'dev'],
+                ['domain:purge', 'devcloud:devcloud2', 'dev'],
                 $domainPurge . PHP_EOL
             ],
             [
-                ['domain:purge', 'uuid', 'dev', 'www.domain1.com'],
+                ['domain:purge', 'devcloud:devcloud2', 'dev', 'www.domain1.com'],
                 '>  Purging domain: www.domain1.com' . PHP_EOL
             ]
         ];

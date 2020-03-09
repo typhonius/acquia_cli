@@ -26,19 +26,19 @@ class ProductionModeCommandTest extends AcquiaCliTestCase
 INFO;
         return [
             [
-                ['productionmode:enable', 'uuid', 'dev'],
+                ['productionmode:enable', 'devcloud:devcloud2', 'dev'],
                 ' [error]  Production mode may only be enabled/disabled on the prod environment. ' . PHP_EOL
             ],
             [
-                ['productionmode:disable', 'uuid', 'dev'],
+                ['productionmode:disable', 'devcloud:devcloud2', 'dev'],
                 ' [error]  Production mode may only be enabled/disabled on the prod environment. ' . PHP_EOL
             ],
             [
-                ['productionmode:enable', 'uuid', 'prod'],
+                ['productionmode:enable', 'devcloud:devcloud2', 'prod'],
                 '>  Enabling production mode for Production environment' . PHP_EOL
             ],
             [
-                ['productionmode:disable', 'uuid', 'prod'],
+                ['productionmode:disable', 'devcloud:devcloud2', 'prod'],
                 '>  Disabling production mode for Production environment' . PHP_EOL
             ]
         ];

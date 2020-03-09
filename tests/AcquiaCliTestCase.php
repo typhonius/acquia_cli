@@ -125,31 +125,28 @@ abstract class AcquiaCliTestCase extends TestCase
             '/applications/a47ac10b-58cc-4372-a567-0e02b2c3d470/environments' => [
                 'get' => 'Environments/getAllEnvironments.json'
             ],
-            '/applications/uuid/tags' => [
+            '/applications/a47ac10b-58cc-4372-a567-0e02b2c3d470/tags' => [
                 'get' => 'Applications/getAllTags.json',
                 'post' => 'Applications/createTag.json',
             ],
-            '/applications/uuid/tags/name' => [
+            '/applications/a47ac10b-58cc-4372-a567-0e02b2c3d470/tags/name' => [
                 'delete' => 'Applications/deleteTag.json',
             ],
-            '/applications/uuid/databases' => [
+            '/applications/a47ac10b-58cc-4372-a567-0e02b2c3d470/databases' => [
                 'get' => 'Databases/getAllDatabases.json',
                 'post' => 'Databases/createDatabases.json',
             ],
-            '/applications/uuid/databases/dbName/actions/erase' => [
+            '/applications/a47ac10b-58cc-4372-a567-0e02b2c3d470/databases/dbName/actions/erase' => [
                 'post' => 'Databases/truncateDatabases.json',
             ],
-            '/applications/uuid/databases/dbName' => [
+            '/applications/a47ac10b-58cc-4372-a567-0e02b2c3d470/databases/dbName' => [
                 'delete' => 'Databases/deleteDatabases.json'
             ],
             '/roles/roleUuid' => [
                 'put' => 'Roles/updateRole.json',
                 'delete' => 'Roles/deleteRole.json'
             ],
-            '/applications/uuid/environments' => [
-                'get' => 'Environments/getAllEnvironments.json'
-            ],
-            '/applications/uuid/notifications' => [
+            '/applications/a47ac10b-58cc-4372-a567-0e02b2c3d470/notifications' => [
                 'get' => 'Notifications/getAllNotifications.json'
             ],
             '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470' => [
@@ -237,10 +234,10 @@ abstract class AcquiaCliTestCase extends TestCase
             '/environments/32-a47ac10b-58cc-4372-a567-0e02b2c3d470/code' => [
                 'post' => 'Code/deployCode.json'
             ],
-            '/applications/uuid/code' => [
+            '/applications/a47ac10b-58cc-4372-a567-0e02b2c3d470/code' => [
                 'get' => 'Code/getAllCode.json'
             ],
-            '/applications/uuid/insight' => [
+            '/applications/a47ac10b-58cc-4372-a567-0e02b2c3d470/insight' => [
                 'get' => 'Insights/getAllInsights.json'
             ],
             '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/livedev/actions/disable' => [
