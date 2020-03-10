@@ -51,11 +51,29 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
         $this->assertSame('AcquiaCli 2.0.0-dev' . PHP_EOL, $actualValue);
     }
 
+    public function testClientOptions()
+    {
+        $command = ['application:list', '--sort=label', '--filter=label=@*sample*', '--limit=2'];
+
+        $this->execute($command);
+
+        $expectedQuery = [
+            'limit' => '2',
+            'sort' => 'label',
+            'filter' => 'label=@*sample*'
+        ];
+
+        $actualQuery = $this->client->getQuery();
+        $this->assertEqual($expectedQuery, $actualQuery);
+    }
+
     public function testCloudApi()
     {
 
         $config = new Config($this->root);
         $cloudApi = new CloudApi($config, $this->client);
+
+        $this->assertInstanceOf('\AcquiaCloudApi\Connector\Client', $cloudApi->getClient());
 
         $applicationUuid = $cloudApi->getApplicationUuid('devcloud:devcloud2');
         $this->assertSame('a47ac10b-58cc-4372-a567-0e02b2c3d470', $applicationUuid);
