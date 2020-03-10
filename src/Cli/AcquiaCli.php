@@ -3,7 +3,6 @@
 namespace AcquiaCli\Cli;
 
 use Robo\Robo;
-use Robo\Config\Config;
 use Robo\Common\ConfigAwareTrait;
 use Symfony\Component\Lock\Factory;
 use Symfony\Component\Lock\Store\SemaphoreStore;
@@ -129,6 +128,7 @@ the field should be sorted in a descending order. Not all fields are sortable.'
     {
         $parameterInjection = $container->get('parameterInjection');
         $parameterInjection->register('AcquiaCli\Cli\CloudApi', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCli\Cli\Config', new AcquiaCliInjector);
         $parameterInjection->register('AcquiaCloudApi\Connector\Client', new AcquiaCliInjector);
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Applications', new AcquiaCliInjector);
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Environments', new AcquiaCliInjector);

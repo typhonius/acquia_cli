@@ -27,7 +27,6 @@ $config = new Config($root);
 
 // Instantiate CloudApi client
 $client = CloudApi::createClient($config);
-$cloudapi = new CloudApi($config, $client);
 
 // Set up input and output parameters
 $argv = $_SERVER['argv'];

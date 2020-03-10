@@ -2,10 +2,8 @@
 
 namespace AcquiaCli\Cli;
 
-use Consolidation\Config\ConfigInterface;
 use Robo\Config\Config as RoboConfig;
 use Robo\Config\GlobalOptionDefaultValuesInterface;
-
 use Consolidation\Config\Loader\ConfigProcessor;
 use Consolidation\Config\Loader\YamlConfigLoader;
 

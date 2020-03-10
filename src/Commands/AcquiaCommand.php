@@ -2,27 +2,21 @@
 
 namespace AcquiaCli\Commands;
 
-use AcquiaCloudApi\Connector\Client;
-use AcquiaCloudApi\Connector\Connector;
-use AcquiaCloudApi\Endpoints\Applications;
-use AcquiaCloudApi\Endpoints\Environments;
-use AcquiaCloudApi\Endpoints\Organizations;
 use AcquiaCloudApi\Endpoints\Notifications;
 use AcquiaCloudApi\Endpoints\Databases;
 use AcquiaCloudApi\Endpoints\DatabaseBackups;
 use AcquiaCloudApi\Response\DatabaseResponse;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use AcquiaCloudApi\Response\OperationResponse;
-use AcquiaCloudApi\Response\OrganizationResponse;
 use Consolidation\AnnotatedCommand\CommandData;
-use Robo\Tasks;
-use Robo\Robo;
-use Exception;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableStyle;
 use Consolidation\AnnotatedCommand\AnnotationData;
 use Symfony\Component\Console\Input\InputInterface;
+use Robo\Tasks;
+use Robo\Robo;
+use Exception;
 
 /**
  * Class AcquiaCommand
@@ -33,8 +27,10 @@ abstract class AcquiaCommand extends Tasks
     // @TODO https://github.com/boedah/robo-drush/issues/18
     //use \Boedah\Robo\Task\Drush\loadTasks;
 
+    /** @var \AcquiaCli\Cli\CloudApi $cloudapiService */
     protected $cloudapiService;
 
+    /** @var \AcquiaCloudApi\Connector\Client $cloudapi */
     protected $cloudapi;
 
     /** Regex for a valid UUID string. */
@@ -153,7 +149,7 @@ abstract class AcquiaCommand extends Tasks
         }
         $notificationUuid = end($notificationArray);
 
-        $extraConfig = $this->cloudapiService->getExtraConfig();
+        $extraConfig = Robo::config()->get('extraconfig');
         $sleep = $extraConfig['taskwait'];
         $timeout = $extraConfig['timeout'];
 
