@@ -12,6 +12,7 @@ use AcquiaCli\Cli\CloudApi;
 
 /**
  * Class LogsCommand
+ *
  * @package AcquiaCli\Commands
  */
 class LogsCommand extends AcquiaCommand
@@ -23,9 +24,9 @@ class LogsCommand extends AcquiaCommand
     /**
      * Streams logs from an environment.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
-     * @param array               $opts
+     * @param  string              $uuid
+     * @param  EnvironmentResponse $environment
+     * @param  array               $opts
      * @option $colourise Colourise the output
      * @option $logtypes  Filter to specific log types
      * @option $servers   Filter to specific servers
@@ -72,13 +73,15 @@ class LogsCommand extends AcquiaCommand
         $table->setColumnStyle(2, 'center-align');
         foreach ($logs as $log) {
             $table
-                ->addRows([
+                ->addRows(
+                    [
                     [
                         $log->type,
                         $log->label,
                         $log->flags->available ? '✓' : ' ',
                     ],
-                ]);
+                    ]
+                );
         }
         $table->render();
     }
@@ -86,9 +89,9 @@ class LogsCommand extends AcquiaCommand
     /**
      * Creates a log snapshot.
      *
-     * @param string  $uuid
-     * @param string  $environment
-     * @param string  $logType
+     * @param string $uuid
+     * @param string $environment
+     * @param string $logType
      *
      * @command log:snapshot
      */
@@ -102,10 +105,10 @@ class LogsCommand extends AcquiaCommand
     /**
      * Downloads a log file.
      *
-     * @param string  $uuid
-     * @param string  $environment
-     * @param string  $logType
-     * @param string  $path
+     * @param string $uuid
+     * @param string $environment
+     * @param string $logType
+     * @param string $path
      *
      * @command log:download
      */

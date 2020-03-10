@@ -12,6 +12,7 @@ use AcquiaCli\Cli\CloudApi;
 
 /**
  * Class ApplicationsCommand
+ *
  * @package AcquiaCli\Commands
  */
 class ApplicationsCommand extends AcquiaCommand
@@ -33,13 +34,15 @@ class ApplicationsCommand extends AcquiaCommand
         $table->setHeaders(['Name', 'UUID', 'Hosting ID']);
         foreach ($applications as $application) {
             $table
-                ->addRows([
+                ->addRows(
+                    [
                     [
                         $application->name,
                         $application->uuid,
                         $application->hosting->id,
                     ],
-                ]);
+                    ]
+                );
         }
         $table->render();
     }
@@ -65,12 +68,17 @@ class ApplicationsCommand extends AcquiaCommand
 
         $databases = $databasesAdapter->getAll($uuid);
 
-        $dbNames = array_map(function ($database) {
-            return $database->name;
-        }, $databases->getArrayCopy());
+        $dbNames = array_map(
+            function ($database) {
+                return $database->name;
+            },
+            $databases->getArrayCopy()
+        );
 
         foreach ($environments as $environment) {
-            /** @var EnvironmentResponse $environment */
+            /**
+             * @var EnvironmentResponse $environment
+             */
 
             $environmentName = sprintf('%s (%s)', $environment->label, $environment->name);
             if ($environment->flags->livedev) {
@@ -82,7 +90,8 @@ class ApplicationsCommand extends AcquiaCommand
             }
 
             $table
-                ->addRows([
+                ->addRows(
+                    [
                     [
                         $environmentName,
                         $environment->uuid,
@@ -90,7 +99,8 @@ class ApplicationsCommand extends AcquiaCommand
                         implode("\n", $environment->domains),
                         implode("\n", $dbNames)
                     ],
-                ]);
+                    ]
+                );
         }
         $table->render();
 
@@ -117,12 +127,14 @@ class ApplicationsCommand extends AcquiaCommand
         $table->setHeaders(['Name', 'Color']);
         foreach ($tags as $tag) {
             $table
-                ->addRows([
+                ->addRows(
+                    [
                     [
                         $tag->name,
                         $tag->color,
                     ],
-                ]);
+                    ]
+                );
         }
         $table->render();
     }
@@ -130,9 +142,9 @@ class ApplicationsCommand extends AcquiaCommand
     /**
      * Creates an application tag.
      *
-     * @param string              $uuid
-     * @param string              $name
-     * @param string              $color
+     * @param string $uuid
+     * @param string $name
+     * @param string $color
      *
      * @command application:tag:create
      * @aliases app:tag:create
@@ -147,8 +159,8 @@ class ApplicationsCommand extends AcquiaCommand
     /**
      * Deletes an application tag.
      *
-     * @param string              $uuid
-     * @param string              $name
+     * @param string $uuid
+     * @param string $name
      *
      * @command application:tag:delete
      * @aliases app:tag:delete

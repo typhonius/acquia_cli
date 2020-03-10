@@ -14,6 +14,7 @@ use Symfony\Component\Console\Input\InputInterface;
 
 /**
  * Class CloudApi
+ *
  * @package AcquiaCli
  */
 class CloudApi
@@ -39,18 +40,22 @@ class CloudApi
             $acquia['secret'] = getenv('ACQUIACLI_SECRET');
         }
         
-        $connector = new Connector([
+        $connector = new Connector(
+            [
             'key' => $acquia['key'],
             'secret' => $acquia['secret'],
-        ]);
-        /** @var \AcquiaCloudApi\Connector\Client $cloudapi */
+            ]
+        );
+        /**
+         * @var \AcquiaCloudApi\Connector\Client $cloudapi
+         */
         $client = Client::factory($connector);
 
         return $client;
     }
 
     /**
-     * @param string $name
+     * @param  string $name
      * @return mixed
      * @throws \Exception
      */
@@ -68,8 +73,8 @@ class CloudApi
     }
 
     /**
-     * @param string $uuid
-     * @param string $environment
+     * @param  string $uuid
+     * @param  string $environment
      * @return EnvironmentResponse
      * @throws \Exception
      */
@@ -88,7 +93,7 @@ class CloudApi
     }
 
     /**
-     * @param string $organizationName
+     * @param  string $organizationName
      * @return OrganizationResponse
      * @throws \Exception
      */

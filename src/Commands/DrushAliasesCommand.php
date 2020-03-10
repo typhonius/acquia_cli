@@ -6,6 +6,7 @@ use AcquiaCloudApi\Endpoints\Account;
 
 /**
  * Class DrushAliasesCommand
+ *
  * @package AcquiaCli\Commands
  */
 class DrushAliasesCommand extends AccountCommand
@@ -13,6 +14,7 @@ class DrushAliasesCommand extends AccountCommand
 
     /**
      * Downloads a compressed archive of Drush aliases and prompts the user to unpack it in the right place.
+     *
      * @option install Install Drush aliases directly without confirmation.
      *
      * @command drush:aliases
@@ -28,7 +30,8 @@ class DrushAliasesCommand extends AccountCommand
                     'Do you want to automatically unpack Acquia Cloud Drush aliases to %s',
                     getenv('HOME')
                 )
-            )) {
+            )
+            ) {
                 if (!$home = getenv('HOME')) {
                     throw new \Exception('Home directory not found.');
                 }

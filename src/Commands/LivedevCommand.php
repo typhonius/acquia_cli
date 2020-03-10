@@ -7,6 +7,7 @@ use AcquiaCloudApi\Endpoints\Environments;
 
 /**
  * Class LivedevCommand
+ *
  * @package AcquiaCli\Commands
  */
 class LivedevCommand extends EnvironmentsCommand
@@ -15,8 +16,8 @@ class LivedevCommand extends EnvironmentsCommand
     /**
      * Enable livedev for an environment.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
+     * @param string $uuid
+     * @param string $environment
      *
      * @command livedev:enable
      */
@@ -30,8 +31,8 @@ class LivedevCommand extends EnvironmentsCommand
     /**
      * Disable livedev for an environment.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
+     * @param string $uuid
+     * @param string $environment
      *
      * @command livedev:disable
      */

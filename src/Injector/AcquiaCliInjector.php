@@ -25,6 +25,7 @@ use AcquiaCloudApi\Endpoints\Insights;
 class AcquiaCliInjector implements ParameterInjector
 {
 
+    protected $config;
     protected $cloudapi;
     protected $client;
 

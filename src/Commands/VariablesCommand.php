@@ -11,6 +11,7 @@ use AcquiaCli\Cli\CloudApi;
 
 /**
  * Class VariablesCommand
+ *
  * @package AcquiaCli\Commands
  */
 class VariablesCommand extends AcquiaCommand
@@ -19,8 +20,8 @@ class VariablesCommand extends AcquiaCommand
     /**
      * Lists variables.
      *
-     * @param string  $uuid
-     * @param string  $environment
+     * @param string $uuid
+     * @param string $environment
      *
      * @command variable:list
      * @aliases v:l
@@ -35,14 +36,18 @@ class VariablesCommand extends AcquiaCommand
         $table->setHeaders(['Name', 'Value']);
 
         foreach ($variables as $variable) {
-            /** @var VariableResponse $variable */
+            /**
+             * @var VariableResponse $variable
+             */
             $table
-                ->addRows([
+                ->addRows(
+                    [
                     [
                         $variable->name,
                         $variable->value
                     ],
-                ]);
+                    ]
+                );
         }
 
         $table->render();
@@ -51,9 +56,9 @@ class VariablesCommand extends AcquiaCommand
     /**
      * Gets information about a domain.
      *
-     * @param string  $uuid
-     * @param string  $environment
-     * @param string  $name
+     * @param string $uuid
+     * @param string $environment
+     * @param string $name
      *
      * @command variable:info
      * @aliases v:i
@@ -69,10 +74,10 @@ class VariablesCommand extends AcquiaCommand
     /**
      * Add a variable to an environment.
      *
-     * @param string  $uuid
-     * @param string  $environment
-     * @param string  $name
-     * @param string  $value
+     * @param string $uuid
+     * @param string $environment
+     * @param string $name
+     * @param string $value
      *
      * @command variable:create
      * @aliases variable:add,v:a
@@ -89,9 +94,9 @@ class VariablesCommand extends AcquiaCommand
     /**
      * Removes an environment variable from an environment.
      *
-     * @param string  $uuid
-     * @param string  $environment
-     * @param string  $name
+     * @param string $uuid
+     * @param string $environment
+     * @param string $name
      *
      * @command variable:delete
      * @aliases variable:remove,v:d,v:r
@@ -110,10 +115,10 @@ class VariablesCommand extends AcquiaCommand
     /**
      * Updates an environment variable on an environment.
      *
-     * @param string  $uuid
-     * @param string  $environment
-     * @param string  $name
-     * @param string  $value
+     * @param string $uuid
+     * @param string $environment
+     * @param string $name
+     * @param string $value
      *
      * @command variable:update
      * @aliases v:u

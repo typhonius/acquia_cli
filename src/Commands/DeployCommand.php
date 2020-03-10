@@ -6,6 +6,7 @@ use AcquiaCloudApi\Response\EnvironmentResponse;
 
 /**
  * Class DeployCommand
+ *
  * @package AcquiaCli\Commands
  */
 class DeployCommand extends AcquiaCommand
