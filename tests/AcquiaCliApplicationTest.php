@@ -5,6 +5,10 @@ namespace AcquiaCli\Tests;
 use AcquiaCli\Tests\AcquiaCliTestCase;
 use AcquiaCli\Cli\Config;
 use AcquiaCli\Cli\CloudApi;
+use Symfony\Component\Console\Input\ArgvInput;
+use AcquiaCli\Cli\AcquiaCli;
+use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Stopwatch\Stopwatch;
 
 class AcquiaCliApplicationTest extends AcquiaCliTestCase
 {
@@ -83,5 +87,50 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
             ' [error]  Unable to find organization from organization name ' . PHP_EOL,
             $organizationError
         );
+    }
+
+    public function testWaitForNotifications()
+    {
+        $config = new Config($this->root);
+
+        $command = ['acquiacli', '--yes', 'db:backup', 'devcloud:devcloud2', 'dev'];
+        $input = new ArgvInput($command);
+        $output = new BufferedOutput();
+        $app = new AcquiaCli($config, $this->client, $input, $output);
+
+        // Time the command to make sure the sleep is included.
+        $stopwatch = new Stopwatch();
+        $stopwatch->start('5s-sleep', 'notifications');
+        $app->run($input, $output);
+        $sleep5 = $stopwatch->stop('5s-sleep');
+        $this->assertGreaterThan(6000, $sleep5->getDuration());
+        $sleep5Output = $output->fetch();
+
+        // Change the task wait threshold to 2s and try again.
+        $defaultConfig = ['taskwait' => 2, 'timeout' => 300];
+        $config->set('extraconfig', $defaultConfig);
+
+        // Test for less than 5 seconds as the app takes ~2s to boot.
+        $stopwatch->start('2s-sleep', 'notifications');
+        $app->run($input, $output);
+        $sleep2 = $stopwatch->stop('2s-sleep');
+        $this->assertLessThan(5000, $sleep2->getDuration());
+        $sleep2Output = $output->fetch();
+
+        \Robo\Robo::unsetContainer();
+
+        $notificationOutput =<<< OUTPUT
+>  Backing up DB (database1) on Dev
+ Looking up notification                      
+< 1 sec [➤⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬]   0%
+
+>  Backing up DB (database2) on Dev
+ Looking up notification                      
+< 1 sec [➤⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬]   0%
+
+OUTPUT;
+
+        $this->assertSame($notificationOutput . PHP_EOL, $sleep5Output, 'Testing 5s sleep output');
+        $this->assertSame($notificationOutput . PHP_EOL, $sleep2Output, 'Testing 2s sleep output');
     }
 }
