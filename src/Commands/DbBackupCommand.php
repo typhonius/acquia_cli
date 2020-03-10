@@ -14,6 +14,7 @@ use Symfony\Component\Console\Helper\ProgressBar;
 
 /**
  * Class DomainCommand
+ *
  * @package AcquiaCli\Commands
  */
 class DbBackupCommand extends AcquiaCommand
@@ -26,8 +27,8 @@ class DbBackupCommand extends AcquiaCommand
     /**
      * Backs up all DBs in an environment.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
+     * @param string  $uuid
+     * @param string  $environment
      *
      * @command database:backup
      * @aliases db:backup
@@ -41,9 +42,9 @@ class DbBackupCommand extends AcquiaCommand
     /**
      * Shows a list of database backups for all databases in an environment.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
-     * @param string              $dbName
+     * @param string  $uuid
+     * @param string  $environment
+     * @param string  $dbName
      *
      * @command database:backup:list
      * @aliases db:backup:list
@@ -79,13 +80,15 @@ class DbBackupCommand extends AcquiaCommand
 
             foreach ($backups as $backup) {
                 $table
-                    ->addRows([
+                    ->addRows(
+                        [
                         [
                             $backup->id,
                             ucfirst($backup->type),
                             $backup->completedAt,
                         ],
-                    ]);
+                        ]
+                    );
             }
         }
         $table->render();
@@ -94,10 +97,10 @@ class DbBackupCommand extends AcquiaCommand
     /**
      * Restores a database from a saved backup.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
-     * @param string              $dbName
-     * @param int                 $backupId
+     * @param string  $uuid
+     * @param string  $environment
+     * @param string  $dbName
+     * @param int     $backupId
      *
      * @command database:backup:restore
      * @aliases db:backup:restore
@@ -108,7 +111,8 @@ class DbBackupCommand extends AcquiaCommand
 
         if ($this->confirm(
             sprintf('Are you sure you want to restore backup id %s to %s?', $backupId, $environment->label)
-        )) {
+        )
+        ) {
             $this->say(sprintf('Restoring backup %s to %s on %s', $backupId, $dbName, $environment->label));
             $response = $databaseBackupsAdapter->restore($environment->uuid, $dbName, $backupId);
             $this->waitForNotification($response);
@@ -118,10 +122,10 @@ class DbBackupCommand extends AcquiaCommand
     /**
      * Provides a database backup link.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
-     * @param string              $dbName
-     * @param int                 $backupId
+     * @param string  $uuid
+     * @param string  $environment
+     * @param string  $dbName
+     * @param int     $backupId
      *
      * @command database:backup:link
      * @aliases db:backup:link
@@ -144,17 +148,17 @@ class DbBackupCommand extends AcquiaCommand
     /**
      * Downloads a database backup.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
-     * @param string              $dbName
+     * @param string  $uuid
+     * @param string  $environment
+     * @param string  $dbName
      *
      * @throws \Exception
      *
      * @command database:backup:download
      * @aliases db:backup:download
-     * @option $backup Select which backup to download by backup ID. If omitted, the latest will be downloaded.
-     * @option $path Select a path to download the backup to. If omitted, the system temp directory will be used.
-     * @option $filename Choose a filename to call the backup. If omitted, the name will be automatically generated.
+     * @option  $backup Select which backup to download by backup ID. If omitted, the latest will be downloaded.
+     * @option  $path Select a path to download the backup to. If omitted, the system temp directory will be used.
+     * @option  $filename Choose a filename to call the backup. If omitted, the name will be automatically generated.
      */
     public function dbBackupDownload(
         Client $client,
@@ -204,20 +208,23 @@ class DbBackupCommand extends AcquiaCommand
             ['CURLOPT_RETURNTRANSFER' => true, 'CURLOPT_FILE' => $location]
         );
 
-        $client->addOption('progress', function (
-            $downloadTotal,
-            $downloadedBytes
-        ) {
-            if ($downloadTotal) {
-                $currentStep = $downloadedBytes - $this->lastStep;
-                $this->downloadProgress->setMaxSteps($downloadTotal);
-                $this->downloadProgress->setFormat(
-                    "<fg=white;bg=cyan> %message:-45s%</>\n%current:6s%/%max:6s% bytes [%bar%] %percent:3s%%"
-                );
-                $this->downloadProgress->advance($currentStep);
+        $client->addOption(
+            'progress',
+            function (
+                $downloadTotal,
+                $downloadedBytes
+            ) {
+                if ($downloadTotal) {
+                    $currentStep = $downloadedBytes - $this->lastStep;
+                    $this->downloadProgress->setMaxSteps($downloadTotal);
+                    $this->downloadProgress->setFormat(
+                        "<fg=white;bg=cyan> %message:-45s%</>\n%current:6s%/%max:6s% bytes [%bar%] %percent:3s%%"
+                    );
+                    $this->downloadProgress->advance($currentStep);
+                }
+                $this->lastStep = $downloadedBytes;
             }
-            $this->lastStep = $downloadedBytes;
-        });
+        );
 
         $databaseBackupsAdapter->download($environment->uuid, $dbName, $backupId);
         $this->downloadProgress->setMessage(sprintf('Database backup downloaded to %s', $location));

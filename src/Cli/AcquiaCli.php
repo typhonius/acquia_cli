@@ -18,6 +18,7 @@ use AcquiaCli\Cli\CloudApi;
 
 /**
  * Class AcquiaCli
+ *
  * @package AcquiaCli
  */
 class AcquiaCli
@@ -31,6 +32,7 @@ class AcquiaCli
 
     /**
      * AcquiaCli constructor.
+     *
      * @param Config               $config
      * @param InputInterface|null  $input
      * @param OutputInterface|null $output
@@ -52,7 +54,8 @@ class AcquiaCli
 
         $application = new Application(self::NAME, $version);
 
-        $application->getDefinition()->addOptions([
+        $application->getDefinition()->addOptions(
+            [
             new InputOption(
                 '--no-wait',
                 null,
@@ -95,7 +98,8 @@ against the filters. Not all fields are filterable.'
 The order of the fields is significant. A leading - in the field indicates
 the field should be sorted in a descending order. Not all fields are sortable.'
             ),
-        ]);
+            ]
+        );
 
         // Create and configure container.
         $container = $this->getContainer($input, $output, $application, $config, $client);
@@ -149,8 +153,8 @@ the field should be sorted in a descending order. Not all fields are sortable.'
     }
 
     /**
-     * @param InputInterface  $input
-     * @param OutputInterface $output
+     * @param  InputInterface  $input
+     * @param  OutputInterface $output
      * @return int
      */
     public function run(InputInterface $input, OutputInterface $output)

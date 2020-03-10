@@ -12,6 +12,7 @@ use AcquiaCli\Cli\CloudApi;
 
 /**
  * Class InsightsCommand
+ *
  * @package AcquiaCli\Commands
  */
 class InsightsCommand extends AcquiaCommand
@@ -35,7 +36,9 @@ class InsightsCommand extends AcquiaCommand
             $insights = $insightsAdapter->getEnvironment($environment->uuid);
         }
         foreach ($insights as $insight) {
-            /** @var InsightResponse $insight */
+            /**
+             * @var InsightResponse $insight
+             */
 
             $this->renderInsightInfo($insight);
         }
@@ -44,7 +47,7 @@ class InsightsCommand extends AcquiaCommand
     /**
      * Shows insights alerts for specified applications.
      *
-     * @param string $siteId
+     * @param  string $siteId
      * @option failed Whether to only show failed insight checks.
      *
      * @command insights:alerts:list
@@ -61,14 +64,17 @@ class InsightsCommand extends AcquiaCommand
         $table->setColumnStyle(4, 'center-align');
 
         foreach ($alerts as $alert) {
-            /** @var InsightModuleResponse $alert */
+            /**
+             * @var InsightModuleResponse $alert
+             */
 
             if ($options['failed'] && !$alert->failed_value) {
                 continue;
             }
 
             $table
-                ->addRows([
+                ->addRows(
+                    [
                     [
                         $alert->uuid,
                         $alert->name,
@@ -76,7 +82,8 @@ class InsightsCommand extends AcquiaCommand
                         $alert->flags->resolved ? '✓' : '',
                         $alert->flags->ignored ? '✓' : '',
                     ],
-                ]);
+                    ]
+                );
         }
 
         $table->render();
@@ -102,7 +109,7 @@ class InsightsCommand extends AcquiaCommand
     /**
      * Shows insights alerts for specified applications.
      *
-     * @param string $siteId
+     * @param  string $siteId
      * @option enabled Whether to only show enabled modules.
      * @option upgradeable Whether to only show modules that need an upgrade.
      *
@@ -122,8 +129,9 @@ class InsightsCommand extends AcquiaCommand
         $table->setColumnStyle(3, 'center-align');
 
         foreach ($modules as $module) {
-            /** @var InsightModuleResponse $module */
-            // var_dump($module);
+            /**
+             * @var InsightModuleResponse $module
+             */
 
             if ($options['enabled'] && !$module->flags->enabled) {
                 continue;
@@ -133,14 +141,16 @@ class InsightsCommand extends AcquiaCommand
             }
 
             $table
-                ->addRows([
+                ->addRows(
+                    [
                     [
                         $module->name,
                         $module->version,
                         $module->flags->enabled ? '✓' : '',
                         array_search('upgradeable', $module->tags, true) !== false ? '✓' : '',
                     ],
-                ]);
+                    ]
+                );
         }
 
         $table->render();
@@ -172,9 +182,12 @@ class InsightsCommand extends AcquiaCommand
         $table = new Table($output);
         $table->setHeaders(['Type', 'Pass', 'Fail', 'Ignored', 'Total', '%']);
         foreach ($insight->counts as $type => $count) {
-            /** @var InsightCountResponse $count */
+            /**
+             * @var InsightCountResponse $count
+             */
             $table
-                ->addRows([
+                ->addRows(
+                    [
                     [
                         ucwords(str_replace('_', ' ', $type)),
                         $count->pass,
@@ -183,7 +196,8 @@ class InsightsCommand extends AcquiaCommand
                         $count->total,
                         $count->percent,
                     ],
-                ]);
+                    ]
+                );
         }
 
         $table->render();

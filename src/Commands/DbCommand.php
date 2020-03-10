@@ -13,6 +13,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 /**
  * Class DomainCommand
+ *
  * @package AcquiaCli\Commands
  */
 class DbCommand extends AcquiaCommand
@@ -30,7 +31,7 @@ class DbCommand extends AcquiaCommand
     /**
      * Shows all databases.
      *
-     * @param string              $uuid
+     * @param string $uuid
      *
      * @command database:list
      * @aliases db:list
@@ -42,11 +43,13 @@ class DbCommand extends AcquiaCommand
         $table->setHeaders(['Databases']);
         foreach ($databases as $database) {
             $table
-                ->addRows([
+                ->addRows(
+                    [
                     [
                         $database->name,
                     ]
-                ]);
+                    ]
+                );
         }
         $table->render();
     }
@@ -54,8 +57,8 @@ class DbCommand extends AcquiaCommand
     /**
      * Creates a database.
      *
-     * @param string              $uuid
-     * @param string              $dbName
+     * @param string $uuid
+     * @param string $dbName
      *
      * @command database:create
      * @aliases database:add,db:create,db:add
@@ -70,8 +73,8 @@ class DbCommand extends AcquiaCommand
     /**
      * Deletes a database.
      *
-     * @param string              $uuid
-     * @param string              $dbName
+     * @param string $uuid
+     * @param string $dbName
      *
      * @command database:delete
      * @aliases database:remove,db:remove,db:delete
@@ -88,8 +91,8 @@ class DbCommand extends AcquiaCommand
     /**
      * Truncaates a database.
      *
-     * @param string              $uuid
-     * @param string              $dbName
+     * @param string $uuid
+     * @param string $dbName
      *
      * @command database:truncate
      * @aliases db:truncate
@@ -106,10 +109,10 @@ class DbCommand extends AcquiaCommand
     /**
      * Copies a database from one environment to another.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environmentFrom
-     * @param EnvironmentResponse $environmentTo
-     * @param string              $dbName
+     * @param string $uuid
+     * @param string $environmentFrom
+     * @param string $environmentTo
+     * @param string $dbName
      *
      * @command database:copy
      * @aliases db:copy
@@ -126,7 +129,8 @@ class DbCommand extends AcquiaCommand
                 $environmentFrom->label,
                 $environmentTo->label
             )
-        )) {
+        )
+        ) {
             $this->backupAndMoveDbs($uuid, $environmentFrom, $environmentTo, $dbName);
         }
     }
@@ -134,9 +138,9 @@ class DbCommand extends AcquiaCommand
     /**
      * Copies all DBs from one environment to another environment.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environmentFrom
-     * @param EnvironmentResponse $environmentTo
+     * @param string $uuid
+     * @param string $environmentFrom
+     * @param string $environmentTo
      *
      * @command database:copy:all
      * @aliases db:copy:all
@@ -152,7 +156,8 @@ class DbCommand extends AcquiaCommand
                 $environmentFrom->label,
                 $environmentTo->label
             )
-        )) {
+        )
+        ) {
             $this->backupAndMoveDbs($uuid, $environmentFrom, $environmentTo);
         }
     }

@@ -8,6 +8,7 @@ use AcquiaCloudApi\Endpoints\Environments;
 
 /**
  * Class SshCommand
+ *
  * @package AcquiaCli\Commands
  */
 class SshCommand extends EnvironmentsCommand
@@ -24,16 +25,18 @@ class SshCommand extends EnvironmentsCommand
     public function sshInfo(Client $client, Environments $environmentsAdapter, $uuid, $env = null)
     {
 
-        // if (null !== $env) {
-        //     $client->addQuery('filter', "name=${env}");
-        // }
+        if (null !== $env) {
+            $client->addQuery('filter', "name=${env}");
+        }
 
         $environments = $environmentsAdapter->getAll($uuid);
 
-        // $client->clearQuery();
+        $client->clearQuery();
 
         foreach ($environments as $e) {
-            /** @var $e EnvironmentResponse */
+            /**
+             * @var $e EnvironmentResponse
+             */
             $this->say($e->name . ': ssh ' . $e->sshUrl);
         }
     }

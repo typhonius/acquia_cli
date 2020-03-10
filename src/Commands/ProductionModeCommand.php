@@ -7,6 +7,7 @@ use AcquiaCloudApi\Endpoints\Environments;
 
 /**
  * Class ProductionModeCommand
+ *
  * @package AcquiaCli\Commands
  */
 class ProductionModeCommand extends EnvironmentsCommand
@@ -15,8 +16,8 @@ class ProductionModeCommand extends EnvironmentsCommand
     /**
      * Enable production mode for an environment.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
+     * @param  string              $uuid
+     * @param  EnvironmentResponse $environment
      * @throws \Exception
      *
      * @command productionmode:enable
@@ -38,8 +39,8 @@ class ProductionModeCommand extends EnvironmentsCommand
     /**
      * Disable production mode for an environment.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
+     * @param  string              $uuid
+     * @param  EnvironmentResponse $environment
      * @throws \Exception
      *
      * @command productionmode:disable

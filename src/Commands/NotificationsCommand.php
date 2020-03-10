@@ -10,6 +10,7 @@ use Symfony\Component\Console\Helper\Table;
 
 /**
  * Class TasksCommand
+ *
  * @package AcquiaCli\Commands
  */
 class NotificationsCommand extends AcquiaCommand
@@ -22,10 +23,10 @@ class NotificationsCommand extends AcquiaCommand
      * @param int    $limit  The maximum number of items to return.
      * @param string $filter
      * @param string $sort   Sortable by: 'name', 'title', 'created', 'completed', 'started'.
-     * A leading "~" in the field indicates the field should be sorted in a descending order.
+     *                       A leading "~" in the field indicates the field should be sorted in a descending order.
      *
      * @command notification:list
-     * @alias n:l
+     * @alias   n:l
      */
     public function notificationList(
         Config $config,
@@ -62,14 +63,16 @@ class NotificationsCommand extends AcquiaCommand
             $createdDate->setTimezone($timezone);
 
             $table
-                ->addRows([
+                ->addRows(
+                    [
                     [
                         $notification->uuid,
                         $createdDate->format($format),
                         $notification->label,
                         $notification->status,
                     ],
-                ]);
+                    ]
+                );
         }
 
         $table->render();
@@ -82,8 +85,8 @@ class NotificationsCommand extends AcquiaCommand
      * @param string $notificationUuid
      *
      * @command notification:info
-     * @alias n:i
-     * @throws \Exception
+     * @alias   n:i
+     * @throws  \Exception
      */
     public function notificationInfo(Config $config, Notifications $notificationsAdapter, $uuid, $notificationUuid)
     {

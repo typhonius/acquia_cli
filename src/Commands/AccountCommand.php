@@ -7,6 +7,7 @@ use AcquiaCli\Cli\Config;
 
 /**
  * Class AccountCommand
+ *
  * @package AcquiaCli\Commands
  */
 class AccountCommand extends AcquiaCommand

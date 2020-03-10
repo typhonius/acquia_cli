@@ -2,6 +2,7 @@
 
 namespace AcquiaCli\Commands;
 
+use AcquiaCloudApi\Endpoints\Environments;
 use AcquiaCloudApi\Endpoints\Notifications;
 use AcquiaCloudApi\Endpoints\Databases;
 use AcquiaCloudApi\Endpoints\DatabaseBackups;
@@ -20,6 +21,7 @@ use Exception;
 
 /**
  * Class AcquiaCommand
+ *
  * @package AcquiaCli\Commands
  */
 abstract class AcquiaCommand extends Tasks
@@ -27,25 +29,39 @@ abstract class AcquiaCommand extends Tasks
     // @TODO https://github.com/boedah/robo-drush/issues/18
     //use \Boedah\Robo\Task\Drush\loadTasks;
 
-    /** @var \AcquiaCli\Cli\CloudApi $cloudapiService */
+    /**
+     * @var \AcquiaCli\Cli\CloudApi $cloudapiService
+     */
     protected $cloudapiService;
 
-    /** @var \AcquiaCloudApi\Connector\Client $cloudapi */
+    /**
+     * @var \AcquiaCloudApi\Connector\Client $cloudapi
+     */
     protected $cloudapi;
 
-    /** Regex for a valid UUID string. */
+    /**
+     * Regex for a valid UUID string.
+     */
     const UUIDV4 = '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i';
 
-    /** Task response from API indicates failure. */
+    /**
+     * Task response from API indicates failure.
+     */
     const TASKFAILED = 'failed';
 
-    /** Task response from API indicates completion. */
+    /**
+     * Task response from API indicates completion.
+     */
     const TASKCOMPLETED = 'completed';
 
-    /** Task response from API indicates started. */
+    /**
+     * Task response from API indicates started.
+     */
     const TASKSTARTED = 'started';
 
-    /** Task response from API indicates in progress. */
+    /**
+     * Task response from API indicates in progress.
+     */
     const TASKINPROGRESS = 'in-progress';
 
     /**
@@ -64,7 +80,7 @@ abstract class AcquiaCommand extends Tasks
      * confirmation.
      *
      * @param string $question
-     * @param bool $default
+     * @param bool   $default
      */
     protected function confirm($question, $default = false)
     {
@@ -132,7 +148,7 @@ abstract class AcquiaCommand extends Tasks
     /**
      * Waits for a notification to complete.
      *
-     * @param OperationResponse $response
+     * @param  OperationResponse $response
      * @throws \Exception
      */
     protected function waitForNotification($response)
@@ -176,9 +192,9 @@ abstract class AcquiaCommand extends Tasks
                 case self::TASKFAILED:
                     // If there's one failure we should throw an exception
                     throw new \Exception('Acquia task failed.');
-                    break(2);
-                // If tasks are started or in progress, we should continue back
-                // to the top of the loop and wait until tasks are complete.
+                        break(2);
+                    // If tasks are started or in progress, we should continue back
+                    // to the top of the loop and wait until tasks are complete.
                 case self::TASKSTARTED:
                 case self::TASKINPROGRESS:
                     break;
@@ -187,7 +203,7 @@ abstract class AcquiaCommand extends Tasks
                     break(2);
                 default:
                     throw new \Exception('Unknown notification status.');
-                    break(2);
+                        break(2);
             }
 
             // Timeout if the command exceeds the configured timeout threshold.
@@ -246,9 +262,7 @@ abstract class AcquiaCommand extends Tasks
     protected function backupAllEnvironmentDbs($uuid, $environment)
     {
         $dbAdapter = new Databases($this->cloudapi);
-        // var_dump($dbAdapter);
         $databases = $dbAdapter->getAll($uuid);
-        // var_dump($databases);
         foreach ($databases as $database) {
             $this->backupDb($uuid, $environment, $database);
         }
@@ -261,7 +275,6 @@ abstract class AcquiaCommand extends Tasks
      */
     protected function backupDb($uuid, $environment, $database)
     {
-        // var_dump($database);
         // Run database backups.
         $this->say(sprintf('Backing up DB (%s) on %s', $database->name, $environment->label));
         $dbAdapter = new DatabaseBackups($this->cloudapi);

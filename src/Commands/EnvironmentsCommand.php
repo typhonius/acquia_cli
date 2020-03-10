@@ -11,6 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class EnvironmentsCommand
+ *
  * @package AcquiaCli\Commands
  */
 class EnvironmentsCommand extends AcquiaCommand
@@ -19,7 +20,7 @@ class EnvironmentsCommand extends AcquiaCommand
     /**
      * Shows list of environments in an application.
      *
-     * @param string      $uuid
+     * @param string $uuid
      *
      * @command environment:list
      * @aliases env:list,e:l
@@ -30,24 +31,30 @@ class EnvironmentsCommand extends AcquiaCommand
         $environments = $environmentsAdapter->getAll($uuid);
 
         $table = new Table($output);
-        $table->setHeaders([
+        $table->setHeaders(
+            [
             'UUID',
             'Name',
             'Label',
             'Domains',
-        ]);
+            ]
+        );
 
         foreach ($environments as $environment) {
-            /** @var EnvironmentResponse $environment */
+            /**
+             * @var EnvironmentResponse $environment
+             */
             $table
-            ->addRows([
-                [
+                ->addRows(
+                    [
+                    [
                     $environment->uuid,
                     $environment->name,
                     $environment->label,
                     implode($environment->domains, "\n"),
-                ],
-            ]);
+                    ],
+                    ]
+                );
         }
 
         $table->render();
@@ -107,7 +114,8 @@ class EnvironmentsCommand extends AcquiaCommand
         if (!$environment->flags->cde) {
             $serverTable = new Table($output);
             // needs AZ?
-            $serverTable->setHeaders([
+            $serverTable->setHeaders(
+                [
                 'Role(s)',
                 'Name',
                 'FQDN',
@@ -118,7 +126,8 @@ class EnvironmentsCommand extends AcquiaCommand
                 'Active',
                 'Primary',
                 'EIP'
-            ]);
+                ]
+            );
 
             $servers = $serversAdapter->getAll($environment->uuid);
 
@@ -129,7 +138,8 @@ class EnvironmentsCommand extends AcquiaCommand
                 $eip = $server->flags->elastic_ip ? '✓' : ' ';
 
                 $serverTable
-                    ->addRows([
+                    ->addRows(
+                        [
                         [
                             implode(', ', $server->roles),
                             $server->name,
@@ -142,13 +152,15 @@ class EnvironmentsCommand extends AcquiaCommand
                             $primaryDb,
                             $eip
                         ],
-                    ]);
+                        ]
+                    );
             }
             $serverTable->render();
         }
 
         $environmentTable = new Table($output);
-        $environmentTable->setHeaders([
+        $environmentTable->setHeaders(
+            [
             'Branch',
             'CDE',
             'PHP Version',
@@ -156,7 +168,8 @@ class EnvironmentsCommand extends AcquiaCommand
             'OpCache',
             'APCu',
             'Sendmail Path'
-        ]);
+            ]
+        );
 
         if (!isset($environment->configuration->php)) {
             $environment->configuration = new \stdClass();
@@ -168,7 +181,8 @@ class EnvironmentsCommand extends AcquiaCommand
             $environment->configuration->php->sendmail_path = ' ';
         }
         $environmentTable
-            ->addRows([
+            ->addRows(
+                [
                 [
                     $environment->vcs->path,
                     $environment->flags->cde ? $environment->name : ' ',
@@ -178,7 +192,8 @@ class EnvironmentsCommand extends AcquiaCommand
                     $environment->configuration->php->apcu,
                     $environment->configuration->php->sendmail_path
                 ],
-            ]);
+                ]
+            );
         $environmentTable->render();
     }
 
@@ -186,11 +201,11 @@ class EnvironmentsCommand extends AcquiaCommand
      * Renames an environment.
      *
      * @param string $uuid
-     * @param EnvironmentResponse $environment
+     * @param string $environment
      * @param string $name
      *
      * @command environment:rename
-     * @alias env:rename,e:rename
+     * @alias   env:rename,e:rename
      */
     public function environmentRename(Environments $environmentsAdapter, $uuid, $environment, $name)
     {
@@ -203,10 +218,10 @@ class EnvironmentsCommand extends AcquiaCommand
      * Deletes an environment.
      *
      * @param string $uuid
-     * @param EnvironmentResponse $environment
+     * @param string $environment
      *
      * @command environment:delete
-     * @alias env:delete,e:d,environment:remove,env:remove
+     * @alias   env:delete,e:d,environment:remove,env:remove
      */
     public function environmentDelete(Environments $environmentsAdapter, $uuid, $environment)
     {

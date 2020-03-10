@@ -4,7 +4,7 @@ namespace AcquiaCli\Tests;
 
 use AcquiaCloudApi\Connector\Client;
 use Symfony\Component\Console\Input\ArgvInput;
-use Robo\Config\Config;
+use AcquiaCli\Cli\Config;
 use Consolidation\Config\Loader\ConfigProcessor;
 use Consolidation\Config\Loader\YamlConfigLoader;
 use AcquiaCli\Cli\AcquiaCli;
@@ -45,8 +45,8 @@ abstract class AcquiaCliTestCase extends TestCase
     /**
      * Returns a PSR7 Response (JSON) for a given fixture.
      *
-     * @param  string        $fixture    The fixture to create the response for.
-     * @param  integer       $statusCode A HTTP Status Code for the response.
+     * @param  string  $fixture    The fixture to create the response for.
+     * @param  integer $statusCode A HTTP Status Code for the response.
      * @return Psr7\Response
      */
     protected function getPsr7JsonResponseForFixture($fixture, $statusCode = 200): Psr7\Response
@@ -61,8 +61,8 @@ abstract class AcquiaCliTestCase extends TestCase
     /**
      * Returns a PSR7 Response (Gzip) for a given fixture.
      *
-     * @param  string        $fixture    The fixture to create the response for.
-     * @param  integer       $statusCode A HTTP Status Code for the response.
+     * @param  string  $fixture    The fixture to create the response for.
+     * @param  integer $statusCode A HTTP Status Code for the response.
      * @return Psr7\Response
      */
     protected function getPsr7GzipResponseForFixture($fixture, $statusCode = 200): Psr7\Response
@@ -101,13 +101,36 @@ abstract class AcquiaCliTestCase extends TestCase
         if ($fixture = $fixtureMap[$path][$verb]) {
             // Add in overrides for fixtures which should be downloaded
             // rather than responded to e.g. log:download
-            if ($fixture === 'Logs/downloadLog.dat' ||
-                $fixture === 'DatabaseBackups/downloadDatabaseBackup.dat' ||
-                $fixture === 'Account/getDrushAliases.dat') {
+            if ($fixture === 'Logs/downloadLog.dat'
+                || $fixture === 'DatabaseBackups/downloadDatabaseBackup.dat'
+                || $fixture === 'Account/getDrushAliases.dat'
+            ) {
                 return $this->getPsr7GzipResponseForFixture($fixture);
             }
             return $this->getPsr7JsonResponseForFixture($fixture);
         }
+    }
+
+    public function execute($command)
+    {
+
+        $root = dirname(dirname(__DIR__));
+        $config = new Config($root);
+        $loader = new YamlConfigLoader();
+        $processor = new ConfigProcessor();
+        $processor->extend($loader->load(dirname(__DIR__) . '/default.acquiacli.yml'));
+        $config->import($processor->export());
+
+        array_unshift($command, 'acquiacli', '--no-wait', '--yes');
+        $input = new ArgvInput($command);
+        $output = new BufferedOutput();
+
+        $app = new AcquiaCli($config, $this->client, $input, $output);
+        $app->run($input, $output);
+
+        Robo::unsetContainer();
+
+        return $output->fetch();
     }
 
     public static function getFixtureMap()
@@ -341,26 +364,5 @@ abstract class AcquiaCliTestCase extends TestCase
         $property->setAccessible(true);
 
         return $property;
-    }
-
-    public function execute($command)
-    {
-
-        $config = new Config();
-        $loader = new YamlConfigLoader();
-        $processor = new ConfigProcessor();
-        $processor->extend($loader->load(dirname(__DIR__) . '/default.acquiacli.yml'));
-        $config->import($processor->export());
-
-        array_unshift($command, 'acquiacli', '--no-wait', '--yes');
-        $input = new ArgvInput($command);
-        $output = new BufferedOutput();
-
-        $app = new AcquiaCli($config, $this->client, $input, $output);
-        $app->run($input, $output);
-
-        Robo::unsetContainer();
-
-        return $output->fetch();
     }
 }

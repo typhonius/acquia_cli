@@ -11,6 +11,7 @@ use AcquiaCli\Cli\CloudApi;
 
 /**
  * Class CodeCommand
+ *
  * @package AcquiaCli\Commands
  */
 class CodeCommand extends AcquiaCommand
@@ -38,15 +39,19 @@ class CodeCommand extends AcquiaCommand
         $table->setHeaders(['Name', 'Tag']);
 
         foreach ($branches as $branch) {
-            /** @var BranchResponse $branch */
+            /**
+             * @var BranchResponse $branch
+             */
             $tag = $branch->flags->tag ? '✓' : '';
             $table
-                ->addRows([
+                ->addRows(
+                    [
                     [
                         $branch->name,
                         $tag,
                     ],
-                ]);
+                    ]
+                );
         }
 
         $table->render();
@@ -55,9 +60,9 @@ class CodeCommand extends AcquiaCommand
     /**
      * Deploys code from one environment to another.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environmentFrom
-     * @param EnvironmentResponse $environmentTo
+     * @param string  $uuid
+     * @param string  $environmentFrom
+     * @param string  $environmentTo
      *
      * @command code:deploy
      * @aliases c:d
@@ -77,7 +82,8 @@ class CodeCommand extends AcquiaCommand
                 $environmentFrom->label,
                 $environmentTo->label
             )
-        )) {
+        )
+        ) {
             return;
         }
 
@@ -98,9 +104,9 @@ class CodeCommand extends AcquiaCommand
     /**
      * Switches code branch on an environment.
      *
-     * @param string  $uuid
-     * @param string  $environment
-     * @param string  $branch
+     * @param string $uuid
+     * @param string $environment
+     * @param string $branch
      *
      * @command code:switch
      * @aliases c:s
@@ -115,7 +121,8 @@ class CodeCommand extends AcquiaCommand
                 $environment->name,
                 $branch
             )
-        )) {
+        )
+        ) {
             return;
         }
 
