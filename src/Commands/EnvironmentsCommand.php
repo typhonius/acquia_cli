@@ -44,17 +44,16 @@ class EnvironmentsCommand extends AcquiaCommand
             /**
              * @var EnvironmentResponse $environment
              */
-            $table
-                ->addRows(
+            $table->addRows(
+                [
                     [
-                    [
-                    $environment->uuid,
-                    $environment->name,
-                    $environment->label,
-                    implode($environment->domains, "\n"),
+                        $environment->uuid,
+                        $environment->name,
+                        $environment->label,
+                        implode($environment->domains, "\n"),
                     ],
-                    ]
-                );
+                ]
+            );
         }
 
         $table->render();
