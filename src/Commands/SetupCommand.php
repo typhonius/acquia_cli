@@ -8,6 +8,7 @@ use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class SetupCommand
+ *
  * @package AcquiaCli\Commands
  */
 class SetupCommand extends Tasks

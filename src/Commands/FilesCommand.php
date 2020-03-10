@@ -7,6 +7,7 @@ use AcquiaCloudApi\Endpoints\Environments;
 
 /**
  * Class FilesCommand
+ *
  * @package AcquiaCli\Commands
  */
 class FilesCommand extends AcquiaCommand
@@ -14,9 +15,9 @@ class FilesCommand extends AcquiaCommand
     /**
      * Copies files from one environment to another.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environmentFrom
-     * @param EnvironmentResponse $environmentTo
+     * @param string $uuid
+     * @param string $environmentFrom
+     * @param string $environmentTo
      *
      * @command files:copy
      * @aliases f:c
@@ -32,7 +33,8 @@ class FilesCommand extends AcquiaCommand
                 $environmentFrom->label,
                 $environmentTo->label
             )
-        )) {
+        )
+        ) {
             $this->copyFiles($uuid, $environmentFrom, $environmentTo);
         }
     }

@@ -9,6 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * Class DomainCommand
+ *
  * @package AcquiaCli\Commands
  */
 class DomainCommand extends AcquiaCommand
@@ -17,8 +18,8 @@ class DomainCommand extends AcquiaCommand
     /**
      * Lists domains.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
+     * @param string $uuid
+     * @param string $environment
      *
      * @command domain:list
      */
@@ -34,16 +35,20 @@ class DomainCommand extends AcquiaCommand
         $table->setColumnStyle(3, 'center-align');
 
         foreach ($domains as $domain) {
-            /** @var DomainResponse $domain */
+            /**
+             * @var DomainResponse $domain
+             */
             $table
-                ->addRows([
+                ->addRows(
+                    [
                     [
                         $domain->hostname,
                         $domain->flags->default ? '✓' : '',
                         $domain->flags->active ? '✓' : '',
                         $domain->flags->uptime ? '✓' : '',
                     ],
-                ]);
+                    ]
+                );
         }
 
         $table->render();
@@ -52,9 +57,9 @@ class DomainCommand extends AcquiaCommand
     /**
      * Gets information about a domain.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
-     * @param string              $domain
+     * @param string $uuid
+     * @param string $environment
+     * @param string $domain
      *
      * @command domain:info
      */
@@ -66,7 +71,8 @@ class DomainCommand extends AcquiaCommand
         $table = new Table($output);
         $table->setHeaders(['Hostname', 'Active', 'DNS Resolves', 'IP Addresses', 'CNAMES']);
         $table
-            ->addRows([
+            ->addRows(
+                [
                 [
                     $domain->hostname,
                     $domain->flags->active ? '✓' : '',
@@ -74,7 +80,8 @@ class DomainCommand extends AcquiaCommand
                     implode($domain->ip_addresses, "\n"),
                     implode($domain->cnames, "\n"),
                 ],
-            ]);
+                ]
+            );
 
         $table->render();
     }
@@ -82,12 +89,12 @@ class DomainCommand extends AcquiaCommand
     /**
      * Add a domain to an environment.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
-     * @param string              $domain
+     * @param string $uuid
+     * @param string $environment
+     * @param string $domain
      *
      * @command domain:create
-     * @alias domain:add
+     * @alias   domain:add
      */
     public function domainCreate(Domains $domainAdapter, $uuid, $environment, $domain)
     {
@@ -100,12 +107,12 @@ class DomainCommand extends AcquiaCommand
     /**
      * Remove a domain to an environment.
      *
-     * @param string              $uuid
-     * @param EnvironmentResponse $environment
-     * @param string              $domain
+     * @param string $uuid
+     * @param string $environment
+     * @param string $domain
      *
      * @command domain:delete
-     * @alias domain:remove
+     * @alias   domain:remove
      */
     public function domainDelete(Domains $domainAdapter, $uuid, $environment, $domain)
     {
@@ -120,10 +127,10 @@ class DomainCommand extends AcquiaCommand
     /**
      * Move a domain from one environment to another.
      *
-     * @param string              $uuid
-     * @param string              $domain
-     * @param EnvironmentResponse $environmentFrom
-     * @param EnvironmentResponse $environmentTo
+     * @param string $uuid
+     * @param string $domain
+     * @param string $environmentFrom
+     * @param string $environmentTo
      *
      * @command domain:move
      */
@@ -139,7 +146,8 @@ class DomainCommand extends AcquiaCommand
                 $environmentFrom->label,
                 $environmentTo->label
             )
-        )) {
+        )
+        ) {
             $this->say(sprintf('Moving %s from %s to %s', $domain, $environmentFrom->label, $environmentTo->label));
 
             $deleteResponse = $domainAdapter->delete($environmentFrom->uuid, $domain);
@@ -161,17 +169,21 @@ class DomainCommand extends AcquiaCommand
     {
         $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
 
-        if ($environment->name === 'prod' &&
-            !$this->confirm("Are you sure you want to purge varnish on the production environment?")) {
+        if ($environment->name === 'prod'
+            && !$this->confirm("Are you sure you want to purge varnish on the production environment?")
+        ) {
             return;
         }
 
         if (null === $domain) {
             $domains = $domainAdapter->getAll($environment->uuid);
-            $domainNames = array_map(function ($domain) {
-                $this->say(sprintf('Purging domain: %s', $domain->hostname));
-                return $domain->hostname;
-            }, $domains->getArrayCopy());
+            $domainNames = array_map(
+                function ($domain) {
+                    $this->say(sprintf('Purging domain: %s', $domain->hostname));
+                    return $domain->hostname;
+                },
+                $domains->getArrayCopy()
+            );
         } else {
             $this->say(sprintf('Purging domain: %s', $domain));
             $domainNames = [$domain];

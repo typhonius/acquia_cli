@@ -12,6 +12,7 @@ use AcquiaCloudApi\Endpoints\Roles;
 
 /**
  * Class TeamsCommand
+ *
  * @package AcquiaCli\Commands
  */
 class TeamsCommand extends AcquiaCommand
@@ -55,7 +56,7 @@ class TeamsCommand extends AcquiaCommand
      * @param string $teamUuid
      *
      * @command team:addapplication
-     * @alias team:addapp
+     * @alias   team:addapp
      */
     public function teamAddApplication(Teams $teamsAdapter, $uuid, $teamUuid)
     {
@@ -76,14 +77,18 @@ class TeamsCommand extends AcquiaCommand
         $table = new Table($this->output());
         $table->setHeaders(['Name', 'Label']);
         foreach ($permissions as $permission) {
-            /** @var PermissionResponse $permission */
+            /**
+             * @var PermissionResponse $permission
+             */
             $table
-                ->addRows([
+                ->addRows(
+                    [
                     [
                         $permission->name,
                         $permission->label,
                     ],
-                ]);
+                    ]
+                );
         }
 
         $table->render();
@@ -93,11 +98,13 @@ class TeamsCommand extends AcquiaCommand
      * Adds a new role to an organization.
      *
      * @param string      $organization
-     * @param string      $name             A human readable role name e.g. 'Release Managers'
-     * @param string      $permissions      A comma separated list of permissions a role should have
-     * e.g. 'administer domain non-prod,administer ssh keys,deploy to non-prod'
-     * @param null|string $description      A human readable description of the role
-     * e.g. 'For non-technical users to create releases'
+     * @param string      $name         A human readable role name e.g. 'Release Managers'
+     * @param string      $permissions  A comma separated list of permissions a role should have
+     *                                  e.g. 'administer domain non-prod,administer ssh
+     *                                  keys,deploy to non-prod'
+     * @param null|string $description  A human readable description of the role
+     *                                  e.g. 'For non-technical users to create
+     *                                  releases'
      *
      * @command role:add
      */
@@ -129,7 +136,7 @@ class TeamsCommand extends AcquiaCommand
      *
      * @param string $roleUuid
      * @param string $permissions A comma separated list of permissions a role should have
-     * e.g. 'administer domain non-prod,administer ssh keys,deploy to non-prod'
+     *                            e.g. 'administer domain non-prod,administer ssh keys,deploy to non-prod'
      *
      * @command role:update:permissions
      */
@@ -143,7 +150,7 @@ class TeamsCommand extends AcquiaCommand
     /**
      * Shows all roles within an organization.
      *
-     * @param OrganizationResponse $organization
+     * @param string  $organization
      *
      * @command role:list
      */
@@ -156,10 +163,13 @@ class TeamsCommand extends AcquiaCommand
 
         $permissions = $permissionsAdapter->get();
 
-        $roleList = array_map(function ($role) {
-            $this->say($role->name . ': ' . $role->uuid);
-            return $role->name;
-        }, $roles->getArrayCopy());
+        $roleList = array_map(
+            function ($role) {
+                $this->say($role->name . ': ' . $role->uuid);
+                return $role->name;
+            },
+            $roles->getArrayCopy()
+        );
 
         array_unshift($roleList, 'Permission');
 
@@ -167,11 +177,15 @@ class TeamsCommand extends AcquiaCommand
         $table->setHeaders($roleList);
 
         foreach ($permissions as $permission) {
-            /** @var PermissionResponse $permission */
+            /**
+             * @var PermissionResponse $permission
+             */
             $roleHasPermission = false;
             $permissionsMatrix = [$permission->name];
             foreach ($roles as $role) {
-                /** @var RoleResponse $role */
+                /**
+                 * @var RoleResponse $role
+                 */
                 foreach ($role->permissions as $rolePermission) {
                     if ($rolePermission->name == $permission->name) {
                         $permissionsMatrix[] = '✓';
@@ -185,10 +199,12 @@ class TeamsCommand extends AcquiaCommand
             }
 
             $table
-                ->addRows([
+                ->addRows(
+                    [
                     $permissionsMatrix,
 
-                ]);
+                    ]
+                );
         }
 
         $table->render();
