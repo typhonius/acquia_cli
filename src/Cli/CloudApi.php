@@ -119,9 +119,4 @@ class CloudApi
     {
         $this->client = $client;
     }
-
-    public function getExtraConfig()
-    {
-        return $this->config->get('extraconfig');
-    }
 }

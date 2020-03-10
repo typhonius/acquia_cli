@@ -3,6 +3,7 @@
 namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\Endpoints\Account;
+use AcquiaCli\Cli\Config;
 
 /**
  * Class AccountCommand
@@ -16,9 +17,10 @@ class AccountCommand extends AcquiaCommand
      *
      * @command account
      */
-    public function account(Account $accountAdapter)
+    public function account(Config $config, Account $accountAdapter)
     {
-        $extraConfig = $this->cloudapiService->getExtraConfig();
+
+        $extraConfig = $config->get('extraconfig');
         $tz = $extraConfig['timezone'];
         $format = $extraConfig['format'];
         $timezone = new \DateTimeZone($tz);

@@ -2,6 +2,7 @@
 
 namespace AcquiaCli\Commands;
 
+use AcquiaCli\Cli\Config;
 use AcquiaCloudApi\Connector\Client;
 use AcquiaCloudApi\Endpoints\Notifications;
 use AcquiaCloudApi\Endpoints\Organizations;
@@ -27,6 +28,7 @@ class NotificationsCommand extends AcquiaCommand
      * @alias n:l
      */
     public function notificationList(
+        Config $config,
         Client $client,
         Notifications $notificationsAdapter,
         $uuid,
@@ -50,8 +52,7 @@ class NotificationsCommand extends AcquiaCommand
         $table = new Table($output);
         $table->setHeaders(['UUID', 'Created', 'Name', 'Status']);
 
-        $extraConfig = $this->cloudapiService->getExtraConfig();
-
+        $extraConfig = $config->get('extraconfig');
         $tz = $extraConfig['timezone'];
         $format = $extraConfig['format'];
         $timezone = new \DateTimeZone($tz);
@@ -84,10 +85,10 @@ class NotificationsCommand extends AcquiaCommand
      * @alias n:i
      * @throws \Exception
      */
-    public function notificationInfo(Notifications $notificationsAdapter, $uuid, $notificationUuid)
+    public function notificationInfo(Config $config, Notifications $notificationsAdapter, $uuid, $notificationUuid)
     {
 
-        $extraConfig = $this->cloudapiService->getExtraConfig();
+        $extraConfig = $config->get('extraconfig');
         $tz = $extraConfig['timezone'];
         $format = $extraConfig['format'];
         $timezone = new \DateTimeZone($tz);

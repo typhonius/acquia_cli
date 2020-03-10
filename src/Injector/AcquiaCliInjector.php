@@ -30,6 +30,7 @@ class AcquiaCliInjector implements ParameterInjector
 
     public function __construct()
     {
+        $this->config = \Robo\Robo::service('config');
         $this->cloudapi = \Robo\Robo::service('cloudApi');
         $this->client = \Robo\Robo::service('client');
     }
@@ -39,6 +40,8 @@ class AcquiaCliInjector implements ParameterInjector
         switch ($interfaceName) {
             case 'AcquiaCli\Cli\CloudApi':
                 return $this->cloudapi;
+            case 'AcquiaCli\Cli\Config':
+                return $this->config;
             case 'AcquiaCloudApi\Connector\Client':
                 return $this->client;
             case 'AcquiaCloudApi\Endpoints\Applications':
