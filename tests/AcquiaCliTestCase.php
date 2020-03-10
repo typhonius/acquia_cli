@@ -353,6 +353,9 @@ abstract class AcquiaCliTestCase extends TestCase
             '/applications/foobar/databases' => [
                 'get' => 'Databases/getAllDatabases.json',
                 'post' => 'Databases/createDatabases.json',
+            ],
+            '/notifications/42b56cff-0b55-4bdf-a949-1fd0fca61c6c' => [
+                'get' => 'Notifications/getNotification.json'
             ]
         ];
     }
