@@ -28,12 +28,14 @@ class AcquiaCliInjector implements ParameterInjector
     protected $config;
     protected $cloudapi;
     protected $client;
+    protected $logstream;
 
     public function __construct()
     {
         $this->config = \Robo\Robo::service('config');
         $this->cloudapi = \Robo\Robo::service('cloudApi');
         $this->client = \Robo\Robo::service('client');
+        $this->logstream = \Robo\Robo::service('logstream');
     }
 
     public function get(CommandData $commandData, $interfaceName)
@@ -45,6 +47,8 @@ class AcquiaCliInjector implements ParameterInjector
                 return $this->config;
             case 'AcquiaCloudApi\Connector\Client':
                 return $this->client;
+            case 'AcquiaLogstream\LogstreamManager':
+                return $this->logstream;
             case 'AcquiaCloudApi\Endpoints\Applications':
                 return new Applications($this->client);
             case 'AcquiaCloudApi\Endpoints\Environments':

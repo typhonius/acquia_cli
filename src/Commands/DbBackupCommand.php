@@ -191,7 +191,13 @@ class DbBackupCommand extends AcquiaCommand
         }
 
         if (null === $opts['path']) {
-            $location = tempnam(sys_get_temp_dir(), $backupName) . '.sql.gz';
+            $tmpLocation = tempnam(sys_get_temp_dir(), $backupName);
+            $location = sprintf('%s.sql.gz', $tmpLocation);
+            if (is_string($tmpLocation)) {
+                rename($tmpLocation, $location);
+            } else {
+                throw new \Exception('Unable to make temporary file.');
+            }
         } else {
             $location = sprintf("%s/%s.sql.gz", $opts['path'], $backupName);
         }

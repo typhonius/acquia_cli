@@ -64,7 +64,7 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
         ];
 
         $actualQuery = $this->client->getQuery();
-        $this->assertEqual($expectedQuery, $actualQuery);
+        $this->assertSame($expectedQuery, $actualQuery);
     }
 
     public function testCloudApi()
