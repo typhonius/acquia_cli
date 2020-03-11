@@ -32,6 +32,41 @@ class LogsCommandTest extends AcquiaCliTestCase
         }
     }
 
+    public function testLogstream()
+    {
+
+        $command = [
+            'log:stream',
+            'devcloud:devcloud2',
+            'dev',
+            '--colourise',
+            '--logtypes=apache-access',
+            '--servers=web-1234'
+        ];
+
+        $this->execute($command);
+
+        $authArray = [
+            'site' => 'clouduidev:qa4',
+            'd' => 'd8b940bb5a1865e57b22734d541ed981c89f952e527b0a983d0e457437a43c23',
+            't' => 1516990002,
+            'env' => 'prod',
+            'cmd' => 'stream-environment'
+        ];
+        $this->assertSame('1.1.1.1', $this->logstream->getDns());
+        $this->assertSame(['apache-access'], $this->logstream->getLogTypeFilter());
+        $this->assertSame(['web-1234'], $this->logstream->getLogServerFilter());
+        $this->assertSame(10, $this->logstream->getTimeout());
+        $this->assertSame(true, $this->logstream->getColourise());
+
+        $class = new \ReflectionClass(get_class($this->logstream));
+        $method = $class->getMethod('getAuthArray');
+        $method->setAccessible(true);
+        $output = $method->invoke($this->logstream);
+
+        $this->assertEquals($authArray, $output);
+    }
+
     /**
      * @dataProvider logsProvider
      */

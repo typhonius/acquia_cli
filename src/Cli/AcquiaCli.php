@@ -15,6 +15,7 @@ use Consolidation\AnnotatedCommand\CommandFileDiscovery;
 use AcquiaCloudApi\Connector\Client;
 use AcquiaCli\Injector\AcquiaCliInjector;
 use AcquiaCli\Cli\CloudApi;
+use AcquiaLogstream\LogstreamManager;
 
 /**
  * Class AcquiaCli
@@ -125,6 +126,10 @@ the field should be sorted in a descending order. Not all fields are sortable.'
             ->withArgument('config')
             ->withArgument('client');
 
+        $container->add('logstream', LogstreamManager::class)
+            ->withArgument('input')
+            ->withArgument('output');
+
         return $container;
     }
 
@@ -134,6 +139,7 @@ the field should be sorted in a descending order. Not all fields are sortable.'
         $parameterInjection->register('AcquiaCli\Cli\CloudApi', new AcquiaCliInjector);
         $parameterInjection->register('AcquiaCli\Cli\Config', new AcquiaCliInjector);
         $parameterInjection->register('AcquiaCloudApi\Connector\Client', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaLogstream\LogstreamManager', new AcquiaCliInjector);
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Applications', new AcquiaCliInjector);
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Environments', new AcquiaCliInjector);
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Databases', new AcquiaCliInjector);
