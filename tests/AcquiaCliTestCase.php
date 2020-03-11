@@ -14,6 +14,8 @@ use Robo\Robo;
 use GuzzleHttp\Psr7;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\StreamInterface;
+use AcquiaCli\Injector\AcquiaCliInjector;
+use AcquiaLogstream\LogstreamManager;
 
 /**
  * Class AcquiaCliTestCase
@@ -22,10 +24,12 @@ abstract class AcquiaCliTestCase extends TestCase
 {
 
     public $client;
+    public $logstream;
 
     public function setUp()
     {
         $this->client = $this->getMockClient();
+        $this->logstream = $this->getMockLogstream();
     }
 
     protected function getPsr7StreamForFixture($fixture): StreamInterface
@@ -94,6 +98,27 @@ abstract class AcquiaCliTestCase extends TestCase
         return Client::factory($connector);
     }
 
+    /**
+     * Mock client class.
+     *
+     * @return LogstreamManager
+     */
+    protected function getMockLogstream()
+    {
+        $logstream = $this
+            ->getMockBuilder('AcquiaLogstream\LogstreamManager')
+            ->disableOriginalConstructor()
+            ->setMethods(['stream'])
+            ->getMock();
+
+        $logstream
+            ->expects($this->any())
+            ->method('stream')
+            ->willReturn('');
+
+        return $logstream;
+    }
+
     public function sendRequestCallback($verb, $path)
     {
         $fixtureMap = self::getFixtureMap();
@@ -126,6 +151,14 @@ abstract class AcquiaCliTestCase extends TestCase
         $output = new BufferedOutput();
 
         $app = new AcquiaCli($config, $this->client, $input, $output);
+
+        // Override the LogstreamManager with a mock in the container.
+        $container = Robo::getContainer();
+        $container->add('logstream', $this->logstream);
+        $parameterInjection = $container->get('parameterInjection');
+        $parameterInjection->register('AcquiaLogstream\LogstreamManager', new AcquiaCliInjector);
+        Robo::setContainer($container);
+
         $app->run($input, $output);
 
         Robo::unsetContainer();
@@ -209,6 +242,9 @@ abstract class AcquiaCliTestCase extends TestCase
                 'post' => 'DatabaseBackups/restoreDatabaseBackup.json',
             ],
             '/environments/bfcc7ad1-f987-41b8-9ea5-f26f0ef3838a/databases/database2/backups/1/actions/download' => [
+                'get' => 'DatabaseBackups/downloadDatabaseBackup.dat'
+            ],
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/databases/database2/backups/1/actions/download' => [
                 'get' => 'DatabaseBackups/downloadDatabaseBackup.dat'
             ],
             '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/domains' => [
@@ -346,6 +382,9 @@ abstract class AcquiaCliTestCase extends TestCase
             ],
             '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/insight' => [
                 'get' => 'Insights/getEnvironment.json'
+            ],
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/logstream' => [
+                'get' => 'Logs/getLogstream.json',
             ],
             '/applications/foobar/environments' => [
                 'get' => 'Environments/getAllEnvironments.json'

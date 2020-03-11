@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e62f6c51919109e483f89acc1e009785",
+    "content-hash": "fa27c43445a2c88b216701305704415d",
     "packages": [
         {
             "name": "consolidation/annotated-command",
@@ -2307,16 +2307,16 @@
         },
         {
             "name": "typhonius/acquia-logstream",
-            "version": "0.3",
+            "version": "0.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/typhonius/acquia-logstream.git",
-                "reference": "58208d2b13ede731b805284c7c54722e361009b8"
+                "reference": "377b8cac92121efeea619443ce2135d2ad56b78c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/typhonius/acquia-logstream/zipball/58208d2b13ede731b805284c7c54722e361009b8",
-                "reference": "58208d2b13ede731b805284c7c54722e361009b8",
+                "url": "https://api.github.com/repos/typhonius/acquia-logstream/zipball/377b8cac92121efeea619443ce2135d2ad56b78c",
+                "reference": "377b8cac92121efeea619443ce2135d2ad56b78c",
                 "shasum": ""
             },
             "require": {
@@ -2326,7 +2326,9 @@
                 "typhonius/acquia-php-sdk-v2": "^2.0.0"
             },
             "require-dev": {
+                "php-coveralls/php-coveralls": "^2.0.0",
                 "phpstan/phpstan": "^0.11.19",
+                "phpunit/phpunit": "^7.0",
                 "squizlabs/php_codesniffer": "^3.1"
             },
             "type": "library",
@@ -2346,7 +2348,7 @@
                 }
             ],
             "description": "PHP library to connect to Acquia Logstream service",
-            "time": "2019-12-31T03:22:29+00:00"
+            "time": "2020-03-10T21:41:45+00:00"
         },
         {
             "name": "typhonius/acquia-php-sdk-v2",

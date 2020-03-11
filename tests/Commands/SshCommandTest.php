@@ -29,6 +29,10 @@ INFO;
             [
                 ['ssh:info', 'devcloud:devcloud2'],
                 $infoResponse . PHP_EOL
+            ],
+            [
+                ['ssh:info', 'devcloud:devcloud2', 'dev'],
+                $infoResponse . PHP_EOL,
             ]
         ];
     }

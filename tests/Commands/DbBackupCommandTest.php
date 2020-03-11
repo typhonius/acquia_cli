@@ -23,15 +23,32 @@ class DbBackupCommandTest extends AcquiaCliTestCase
 
         $this->assertStringStartsWith('>  Downloading database backup to ', $actualResponse);
         $this->assertStringContainsString(sys_get_temp_dir(), $matches[2]);
+    }
 
-        $path = sprintf(
-            '%s/vendor/typhonius/acquia-php-sdk-v2/tests/Fixtures/Endpoints/%s',
-            dirname(dirname(__DIR__)),
-            'DatabaseBackups/downloadDatabaseBackup.dat'
+    public function testDownloadDatabaseBackupsCommandsWithOptions()
+    {
+        $command = [
+            'database:backup:download',
+            'devcloud:devcloud2',
+            'dev',
+            'database2',
+            '--backup=1',
+            '--filename=foo',
+            '--path=/tmp'
+        ];
+        $actualResponse = $this->execute($command);
+
+        $this->assertEquals(
+            preg_match(
+                '@>  Downloading database backup to ((/tmp/)foo.sql.gz)@',
+                $actualResponse,
+                $matches
+            ),
+            1
         );
-        $this->assertFileExists($path);
-        $contents = file_get_contents($path);
-        // $this->assertStringEqualsFile($matches[1], $contents);
+
+        $this->assertStringStartsWith('>  Downloading database backup to ', $actualResponse);
+        $this->assertStringContainsString('/tmp/', $matches[2]);
     }
 
     /**
@@ -84,8 +101,13 @@ TABLE;
             [
                 ['database:backup', 'devcloud:devcloud2', 'dev'],
                 $createBackupText . PHP_EOL
-            ],            [
+            ],
+            [
                 ['database:backup:list', 'devcloud:devcloud2', 'dev'],
+                $dbBackupList . PHP_EOL
+            ],
+            [
+                ['database:backup:list', 'devcloud:devcloud2', 'dev', 'dbName'],
                 $dbBackupList . PHP_EOL
             ],
             [
