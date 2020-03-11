@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a9c719eeb0cb934074c44164d87f1bd8",
+    "content-hash": "cf8b49736c7e6d0deac721810b2184cf",
     "packages": [
         {
             "name": "consolidation/annotated-command",
@@ -2308,16 +2308,16 @@
         },
         {
             "name": "typhonius/acquia-logstream",
-            "version": "0.4",
+            "version": "0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/typhonius/acquia-logstream.git",
-                "reference": "377b8cac92121efeea619443ce2135d2ad56b78c"
+                "reference": "d0adddcba805a96c45072a21985323b45488016a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/typhonius/acquia-logstream/zipball/377b8cac92121efeea619443ce2135d2ad56b78c",
-                "reference": "377b8cac92121efeea619443ce2135d2ad56b78c",
+                "url": "https://api.github.com/repos/typhonius/acquia-logstream/zipball/d0adddcba805a96c45072a21985323b45488016a",
+                "reference": "d0adddcba805a96c45072a21985323b45488016a",
                 "shasum": ""
             },
             "require": {
@@ -2349,7 +2349,7 @@
                 }
             ],
             "description": "PHP library to connect to Acquia Logstream service",
-            "time": "2020-03-10T21:41:45+00:00"
+            "time": "2020-03-11T12:00:27+00:00"
         },
         {
             "name": "typhonius/acquia-php-sdk-v2",
