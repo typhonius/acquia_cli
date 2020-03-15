@@ -174,12 +174,14 @@ class DbBackupCommand extends AcquiaCommand
         if (!$opts['backup']) {
             $client->addQuery('sort', '-created');
             $client->addQuery('limit', 1);
-            $backup = $databaseBackupsAdapter->getAll($environment->uuid, $dbName);
+            $backups = $databaseBackupsAdapter->getAll($environment->uuid, $dbName);
             $client->clearQuery();
-            if (empty($backup)) {
+
+            if (!$backups->count()) {
                 throw new \Exception('Unable to find a database backup to download.');
             }
-            $backupId = $backup[0]->id;
+
+            $backupId = $backups[0]->id;
         } else {
             $backupId = $opts['backup'];
         }
