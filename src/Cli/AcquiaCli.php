@@ -156,6 +156,8 @@ the field should be sorted in a descending order. Not all fields are sortable.'
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Logs', new AcquiaCliInjector);
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Notifications', new AcquiaCliInjector);
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Insights', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\LogForwardingDestinations', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\SslCertificates', new AcquiaCliInjector);
     }
 
     /**
