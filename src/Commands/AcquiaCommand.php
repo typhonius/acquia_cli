@@ -26,8 +26,6 @@ use Exception;
  */
 abstract class AcquiaCommand extends Tasks
 {
-    // @TODO https://github.com/boedah/robo-drush/issues/18
-    //use \Boedah\Robo\Task\Drush\loadTasks;
 
     /**
      * @var \AcquiaCli\Cli\CloudApi $cloudapiService
@@ -85,8 +83,9 @@ abstract class AcquiaCommand extends Tasks
     protected function confirm($question, $default = false)
     {
         if ($this->input()->getOption('yes')) {
-            // @TODO add this back in later.
-            // $this->say('Ignoring confirmation question as --yes option passed.');
+            if ($this->output->isVerbose()) {
+                $this->say('Ignoring confirmation question as --yes option passed.');
+            }
 
             return true;
         }
@@ -154,8 +153,9 @@ abstract class AcquiaCommand extends Tasks
     protected function waitForNotification($response)
     {
         if ($this->input()->getOption('no-wait')) {
-            // @TODO put this back in later.
-            // $this->say('Skipping wait for notification.');
+            if ($this->output->isVerbose()) {
+                $this->say('Skipping wait for notification.');
+            }
             return true;
         }
 
