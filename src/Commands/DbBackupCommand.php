@@ -158,7 +158,7 @@ class DbBackupCommand extends AcquiaCommand
      * @aliases db:backup:download
      * @option  $backup Select which backup to download by backup ID. If omitted, the latest will be downloaded.
      * @option  $path Select a path to download the backup to. If omitted, the system temp directory will be used.
-     * @option  $filename Choose a filename to call the backup. If omitted, the name will be automatically generated.
+     * @option  $filename Choose a filename for the backup. If omitted, the name will be automatically generated.
      */
     public function dbBackupDownload(
         Client $client,

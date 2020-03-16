@@ -13,7 +13,7 @@ class LogsCommandTest extends AcquiaCliTestCase
         $actualResponse = $this->execute($command);
 
         $this->assertEquals(
-            preg_match('@>  Log downloaded to ((\S+)dev-apache-access-(\w+).tar.gz)@', $actualResponse, $matches),
+            preg_match('@>  Log downloaded to ((\S+)dev-apache-access(\w+).tar.gz)@', $actualResponse, $matches),
             1
         );
 
@@ -30,6 +30,32 @@ class LogsCommandTest extends AcquiaCliTestCase
         if ($contents) {
             $this->assertStringEqualsFile($matches[1], $contents);
         }
+    }
+
+    public function testDownloadLogsCommandsWithOptions()
+    {
+        $command = [
+            'log:download',
+            'devcloud:devcloud2',
+            'dev',
+            'apache-access',
+            '--filename=bar',
+            '--path=/tmp'
+        ];
+
+        $actualResponse = $this->execute($command);
+
+        $this->assertEquals(
+            preg_match(
+                '@>  Log downloaded to ((/tmp/)bar.tar.gz)@',
+                $actualResponse,
+                $matches
+            ),
+            1
+        );
+
+        $this->assertStringStartsWith('>  Log downloaded to ', $actualResponse);
+        $this->assertStringContainsString('/tmp/', $matches[2]);
     }
 
     public function testLogstream()
