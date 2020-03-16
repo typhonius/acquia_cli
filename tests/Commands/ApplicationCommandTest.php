@@ -73,6 +73,10 @@ TABLE;
             [
                 ['application:tag:delete', 'devcloud:devcloud2', 'name'],
                 '>  Deleting application tag name' . PHP_EOL
+            ],
+            [
+                ['application:rename', 'devcloud:devcloud2', 'foobar'],
+                '>  Renaming application to foobar' . PHP_EOL
             ]
         ];
     }

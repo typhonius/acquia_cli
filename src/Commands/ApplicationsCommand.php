@@ -171,4 +171,19 @@ class ApplicationsCommand extends AcquiaCommand
         $response = $applicationsAdapter->deleteTag($uuid, $name);
         $this->waitForNotification($response);
     }
+
+    /**
+     * Renames an application.
+     *
+     * @param string $uuid
+     * @param string $name
+     *
+     * @command application:rename
+     * @alias   app:rename,a:rename
+     */
+    public function applicationRename(Applications $applicationsAdapter, $uuid, $name)
+    {
+        $this->say(sprintf('Renaming application to %s', $name));
+        $environments = $applicationsAdapter->rename($uuid, $name);
+    }
 }
