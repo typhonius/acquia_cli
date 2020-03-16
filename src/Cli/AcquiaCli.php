@@ -4,8 +4,7 @@ namespace AcquiaCli\Cli;
 
 use Robo\Robo;
 use Robo\Common\ConfigAwareTrait;
-use Symfony\Component\Lock\Factory;
-use Symfony\Component\Lock\Store\SemaphoreStore;
+use Symfony\Component\Console\Command\LockableTrait;
 use Robo\Runner as RoboRunner;
 use Robo\Application;
 use Symfony\Component\Console\Input\InputInterface;
@@ -26,6 +25,7 @@ class AcquiaCli
 {
 
     use ConfigAwareTrait;
+    use LockableTrait;
 
     private $runner;
 
@@ -168,11 +168,7 @@ the field should be sorted in a descending order. Not all fields are sortable.'
     public function run(InputInterface $input, OutputInterface $output)
     {
         // Obtain a lock and exit if the command is already running.
-        $store = new SemaphoreStore();
-        $factory = new Factory($store);
-        $lock = $factory->createLock('acquia-cli-command');
-
-        if (!$lock->acquire()) {
+        if (!$this->lock('acquia-cli-command')) {
             $output->writeln('The command is already running in another process.');
 
             return 0;
@@ -181,7 +177,7 @@ the field should be sorted in a descending order. Not all fields are sortable.'
         $statusCode = $this->runner->run($input, $output);
 
         // Specifically release the lock after successful command invocation.
-        $lock->release();
+        $this->release();
 
         return $statusCode;
     }

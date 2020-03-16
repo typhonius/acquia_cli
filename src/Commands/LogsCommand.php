@@ -111,27 +111,40 @@ class LogsCommand extends AcquiaCommand
      * @param string $uuid
      * @param string $environment
      * @param string $logType
-     * @param string $path
      *
      * @command log:download
+     * @option  $path Select a path to download the log to. If omitted, the system temp directory will be used.
+     * @option  $filename Choose a filename for the dowloaded log. If omitted, the name will be automatically generated.
      */
-    public function logDownload(CloudApi $cloudapi, Logs $logsAdapter, $uuid, $environment, $logType, $path = null)
-    {
+    public function logDownload(
+        CloudApi $cloudapi,
+        Logs $logsAdapter,
+        $uuid,
+        $environment,
+        $logType,
+        $opts = ['path' => null, 'filename' => null]
+    ) {
         $environment = $cloudapi->getEnvironment($uuid, $environment);
-
-        $label = $environment->label;
-        $envName = $environment->name;
-        $backupName = "${envName}-${logType}";
-
         $log = $logsAdapter->download($environment->uuid, $logType);
 
-        if (null === $path) {
-            $location = tempnam(sys_get_temp_dir(), sprintf('%s-', $backupName)) . '.tar.gz';
+        if (null === $opts['filename']) {
+            $backupName = sprintf('%s-%s', $environment->name, $logType);
         } else {
-            // @TODO do we want to put in a tempnam here or allow
-            // for full definition of the path?
-            $location = $path . $backupName . ".tar.gz";
+            $backupName = $opts['filename'];
         }
+
+        if (null === $opts['path']) {
+            $tmpLocation = tempnam(sys_get_temp_dir(), $backupName);
+            $location = sprintf('%s.tar.gz', $tmpLocation);
+            if (is_string($tmpLocation)) {
+                rename($tmpLocation, $location);
+            } else {
+                throw new \Exception('Unable to make temporary file.');
+            }
+        } else {
+            $location = sprintf("%s/%s.tar.gz", $opts['path'], $backupName);
+        }
+
         if (file_put_contents($location, $log, LOCK_EX)) {
             $this->say(sprintf('Log downloaded to %s', $location));
         } else {
