@@ -119,6 +119,9 @@ abstract class AcquiaCliTestCase extends TestCase
         return $logstream;
     }
 
+    /**
+     * Callback for the mock client.
+     */
     public function sendRequestCallback($verb, $path)
     {
         $fixtureMap = self::getFixtureMap();
@@ -136,9 +139,14 @@ abstract class AcquiaCliTestCase extends TestCase
         }
     }
 
+    /**
+     * Run commands with a mock client.
+     *
+     * @see bin/acquia-robo.php
+     */
     public function execute($command)
     {
-
+        // Create an instance of the application and use some default parameters.
         $root = dirname(dirname(__DIR__));
         $config = new Config($root);
         $loader = new YamlConfigLoader();
@@ -161,6 +169,8 @@ abstract class AcquiaCliTestCase extends TestCase
 
         $app->run($input, $output);
 
+        // Unset the container so we're dealing with a fresh state for each command
+        // This mimics the behaviour expected by users interacting with the application.
         Robo::unsetContainer();
 
         return $output->fetch();
@@ -395,6 +405,18 @@ abstract class AcquiaCliTestCase extends TestCase
             ],
             '/notifications/42b56cff-0b55-4bdf-a949-1fd0fca61c6c' => [
                 'get' => 'Notifications/getNotification.json'
+            ],
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/log-forwarding-destinations' => [
+                'get' => 'LogForwarding/getAllLogForwarding.json'
+            ],
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/log-forwarding-destinations/1234' => [
+                'get' => 'LogForwarding/getLogForwarding.json'
+            ],
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/ssl/certificates' => [
+                'get' => 'SslCertificates/getAllSslCertificates.json'
+            ],
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/ssl/certificates/1234' => [
+                'get' => 'SslCertificates/getSslCertificate.json'
             ]
         ];
     }
