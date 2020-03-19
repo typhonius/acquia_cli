@@ -19,24 +19,15 @@ use AcquiaCloudApi\Endpoints\Organizations;
 class OrganizationsCommand extends AcquiaCommand
 {
 
-    protected $organizationsAdapter;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->organizationsAdapter = new Organizations($this->cloudapi);
-    }
-
     /**
      * Shows a list of all organizations.
      *
      * @command organization:list
      * @aliases org:list,o:l
      */
-    public function showOrganizations()
+    public function showOrganizations(Organizations $organizationsAdapter)
     {
-        $organizations = $this->organizationsAdapter->getAll();
+        $organizations = $organizationsAdapter->getAll();
 
         $table = new Table($this->output());
         $table->setHeaders(['UUID', 'Organization', 'Owner', 'Subs', 'Admins', 'Users', 'Teams', 'Roles']);
@@ -67,19 +58,17 @@ class OrganizationsCommand extends AcquiaCommand
     /**
      * Shows a list of all applications within an organization.
      *
-     * @param string  $organization
+     * @param string $organization
      *
      * @command organization:applications
      * @aliases org:apps,o:a
      */
-    public function organizationApplications($organization)
+    public function organizationApplications(Organizations $organizationsAdapter, $organization)
     {
         $organization = $this->cloudapiService->getOrganization($organization);
+        $applications = $organizationsAdapter->getApplications($organization->uuid);
 
-        $organizationUuid = $organization->uuid;
-        $applications = $this->organizationsAdapter->getApplications($organizationUuid);
-
-        $this->say("Applications in organisation: ${organizationUuid}");
+        $this->say(sprintf('Applications in organisation: %s', $organization->uuid));
         $table = new Table($this->output());
         $table->setHeaders(['UUID', 'Name', 'Type', 'Hosting ID']);
         foreach ($applications as $application) {
@@ -105,19 +94,17 @@ class OrganizationsCommand extends AcquiaCommand
     /**
      * Shows teams within an organization.
      *
-     * @param string  $organization
+     * @param string $organization
      *
      * @command organization:teams
      * @aliases org:teams,o:t
      */
-    public function organizationTeams($organization)
+    public function organizationTeams(Organizations $organizationsAdapter, $organization)
     {
         $organization = $this->cloudapiService->getOrganization($organization);
+        $teams = $organizationsAdapter->getTeams($organization->uuid);
 
-        $organizationUuid = $organization->uuid;
-        $teams = $this->organizationsAdapter->getTeams($organizationUuid);
-
-        $this->say("Teams in organisation: ${organizationUuid}");
+        $this->say(sprintf('Teams in organisation: %s', $organization->uuid));
         $table = new Table($this->output());
         $table->setHeaders(['UUID', 'Name']);
         foreach ($teams as $team) {
@@ -141,19 +128,19 @@ class OrganizationsCommand extends AcquiaCommand
     /**
      * Shows all members.
      *
-     * @param string  $organization
+     * @param string $organization
      *
      * @command organization:members
      * @aliases org:members,o:m
      */
-    public function members($organization)
+    public function members(Organizations $organizationsAdapter, $organization)
     {
         $organization = $this->cloudapiService->getOrganization($organization);
         $organizationUuid = $organization->uuid;
-        $admins = $this->organizationsAdapter->getAdmins($organizationUuid);
-        $members = $this->organizationsAdapter->getMembers($organizationUuid);
+        $admins = $organizationsAdapter->getAdmins($organization->uuid);
+        $members = $organizationsAdapter->getMembers($organization->uuid);
 
-        $this->say("Members in organisation: ${organizationUuid}");
+        $this->say(sprintf('Members in organisation: %s', $organization->uuid));
         $table = new Table($this->output());
         $table
             ->setHeaders(['UUID', 'Username', 'Mail', 'Teams(s)'])

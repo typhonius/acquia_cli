@@ -24,9 +24,9 @@ class LogsCommand extends AcquiaCommand
     /**
      * Streams logs from an environment.
      *
-     * @param  string  $uuid
-     * @param  string  $environment
-     * @param  array   $opts
+     * @param  string $uuid
+     * @param  string $environment
+     * @param  array  $opts
      * @option $colourise Colourise the output
      * @option $logtypes  Filter to specific log types
      * @option $servers   Filter to specific servers

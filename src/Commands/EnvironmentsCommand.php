@@ -204,7 +204,7 @@ class EnvironmentsCommand extends AcquiaCommand
      * @param string $name
      *
      * @command environment:rename
-     * @alias   env:rename,e:rename
+     * @aliases env:rename,e:rename
      */
     public function environmentRename(Environments $environmentsAdapter, $uuid, $environment, $name)
     {
@@ -220,12 +220,12 @@ class EnvironmentsCommand extends AcquiaCommand
      * @param string $environment
      *
      * @command environment:delete
-     * @alias   env:delete,e:d,environment:remove,env:remove
+     * @aliases env:delete,e:d,environment:remove,env:remove
      */
     public function environmentDelete(Environments $environmentsAdapter, $uuid, $environment)
     {
         $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
-        if ($this->confirm("Are you sure you want to delete this environment?")) {
+        if ($this->confirm(sprintf('Are you sure you want to delete the %s environment?', $environment->label))) {
             $this->say(sprintf('Deleting %s environment', $environment->label));
             $response = $environmentsAdapter->delete($environment->uuid);
             $this->waitForNotification($response);

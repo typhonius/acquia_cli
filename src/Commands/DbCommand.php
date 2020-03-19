@@ -19,15 +19,6 @@ use Symfony\Component\Console\Output\BufferedOutput;
 class DbCommand extends AcquiaCommand
 {
 
-    protected $databaseAdapter;
-
-    public function __construct()
-    {
-        parent::__construct();
-
-        $this->databaseAdapter = new Databases($this->cloudapi);
-    }
-
     /**
      * Shows all databases.
      *
@@ -36,9 +27,9 @@ class DbCommand extends AcquiaCommand
      * @command database:list
      * @aliases db:list
      */
-    public function dbList($uuid)
+    public function dbList(Databases $databaseAdapter, $uuid)
     {
-        $databases = $this->databaseAdapter->getAll($uuid);
+        $databases = $databaseAdapter->getAll($uuid);
         $table = new Table($this->output());
         $table->setHeaders(['Databases']);
         foreach ($databases as $database) {
@@ -63,9 +54,9 @@ class DbCommand extends AcquiaCommand
      * @command database:create
      * @aliases database:add,db:create,db:add
      */
-    public function dbCreate($uuid, $dbName)
+    public function dbCreate(Databases $databaseAdapter, $uuid, $dbName)
     {
-        $response = $this->databaseAdapter->create($uuid, $dbName);
+        $response = $databaseAdapter->create($uuid, $dbName);
         $this->say(sprintf('Creating database (%s)', $dbName));
         $this->waitForNotification($response);
     }
@@ -79,17 +70,17 @@ class DbCommand extends AcquiaCommand
      * @command database:delete
      * @aliases database:remove,db:remove,db:delete
      */
-    public function dbDelete($uuid, $dbName)
+    public function dbDelete(Databases $databaseAdapter, $uuid, $dbName)
     {
         if ($this->confirm('Are you sure you want to delete this database?')) {
             $this->say(sprintf('Deleting database (%s)', $dbName));
-            $response = $this->databaseAdapter->delete($uuid, $dbName);
+            $response = $databaseAdapter->delete($uuid, $dbName);
             $this->waitForNotification($response);
         }
     }
 
     /**
-     * Truncaates a database.
+     * Truncates a database (only applicable to Acquia free tier).
      *
      * @param string $uuid
      * @param string $dbName
@@ -97,11 +88,11 @@ class DbCommand extends AcquiaCommand
      * @command database:truncate
      * @aliases db:truncate
      */
-    public function dbTruncate($uuid, $dbName)
+    public function dbTruncate(Databases $databaseAdapter, $uuid, $dbName)
     {
         if ($this->confirm('Are you sure you want to truncate this database?')) {
             $this->say(sprintf('Truncate database (%s)', $dbName));
-            $response = $this->databaseAdapter->truncate($uuid, $dbName);
+            $response = $databaseAdapter->truncate($uuid, $dbName);
             $this->waitForNotification($response);
         }
     }

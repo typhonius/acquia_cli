@@ -192,7 +192,7 @@ abstract class AcquiaCommand extends Tasks
                 case self::TASKFAILED:
                     // If there's one failure we should throw an exception
                     throw new \Exception('Acquia task failed.');
-                        break(2);
+                    break(2);
                     // If tasks are started or in progress, we should continue back
                     // to the top of the loop and wait until tasks are complete.
                 case self::TASKSTARTED:
@@ -203,7 +203,7 @@ abstract class AcquiaCommand extends Tasks
                     break(2);
                 default:
                     throw new \Exception('Unknown notification status.');
-                        break(2);
+                    break(2);
             }
 
             // Timeout if the command exceeds the configured timeout threshold.

@@ -62,7 +62,7 @@ class LogForwardCommand extends AcquiaCommand
     }
 
     /**
-     * Gets information about a Log ForwaRD.
+     * Gets information about a Log Forward.
      *
      * @param string $uuid
      * @param string $environment
