@@ -27,30 +27,55 @@ class DbBackupCommand extends AcquiaCommand
     /**
      * Backs up all DBs in an environment.
      *
-     * @param string  $uuid
-     * @param string  $environment
+     * @param string $uuid
+     * @param string $environment
      *
-     * @command database:backup
-     * @aliases db:backup
+     * @command database:backup:all
+     * @aliases db:backup:all
      */
-    public function dbBackup($uuid, $environment)
+    public function dbBackupAll($uuid, $environment)
     {
         $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
         $this->backupAllEnvironmentDbs($uuid, $environment);
     }
 
     /**
+     * Backs up a DB in an environment.
+     *
+     * @param string $uuid
+     * @param string $environment
+     * @param string $dbName
+     *
+     * @command database:backup
+     * @aliases db:backup
+     */
+    public function dbBackup(Databases $databaseAdapter, $uuid, $environment, $dbName)
+    {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+
+        // @TODO replace this call with a specific API call.
+        // https://cloudapi-docs.acquia.com/#/Environments/getEnvironmentsDatabase
+        $databases = $databaseAdapter->getAll($uuid);
+        foreach ($databases as $database) {
+            if ($database->name === $dbName) {
+                $this->backupDb($uuid, $environment, $database);
+            }
+        }
+    }
+
+    /**
      * Shows a list of database backups for all databases in an environment.
      *
-     * @param string  $uuid
-     * @param string  $environment
-     * @param string  $dbName
+     * @param string $uuid
+     * @param string $environment
+     * @param string $dbName
      *
      * @command database:backup:list
      * @aliases db:backup:list
      */
     public function dbBackupList(
         Client $client,
+        Databases $databaseAdapter,
         DatabaseBackups $databaseBackupsAdapter,
         $uuid,
         $environment,
@@ -61,8 +86,7 @@ class DbBackupCommand extends AcquiaCommand
         if (null !== $dbName) {
             $client->addQuery('filter', "name=${dbName}");
         }
-        $dbAdapter = new Databases($this->cloudapi);
-        $databases = $dbAdapter->getAll($uuid);
+        $databases = $databaseAdapter->getAll($uuid);
         $client->clearQuery();
 
         $table = new Table($this->output());
@@ -97,10 +121,10 @@ class DbBackupCommand extends AcquiaCommand
     /**
      * Restores a database from a saved backup.
      *
-     * @param string  $uuid
-     * @param string  $environment
-     * @param string  $dbName
-     * @param int     $backupId
+     * @param string $uuid
+     * @param string $environment
+     * @param string $dbName
+     * @param int    $backupId
      *
      * @command database:backup:restore
      * @aliases db:backup:restore
@@ -122,10 +146,10 @@ class DbBackupCommand extends AcquiaCommand
     /**
      * Provides a database backup link.
      *
-     * @param string  $uuid
-     * @param string  $environment
-     * @param string  $dbName
-     * @param int     $backupId
+     * @param string $uuid
+     * @param string $environment
+     * @param string $dbName
+     * @param int    $backupId
      *
      * @command database:backup:link
      * @aliases db:backup:link
@@ -148,9 +172,9 @@ class DbBackupCommand extends AcquiaCommand
     /**
      * Downloads a database backup.
      *
-     * @param string  $uuid
-     * @param string  $environment
-     * @param string  $dbName
+     * @param string $uuid
+     * @param string $environment
+     * @param string $dbName
      *
      * @throws \Exception
      *

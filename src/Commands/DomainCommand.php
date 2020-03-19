@@ -70,6 +70,8 @@ class DomainCommand extends AcquiaCommand
 
         $table = new Table($output);
         $table->setHeaders(['Hostname', 'Active', 'DNS Resolves', 'IP Addresses', 'CNAMES']);
+        $table->setColumnStyle(1, 'center-align');
+        $table->setColumnStyle(2, 'center-align');
         $table
             ->addRows(
                 [
@@ -94,7 +96,7 @@ class DomainCommand extends AcquiaCommand
      * @param string $domain
      *
      * @command domain:create
-     * @alias   domain:add
+     * @aliases domain:add
      */
     public function domainCreate(Domains $domainAdapter, $uuid, $environment, $domain)
     {
@@ -112,7 +114,7 @@ class DomainCommand extends AcquiaCommand
      * @param string $domain
      *
      * @command domain:delete
-     * @alias   domain:remove
+     * @aliases domain:remove
      */
     public function domainDelete(Domains $domainAdapter, $uuid, $environment, $domain)
     {

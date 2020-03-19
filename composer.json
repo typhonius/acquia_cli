@@ -21,6 +21,11 @@
             "AcquiaCli\\":"src"
         }
     },
+    "autoload-dev": {
+        "psr-4":{
+            "AcquiaCli\\Tests\\": "tests/"
+        }
+    },
     "require-dev": {
         "php-coveralls/php-coveralls": "^2.0.0",
         "squizlabs/php_codesniffer": "^3.1",

@@ -82,8 +82,10 @@ class DbBackupCommandTest extends AcquiaCliTestCase
 +-----+-------+----------------------+
 TABLE;
 
-        $createBackupText = '>  Backing up DB (database1) on Dev
+        $createBackupAllText = '>  Backing up DB (database1) on Dev
 >  Backing up DB (database2) on Dev';
+
+        $createBackupText = '>  Backing up DB (database1) on Dev';
 
         $dbLink = sprintf(
             '%s/environments/%s/databases/%s/backups/%s/actions/download',
@@ -99,7 +101,11 @@ TABLE;
                 '>  Restoring backup 1234 to dbName on Dev' . PHP_EOL
             ],
             [
-                ['database:backup', 'devcloud:devcloud2', 'dev'],
+                ['database:backup:all', 'devcloud:devcloud2', 'dev'],
+                $createBackupAllText . PHP_EOL
+            ],
+            [
+                ['database:backup', 'devcloud:devcloud2', 'dev', 'database1'],
                 $createBackupText . PHP_EOL
             ],
             [
