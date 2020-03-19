@@ -18,8 +18,8 @@ class CronCommand extends AcquiaCommand
     /**
      * Shows all cron tasks associated with an environment.
      *
-     * @param string  $uuid
-     * @param string  $environment
+     * @param string $uuid
+     * @param string $environment
      *
      * @command cron:list
      */
@@ -55,11 +55,11 @@ class CronCommand extends AcquiaCommand
     /**
      * Adds a new cron task for an environment.
      *
-     * @param string  $uuid
-     * @param string  $environment
-     * @param string  $commandString The command to be run on cron wrapped in quotes.
-     * @param string  $frequency     The crontab format frequency wrapped in quotes
-     * @param string  $label         An optional label for the cron command wrapped in quotes.
+     * @param string $uuid
+     * @param string $environment
+     * @param string $commandString The command to be run on cron wrapped in quotes.
+     * @param string $frequency     The crontab format frequency wrapped in quotes
+     * @param string $label         An optional label for the cron command wrapped in quotes.
      *
      * @command cron:create
      * @aliases cron:add
@@ -75,9 +75,9 @@ class CronCommand extends AcquiaCommand
     /**
      * Removes a cron task for an environment.
      *
-     * @param string  $uuid
-     * @param string  $environment
-     * @param int     $cronId
+     * @param string $uuid
+     * @param string $environment
+     * @param int    $cronId
      *
      * @command cron:delete
      * @aliases cron:remove
@@ -95,9 +95,9 @@ class CronCommand extends AcquiaCommand
     /**
      * Enables a disabled cron entry.
      *
-     * @param string  $uuid
-     * @param string  $environment
-     * @param int     $cronId
+     * @param string $uuid
+     * @param string $environment
+     * @param int    $cronId
      *
      * @command cron:enable
      */
@@ -112,9 +112,9 @@ class CronCommand extends AcquiaCommand
     /**
      * Disables an enabled cron entry.
      *
-     * @param string  $uuid
-     * @param string  $environment
-     * @param int     $cronId
+     * @param string $uuid
+     * @param string $environment
+     * @param int    $cronId
      *
      * @command cron:disable
      */
@@ -131,9 +131,9 @@ class CronCommand extends AcquiaCommand
     /**
      * Shows detailed information about a single cron command.
      *
-     * @param string  $uuid
-     * @param string  $environment
-     * @param int     $cronId
+     * @param string $uuid
+     * @param string $environment
+     * @param int    $cronId
      *
      * @command cron:info
      */

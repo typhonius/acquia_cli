@@ -2,8 +2,8 @@
 
 namespace AcquiaCli\Commands;
 
-use Robo\Robo;
 use Robo\Tasks;
+use AcquiaCli\Cli\Config;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -14,28 +14,20 @@ use Symfony\Component\Yaml\Yaml;
 class SetupCommand extends Tasks
 {
 
-    protected $configFiles;
-
-    /**
-     * AcquiaCommand constructor.
-     */
-    public function __construct()
-    {
-        $this->configFiles = [
-            'global' => Robo::config()->get('config.global'),
-            'project' => Robo::config()->get('config.project'),
-        ];
-    }
-
     /**
      * Performs a check of the config files and provides a view of the parameters provided. Allows the user to create
      * new config files with correct parameters.
      *
      * @command setup
      */
-    public function setup()
+    public function setup(Config $config)
     {
-        foreach ($this->configFiles as $type => $location) {
+        $configFiles = [
+            'global' => $config->get('config.global'),
+            'project' => $config->get('config.project'),
+        ];
+
+        foreach ($configFiles as $type => $location) {
             $this->say(sprintf('Checking %s configuration at %s', $type, $location));
             if (file_exists($location)) {
                 $this->yell(sprintf('%s configuration file found', $type));

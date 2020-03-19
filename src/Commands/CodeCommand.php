@@ -60,9 +60,9 @@ class CodeCommand extends AcquiaCommand
     /**
      * Deploys code from one environment to another.
      *
-     * @param string  $uuid
-     * @param string  $environmentFrom
-     * @param string  $environmentTo
+     * @param string $uuid
+     * @param string $environmentFrom
+     * @param string $environmentTo
      *
      * @command code:deploy
      * @aliases c:d

@@ -54,7 +54,7 @@ class VariablesCommand extends AcquiaCommand
     }
 
     /**
-     * Gets information about a domain.
+     * Gets information about a variable.
      *
      * @param string $uuid
      * @param string $environment

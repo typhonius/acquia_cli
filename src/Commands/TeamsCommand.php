@@ -37,14 +37,14 @@ class TeamsCommand extends AcquiaCommand
      * Invites a user to a team.
      *
      * @param string $teamUuid
-     * @param string $email    The email address for the user that needs to be invited.
-     * @param string $roles    A comma separated list of roles that a user should be invited to.
+     * @param string $email        The email address for the user that needs to be invited.
+     * @param string $roleUuids    A comma separated list of role UUIDs that a user should be invited to.
      *
      * @command team:invite
      */
-    public function teamInvite(Teams $teamsAdapter, $teamUuid, $email, $roles)
+    public function teamInvite(Teams $teamsAdapter, $teamUuid, $email, $roleUuids)
     {
-        $rolesArray = explode(',', $roles);
+        $rolesArray = explode(',', $roleUuids);
         $this->say(sprintf('Inviting %s to team.', $email));
         $teamsAdapter->invite($teamUuid, $email, $rolesArray);
     }
@@ -56,7 +56,7 @@ class TeamsCommand extends AcquiaCommand
      * @param string $teamUuid
      *
      * @command team:addapplication
-     * @alias   team:addapp
+     * @aliases team:addapp
      */
     public function teamAddApplication(Teams $teamsAdapter, $uuid, $teamUuid)
     {
@@ -150,7 +150,7 @@ class TeamsCommand extends AcquiaCommand
     /**
      * Shows all roles within an organization.
      *
-     * @param string  $organization
+     * @param string $organization
      *
      * @command role:list
      */

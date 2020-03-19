@@ -179,7 +179,7 @@ class ApplicationsCommand extends AcquiaCommand
      * @param string $name
      *
      * @command application:rename
-     * @alias   app:rename,a:rename
+     * @aliases app:rename,a:rename
      */
     public function applicationRename(Applications $applicationsAdapter, $uuid, $name)
     {

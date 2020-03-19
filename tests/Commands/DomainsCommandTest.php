@@ -23,7 +23,7 @@ class DomainsCommandTest extends AcquiaCliTestCase
 +-------------+--------+--------------+--------------+---------------------+
 | Hostname    | Active | DNS Resolves | IP Addresses | CNAMES              |
 +-------------+--------+--------------+--------------+---------------------+
-| example.com | ✓      | ✓            | 12.23.34.45  | another.example.com |
+| example.com |   ✓    |      ✓       | 12.23.34.45  | another.example.com |
 +-------------+--------+--------------+--------------+---------------------+
 TABLE;
 

@@ -73,24 +73,6 @@ abstract class AcquiaCommand extends Tasks
         $this->setTableStyles();
     }
 
-    public function getCloudApi()
-    {
-        $cloudapi = Robo::service('cloudApi')->getCloudApi();
-        return $cloudapi;
-    }
-
-    public function getEnvironments()
-    {
-        $environments = Robo::service('cloudApi')->getEnvironments();
-        return $environments;
-    }
-
-    public function getApplications()
-    {
-        $applications = Robo::service('cloudApi')->getApplications();
-        return $applications;
-    }
-
     /**
      * Override the confirm method from consolidation/Robo to allow automatic
      * confirmation.
@@ -196,7 +178,7 @@ abstract class AcquiaCommand extends Tasks
         $progress->setMessage('Looking up notification');
         $progress->start();
 
-        $notificationAdapter = new Notifications($this->getCloudApi());
+        $notificationAdapter = new Notifications($this->cloudapi);
 
         while (true) {
             $progress->advance($sleep);
@@ -210,7 +192,7 @@ abstract class AcquiaCommand extends Tasks
                 case self::TASKFAILED:
                     // If there's one failure we should throw an exception
                     throw new \Exception('Acquia task failed.');
-                        break(2);
+                    break(2);
                     // If tasks are started or in progress, we should continue back
                     // to the top of the loop and wait until tasks are complete.
                 case self::TASKSTARTED:
@@ -221,7 +203,7 @@ abstract class AcquiaCommand extends Tasks
                     break(2);
                 default:
                     throw new \Exception('Unknown notification status.');
-                        break(2);
+                    break(2);
             }
 
             // Timeout if the command exceeds the configured timeout threshold.
@@ -246,7 +228,6 @@ abstract class AcquiaCommand extends Tasks
      */
     protected function backupAndMoveDbs($uuid, $environmentFrom, $environmentTo, $dbName = null)
     {
-
         if (null !== $dbName) {
             $this->cloudapi->addQuery('filter', "name=${dbName}");
         }
@@ -268,7 +249,7 @@ abstract class AcquiaCommand extends Tasks
                 )
             );
 
-            $databaseAdapter = new Databases($this->getCloudApi());
+            $databaseAdapter = new Databases($this->cloudapi);
             $response = $databaseAdapter->copy($environmentFrom->uuid, $database->name, $environmentTo->uuid);
             $this->waitForNotification($response);
         }
@@ -280,7 +261,7 @@ abstract class AcquiaCommand extends Tasks
      */
     protected function backupAllEnvironmentDbs($uuid, $environment)
     {
-        $dbAdapter = new Databases($this->getCloudApi());
+        $dbAdapter = new Databases($this->cloudapi);
         $databases = $dbAdapter->getAll($uuid);
         foreach ($databases as $database) {
             $this->backupDb($uuid, $environment, $database);
@@ -296,7 +277,7 @@ abstract class AcquiaCommand extends Tasks
     {
         // Run database backups.
         $this->say(sprintf('Backing up DB (%s) on %s', $database->name, $environment->label));
-        $dbAdapter = new DatabaseBackups($this->getCloudApi());
+        $dbAdapter = new DatabaseBackups($this->cloudapi);
         $response = $dbAdapter->create($environment->uuid, $database->name);
         $this->waitForNotification($response);
     }

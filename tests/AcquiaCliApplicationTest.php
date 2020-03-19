@@ -2,7 +2,6 @@
 
 namespace AcquiaCli\Tests;
 
-use AcquiaCli\Tests\AcquiaCliTestCase;
 use AcquiaCli\Cli\Config;
 use AcquiaCli\Cli\CloudApi;
 use Symfony\Component\Console\Input\ArgvInput;
@@ -111,7 +110,7 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
     {
         $config = new Config($this->root);
 
-        $command = ['acquiacli', '--yes', 'db:backup', 'devcloud:devcloud2', 'dev'];
+        $command = ['acquiacli', '--yes', 'db:backup', 'devcloud:devcloud2', 'dev', 'database1'];
         $input = new ArgvInput($command);
         $output = new BufferedOutput();
         $app = new AcquiaCli($config, $this->client, $input, $output);
@@ -121,7 +120,7 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
         $stopwatch->start('5s-sleep', 'notifications');
         $app->run($input, $output);
         $sleep5 = $stopwatch->stop('5s-sleep');
-        $this->assertGreaterThan(6000, $sleep5->getDuration());
+        $this->assertGreaterThan(5000, $sleep5->getDuration());
         $sleep5Output = $output->fetch();
 
         // Change the task wait threshold to 2s and try again.
@@ -132,17 +131,13 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
         $stopwatch->start('2s-sleep', 'notifications');
         $app->run($input, $output);
         $sleep2 = $stopwatch->stop('2s-sleep');
-        $this->assertLessThan(5000, $sleep2->getDuration());
+        $this->assertLessThan(3000, $sleep2->getDuration());
         $sleep2Output = $output->fetch();
 
         \Robo\Robo::unsetContainer();
 
         $notificationOutput =<<< OUTPUT
 >  Backing up DB (database1) on Dev
- Looking up notification                      
-< 1 sec [➤⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬]   0%
-
->  Backing up DB (database2) on Dev
  Looking up notification                      
 < 1 sec [➤⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬]   0%
 

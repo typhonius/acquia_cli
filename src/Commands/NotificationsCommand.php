@@ -26,7 +26,7 @@ class NotificationsCommand extends AcquiaCommand
      *                       A leading "~" in the field indicates the field should be sorted in a descending order.
      *
      * @command notification:list
-     * @alias   n:l
+     * @aliases n:l
      */
     public function notificationList(
         Config $config,
@@ -85,7 +85,7 @@ class NotificationsCommand extends AcquiaCommand
      * @param string $notificationUuid
      *
      * @command notification:info
-     * @alias   n:i
+     * @aliases n:i
      * @throws  \Exception
      */
     public function notificationInfo(Config $config, Notifications $notificationsAdapter, $uuid, $notificationUuid)

@@ -23,6 +23,7 @@ use AcquiaCloudApi\Endpoints\Notifications;
 use AcquiaCloudApi\Endpoints\Insights;
 use AcquiaCloudApi\Endpoints\LogForwardingDestinations;
 use AcquiaCloudApi\Endpoints\SslCertificates;
+use AcquiaCloudApi\Endpoints\Organizations;
 
 class AcquiaCliInjector implements ParameterInjector
 {
@@ -87,6 +88,8 @@ class AcquiaCliInjector implements ParameterInjector
                 return new LogForwardingDestinations($this->client);
             case 'AcquiaCloudApi\Endpoints\SslCertificates':
                 return new SslCertificates($this->client);
+            case 'AcquiaCloudApi\Endpoints\Organizations':
+                return new Organizations($this->client);
         }
     }
 }
