@@ -5,7 +5,7 @@
     ],
     "files": [
         "default.acquiacli.yml",
-        "acquiacli.yml"
+        "VERSION"
     ],
     "finder": [
         {
