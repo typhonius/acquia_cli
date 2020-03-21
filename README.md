@@ -3,8 +3,8 @@
 [![Coverage Status](https://coveralls.io/repos/github/typhonius/acquia_cli/badge.svg?branch=master)](https://coveralls.io/repos/github/typhonius/acquia_cli/badge.svg?branch=master)
 
 [![License](https://poser.pugx.org/typhonius/acquia_cli/license.png)]()
-[![Latest Stable Version](https://poser.pugx.org/typhonius/acquia_cli/v/stable.png)](https://packagist.org/packages/typhonius/acquia-php-sdk-v2)
-[![Latest Unstable Version](https://poser.pugx.org/typhonius/acquia_cli/v/unstable.png)](https://packagist.org/packages/typhonius/acquia-php-sdk-v2)
+[![Latest Stable Version](https://poser.pugx.org/typhonius/acquia_cli/v/stable.png)](https://packagist.org/packages/typhonius/acquia_cli)
+[![Latest Unstable Version](https://poser.pugx.org/typhonius/acquia_cli/v/unstable.png)](https://packagist.org/packages/typhonius/acquia_cli)
 
 # Acquia Cli
 
