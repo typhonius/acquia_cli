@@ -47,7 +47,7 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
 
         $actualValue = $this->execute($command);
 
-        $this->assertSame('AcquiaCli 2.0.0-dev' . PHP_EOL, $actualValue);
+        $this->assertContains('AcquiaCli 2', $actualValue);
     }
 
     public function testClientOptions()

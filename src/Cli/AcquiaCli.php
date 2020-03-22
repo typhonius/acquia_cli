@@ -115,6 +115,7 @@ the field should be sorted in a descending order. Not all fields are sortable.'
         $this->runner = new RoboRunner();
         $this->runner->setContainer($container);
         $this->runner->registerCommandClasses($application, $commandClasses);
+        $this->runner->setSelfUpdateRepository('typhonius/acquia_cli');
     }
 
     public function getContainer($input, $output, $application, $config, $client)

@@ -34,6 +34,12 @@
         "phpstan/phpstan-phpunit": "^0.11.2"
     },
     "scripts": {
+        "phar:install-tools": [
+            "mkdir -p tools",
+            "curl -L https://github.com/humbug/box/releases/download/3.8.4/box.phar -o tools/box",
+            "chmod +x tools/box"
+        ],
+        "phar:build": "env PATH=tools:$PATH box compile",
         "lint": [
             "find src -name '*.php' -print0 | xargs -0 -n1 php -l",
             "find tests -name '*.php' -print0 | xargs -0 -n1 php -l"
