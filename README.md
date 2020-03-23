@@ -9,23 +9,55 @@
 # Acquia Cli
 
 ## Pre-installation
-1. Run `composer install`
-1. Obtain your API key and secret
 
-## Generating an API access token
+### Generating an API access token
 To generate an API access token, login to [https://cloud.acquia.com](https://cloud.acquia.com), then visit [https://cloud.acquia.com/#/profile/tokens](https://cloud.acquia.com/#/profile/tokens), and click ***Create Token***.
 
 * Provide a label for the access token, so it can be easily identified. Click ***Create Token***.
 * The token has been generated, copy the api key and api secret to a secure place. Make sure you record it now: you will not be able to retrieve this access token's secret again.
 
-## Automatic installation/setup
+## Downloading a version of the application
+Select either the packaged application or the source application below before continuing with setup steps.
+
+### Installing the packaged application (easiest)
+To install the packaged application quickly and easily, the following three steps may be executed.
+```
+wget https://github.com/typhonius/acquia_cli/releases/latest/download/acquiacli.phar
+mv accquiacli.phar /usr/local/bin/acquiacli
+chmod +x /usr/local/bin/acquiacli
+```
+
+*Explanation*
+A packaged application is created with each tagged release and automatically deployed to GitHub. Each of the releases is able to be viewed and the phar application downloaded by going to the [releases page](https://github.com/typhonius/acquia_cli/releases). You can download the latest version manually by [clicking here](https://github.com/typhonius/acquia_cli/releases/latest/download/acquiacli.phar).
+
+Once this is downloaded to the local computer, it must be moved to a different location and have permissions modified with the following steps.
+* Move the file to somewhere on the user's `$PATH` e.g. `/usr/local/bin/`
+* Make the file executable
+
+
+### Installing from source (advanced)
+To install from source, clone the repository into a location on your computer with the following commands:
+```
+git clone https://github.com/typhonius/acquia_cli.git
+cd acquia_cli
+composer install
+```
+
+## Setup
+### Automatic setup
+Once you have downloaded the application using one of the above steps, run the following commands to enter add your Acquia credentials.
 1. Run `acquiacli setup` (or `./vendor/bin/acquiacli setup` when used as a dependency in another project) which will ask for your credentials and automatically create this file.
 1. Run `acquiacli drush:aliases` to download your available Drush aliases. Follow the instructions output by the command to install them.
 
-## Manual installation/setup
+### Manual installation/setup
 Alternatively, follow the below steps for a manual installation.
 1. Copy the `default.acquiacli.yml` file to your project root and name it `acquiacli.yml`.
 1. Add your Acquia key and secret to the `acquiacli.yml` file.
+
+### Environment Variables
+Environmment variables can be used to store and provide the API key and secret, removing the need for configuration files. 
+* `ACQUIACLI_KEY` The environment variable for the API key
+* `ACQUIACLI_SECRET` The environment variable for the API secret
 
 
 ## Configuration
@@ -34,7 +66,7 @@ The Acquia Cli tool uses cascading configuration on the user's own machine to al
 Acquia Cli will load configuration in the following order with each step overriding matching array keys in the step prior:
 
 1. Firstly, default configuration from `default.acquiacli.yml` in the project root is loaded.
-1. Next, if it exists, global configuration from `~/.acquiacli/acquiacli.yml` is loaded.
+1. Next, if it exists, global configuration from `$HOME/.acquiacli/acquiacli.yml` is loaded.
 1. Finally, if it exists, an `acquiacli.yml` file in the project root will be loaded.
 1. Environment variables take overall precedence for the key and secret, however other config won't be overridden.
 
@@ -48,12 +80,8 @@ timezone | Australia/Sydney | Use [a supported PHP timezone](https://secure.php.
 format | Y-m-d H:i:s | Use [a supported PHP date string](https://secure.php.net/manual/en/function.date.php) to show times in an alternate format.
 taskwait | 5 | A number in seconds to wait before hitting the API to check the status of a task.
 timeout | 300 | A number in seconds before a task is considered to have timed out.
-configsyncdir | sync | A directory to be passed to the config-import command for syncing config.
 
-## Environment Variables
-Environmment variables can be used to store and provide the API key and secret.
-* `ACQUIACLI_KEY` The environment variables for the API key
-* `ACQUIACLI_SECRET` The environment variables for the API secret
+
 
 
 ## Usage/Examples
@@ -63,16 +91,19 @@ Some of the following commands have aliases for simplicity e.g. `environment:inf
 acquiacli application:list
 
 # Show detailed information about servers in the prod environment (assuming sitename of prod:acquia obtained from site:list command)
-acquiacli environment:info prod:acquia prod
+acquiacli environment:info prod:myacquiasite prod
 
 # Copy the files and db from alpha to dev for testing new code
-acquiacli deploy:prepare prod:acquia alpha dev
+acquiacli deploy:prepare prod:myacquiasite alpha dev
 
 # Deploy the develop-build branch to the test environment.
-acquiacli code:switch prod:acquia test develop-build
+acquiacli code:switch prod:myacquiasite test develop-build
 
-# Deploy the release-1.2.3 branch/tag to the production environment and run all config update steps without prompting the user to confirm.
-acquiacli prod:deploy prod:acquia release-1.2.3 --yes
+# Deploy the release-1.2.3 branch/tag to the production environment without prompting the user to confirm.
+acquiacli code:switch prod:myacquiasite prod release-1.2.3 --yes
+
+# Promote the code in preprod to prod.
+acquiacli code:deploy prod:myacquiasite preprod prod
 
 # Get a list of organizations you have access to and display organization UUIDs.
 acquiacli organization:list
@@ -84,17 +115,17 @@ acquiacli team:create 'My Team Name' 'External Contractors'
 acquiacli role:add 'My Team Name' 'Contractors' 'move file to non-prod,move file from prod,download db backup non-prod,download logs non-prod,deploy to non-prod'
 
 # Associate a team with an application within the organization (Use organization:teams to get team UUIDs).
-acquiacli team:addapp prod:acquia d2693c6e-58e7-47e5-8867-e2db88c71b8c
+acquiacli team:addapp prod:myacquiasite d2693c6e-58e7-47e5-8867-e2db88c71b8c
 
 # Add a user to a team and assign roles (Use role:list to obtain the role UUIDs).
 acquiacli team:invite d2693c6e-58e7-47e5-8867-e2db88c71b8c 'username@example.com' f0b89594-0fc5-4609-935f-1f18c313c6c7
 
 ````
 
-## See it in action
+### See it in action
 [![asciicast](https://asciinema.org/a/178427.png)](https://asciinema.org/a/178427)
 
-## Command Parameters
+### Command Parameters
 *Application UUID*
 If a command takes an application UUID as a parameter, it can be provided in one of three ways - see below for a description of hosting realm:
 * The Acquia hosting ID on its own e.g. myacquiasite
@@ -120,15 +151,7 @@ All other parameters are currently provided in the UUID form, including but not 
 
 Commands using the following parameters will be automatically converted by the Acquia Cli tool using the SDK. This is achieved in the `validateUuidHook` method in the `AcquiaCommand` class using a `@hook validate` [annotation](https://github.com/consolidation/annotated-command).
 * `$uuid` is converted to the UUID of the application
-* `$environment` is converted into an EnvironmentResponse object
-* `$environmentFrom` is converted into an EnvironmentResponse object
-* `$environmentTo` is converted into an EnvironmentResponse object
-* `$organization` is converted into an OrganizationResponse object
 
-## Creating a Phar
-A phar archive can be created to run Acquia Cli instead of utilising the entire codebase. Because some of Acquia Cli relies on user configuration of email/password, it is currently most appropriate to allow users to generate their own phar files inclusive of their own configuration.
-
-1. Download and install the [box project tool](https://github.com/box-project/box2) for creating phars.
-2. Follow the Getting Started section above to download and configure Acquia Cli.
-3. Run `box build` in the directory that Acquia Cli has been cloned and configured in. This will use the packaged `box.json` file to create a phar specifically for Acquia Cli.
-4. Move acquiacli.phar to a where it will be used. acquiacli.phar contains your secret email and password information as well as the code required to run Acquia Cli. The phar is now a customised and standalone app.
+Helper functions exist in `CloudApi.php` to convert user supplied parameters into more useful objects.
+* Environments may be converted into an EnvironmentResponse object by using the `getEnvironment` method.
+* Organizations may be converted into an OrganizationResponse object by using the `getOrganization` method.
