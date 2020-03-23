@@ -28,6 +28,7 @@ chmod +x /usr/local/bin/acquiacli
 ```
 
 *Explanation*
+
 A packaged application is created with each tagged release and automatically deployed to GitHub. Each of the releases is able to be viewed and the phar application downloaded by going to the [releases page](https://github.com/typhonius/acquia_cli/releases). You can download the latest version manually by [clicking here](https://github.com/typhonius/acquia_cli/releases/latest/download/acquiacli.phar).
 
 Once this is downloaded to the local computer, it must be moved to a different location and have permissions modified with the following steps.
@@ -55,10 +56,15 @@ Alternatively, follow the below steps for a manual installation.
 1. Add your Acquia key and secret to the `acquiacli.yml` file.
 
 ### Environment Variables
-Environmment variables can be used to store and provide the API key and secret, removing the need for configuration files. 
+Environmment variables can be used to store and provide the API key and secret, removing the need for configuration files.
 * `ACQUIACLI_KEY` The environment variable for the API key
 * `ACQUIACLI_SECRET` The environment variable for the API secret
 
+If environment variables are to be used, these will need to be placed in the relevant bash file e.g. `$HOME/.bashrc` or `$HOME/.bash_profile` in the following format.
+```
+export ACQUIACLI_KEY=15fd1cde-1e66-b113-8e98-5ff9d444d54f
+export ACQUIACLI_SECRET=Sdtg0o83TrZm5gVckpaZynCxpikMqcht9u3fexWIHm7
+```
 
 ## Configuration
 The Acquia Cli tool uses cascading configuration on the user's own machine to allow both global and per project credentials and overrides as needed.
@@ -80,8 +86,6 @@ timezone | Australia/Sydney | Use [a supported PHP timezone](https://secure.php.
 format | Y-m-d H:i:s | Use [a supported PHP date string](https://secure.php.net/manual/en/function.date.php) to show times in an alternate format.
 taskwait | 5 | A number in seconds to wait before hitting the API to check the status of a task.
 timeout | 300 | A number in seconds before a task is considered to have timed out.
-
-
 
 
 ## Usage/Examples
@@ -127,12 +131,14 @@ acquiacli team:invite d2693c6e-58e7-47e5-8867-e2db88c71b8c 'username@example.com
 
 ### Command Parameters
 *Application UUID*
+
 If a command takes an application UUID as a parameter, it can be provided in one of three ways - see below for a description of hosting realm:
 * The Acquia hosting ID on its own e.g. myacquiasite
 * The full Acquia hosting realm and ID e.g. prod:myacquiasite
 * The application UUID e.g. 8ff6c046-ec64-4ce4-bea6-27845ec18600
 
 *Hosting Realms*
+
 Acquia uses the concept of a 'realm' to differentiate between customers on the two tiers of hosting offered:
 * prod: The 'prod' realm is exclusively for Acquia Cloud Enterprise (ACE) customers.
 * devcloud: The 'devcloud' realm is exclusively for Acquia Cloud Professional (ACP) customers.
