@@ -8,7 +8,7 @@ use AcquiaCli\Cli\CloudApi;
 
 $pharPath = \Phar::running(true);
 if ($pharPath) {
-    $root = __DIR__;
+    $root = $pharPath;
     $autoloaderPath = "$pharPath/vendor/autoload.php";
 } else {
     if (file_exists(dirname(__DIR__).'/vendor/autoload.php')) {
