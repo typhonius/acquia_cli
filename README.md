@@ -27,13 +27,13 @@ mv accquiacli.phar /usr/local/bin/acquiacli
 chmod +x /usr/local/bin/acquiacli
 ```
 
-*Explanation*
+*Automatic updates*
 
-A packaged application is created with each tagged release and automatically deployed to GitHub. Each of the releases is able to be viewed and the phar application downloaded by going to the [releases page](https://github.com/typhonius/acquia_cli/releases). You can download the latest version manually by [clicking here](https://github.com/typhonius/acquia_cli/releases/latest/download/acquiacli.phar).
+If the packaged application is used, it can be updated simply and easily whenever a new release is out by running the following command from anywhere on the computer:
 
-Once this is downloaded to the local computer, it must be moved to a different location and have permissions modified with the following steps.
-* Move the file to somewhere on the user's `$PATH` e.g. `/usr/local/bin/`
-* Make the file executable
+```
+acquiacli self:update
+```
 
 
 ### Installing from source (advanced)
