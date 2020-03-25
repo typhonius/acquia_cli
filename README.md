@@ -97,8 +97,12 @@ acquiacli application:list
 # Show detailed information about servers in the prod environment (assuming sitename of prod:acquia obtained from site:list command)
 acquiacli environment:info prod:myacquiasite prod
 
-# Copy the files and db from alpha to dev for testing new code
-acquiacli deploy:prepare prod:myacquiasite alpha dev
+# Copy the files and db from alpha to dev in preparation for a deployment
+acquiacli deploy:prepare prod:myacquiasite dev alpha
+
+# Copy the files and db from prod to test to prepare for a deployment.
+# N.B. if the last argument is omitted in deploy:prepare, prod will be used
+acquiacli deploy:prepare prod:myacquiasite test
 
 # Deploy the develop-build branch to the test environment.
 acquiacli code:switch prod:myacquiasite test develop-build
