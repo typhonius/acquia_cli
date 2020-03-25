@@ -135,7 +135,7 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
 
         \Robo\Robo::unsetContainer();
 
-        $notificationOutput =<<< OUTPUT
+        $notificationOutput = <<< OUTPUT
 >  Backing up DB (database1) on Dev
  Looking up notification                      
 < 1 sec [➤⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬⚬]   0%

@@ -44,7 +44,7 @@
             "find src -name '*.php' -print0 | xargs -0 -n1 php -l",
             "find tests -name '*.php' -print0 | xargs -0 -n1 php -l"
         ],
-        "cs": "phpcs --standard=PSR2 -n src tests",
+        "cs": "phpcs --standard=PSR12 -n src tests",
         "cbf": "phpcbf --standard=PSR2 -n src tests",
         "unit": "phpunit --colors=always  --coverage-clover ./tests/logs/clover.xml",
         "stan": "phpstan analyse --level 7 src tests",

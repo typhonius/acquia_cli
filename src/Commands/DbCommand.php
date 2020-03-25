@@ -113,14 +113,15 @@ class DbCommand extends AcquiaCommand
         $environmentFrom = $this->cloudapiService->getEnvironment($uuid, $environmentFrom);
         $environmentTo = $this->cloudapiService->getEnvironment($uuid, $environmentTo);
 
-        if ($this->confirm(
-            sprintf(
-                'Are you sure you want to copy database %s from %s to %s?',
-                $dbName,
-                $environmentFrom->label,
-                $environmentTo->label
+        if (
+            $this->confirm(
+                sprintf(
+                    'Are you sure you want to copy database %s from %s to %s?',
+                    $dbName,
+                    $environmentFrom->label,
+                    $environmentTo->label
+                )
             )
-        )
         ) {
             $this->backupAndMoveDbs($uuid, $environmentFrom, $environmentTo, $dbName);
         }
@@ -141,13 +142,14 @@ class DbCommand extends AcquiaCommand
         $environmentFrom = $this->cloudapiService->getEnvironment($uuid, $environmentFrom);
         $environmentTo = $this->cloudapiService->getEnvironment($uuid, $environmentTo);
 
-        if ($this->confirm(
-            sprintf(
-                'Are you sure you want to copy all databases from %s to %s?',
-                $environmentFrom->label,
-                $environmentTo->label
+        if (
+            $this->confirm(
+                sprintf(
+                    'Are you sure you want to copy all databases from %s to %s?',
+                    $environmentFrom->label,
+                    $environmentTo->label
+                )
             )
-        )
         ) {
             $this->backupAndMoveDbs($uuid, $environmentFrom, $environmentTo);
         }
