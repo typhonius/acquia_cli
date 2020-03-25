@@ -141,14 +141,15 @@ class DomainCommand extends AcquiaCommand
         $environmentFrom = $this->cloudapiService->getEnvironment($uuid, $environmentFrom);
         $environmentTo = $this->cloudapiService->getEnvironment($uuid, $environmentTo);
 
-        if ($this->confirm(
-            sprintf(
-                'Are you sure you want to move %s from environment %s to %s?',
-                $domain,
-                $environmentFrom->label,
-                $environmentTo->label
+        if (
+            $this->confirm(
+                sprintf(
+                    'Are you sure you want to move %s from environment %s to %s?',
+                    $domain,
+                    $environmentFrom->label,
+                    $environmentTo->label
+                )
             )
-        )
         ) {
             $this->say(sprintf('Moving %s from %s to %s', $domain, $environmentFrom->label, $environmentTo->label));
 
@@ -171,7 +172,8 @@ class DomainCommand extends AcquiaCommand
     {
         $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
 
-        if ($environment->name === 'prod'
+        if (
+            $environment->name === 'prod'
             && !$this->confirm("Are you sure you want to purge varnish on the production environment?")
         ) {
             return;

@@ -25,12 +25,13 @@ class DrushAliasesCommand extends AccountCommand
         $drushArchive = tempnam(sys_get_temp_dir(), 'AcquiaDrushAliases') . '.tar.gz';
         $this->say(sprintf('Acquia Cloud Drush Aliases archive downloaded to %s', $drushArchive));
         if (file_put_contents($drushArchive, $aliases, LOCK_EX)) {
-            if ($options['install'] || $this->confirm(
-                sprintf(
-                    'Do you want to automatically unpack Acquia Cloud Drush aliases to %s',
-                    getenv('HOME')
+            if (
+                $options['install'] || $this->confirm(
+                    sprintf(
+                        'Do you want to automatically unpack Acquia Cloud Drush aliases to %s',
+                        getenv('HOME')
+                    )
                 )
-            )
             ) {
                 if (!$home = getenv('HOME')) {
                     throw new \Exception('Home directory not found.');

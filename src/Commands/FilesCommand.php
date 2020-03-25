@@ -27,13 +27,14 @@ class FilesCommand extends AcquiaCommand
         $environmentFrom = $this->cloudapiService->getEnvironment($uuid, $environmentFrom);
         $environmentTo = $this->cloudapiService->getEnvironment($uuid, $environmentTo);
 
-        if ($this->confirm(
-            sprintf(
-                'Are you sure you want to copy files from %s to %s?',
-                $environmentFrom->label,
-                $environmentTo->label
+        if (
+            $this->confirm(
+                sprintf(
+                    'Are you sure you want to copy files from %s to %s?',
+                    $environmentFrom->label,
+                    $environmentTo->label
+                )
             )
-        )
         ) {
             $this->copyFiles($uuid, $environmentFrom, $environmentTo);
         }

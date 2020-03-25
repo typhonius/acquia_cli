@@ -17,7 +17,6 @@ use AcquiaCli\Cli\CloudApi;
  */
 class LogsCommand extends AcquiaCommand
 {
-
     use InputAwareTrait;
     use OutputAwareTrait;
 

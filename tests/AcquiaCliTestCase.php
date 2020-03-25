@@ -129,7 +129,8 @@ abstract class AcquiaCliTestCase extends TestCase
         if ($fixture = $fixtureMap[$path][$verb]) {
             // Add in overrides for fixtures which should be downloaded
             // rather than responded to e.g. log:download
-            if ($fixture === 'Logs/downloadLog.dat'
+            if (
+                $fixture === 'Logs/downloadLog.dat'
                 || $fixture === 'DatabaseBackups/downloadDatabaseBackup.dat'
                 || $fixture === 'Account/getDrushAliases.dat'
             ) {
@@ -164,7 +165,7 @@ abstract class AcquiaCliTestCase extends TestCase
         $container = Robo::getContainer();
         $container->add('logstream', $this->logstream);
         $parameterInjection = $container->get('parameterInjection');
-        $parameterInjection->register('AcquiaLogstream\LogstreamManager', new AcquiaCliInjector);
+        $parameterInjection->register('AcquiaLogstream\LogstreamManager', new AcquiaCliInjector());
         Robo::setContainer($container);
 
         $app->run($input, $output);
