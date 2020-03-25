@@ -23,7 +23,7 @@ Select either the packaged application or the source application below before co
 To install the packaged application quickly and easily, the following three steps may be executed.
 ```
 wget https://github.com/typhonius/acquia_cli/releases/latest/download/acquiacli.phar
-mv accquiacli.phar /usr/local/bin/acquiacli
+mv acquiacli.phar /usr/local/bin/acquiacli
 chmod +x /usr/local/bin/acquiacli
 ```
 
