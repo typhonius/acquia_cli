@@ -21,10 +21,12 @@ class Config extends RoboConfig implements GlobalOptionDefaultValuesInterface
         $loader = new YamlConfigLoader();
         $processor = new ConfigProcessor();
 
-        $globalConfig = getenv('HOME') . '/.acquiacli/acquiacli.yml';
-        $projectConfig = $root . '/acquiacli.yml';
+        $homeDir = getenv('HOME');
+        $defaultConfig = join(DIRECTORY_SEPARATOR, [dirname(dirname(__DIR__)), 'default.acquiacli.yml']);
+        $globalConfig = join(DIRECTORY_SEPARATOR, [$homeDir, '.acquiacli', 'acquiacli.yml']);
+        $projectConfig = join(DIRECTORY_SEPARATOR, [$root, 'acquiacli.yml']);
 
-        $processor->extend($loader->load($root . '/default.acquiacli.yml'));
+        $processor->extend($loader->load($defaultConfig));
         $processor->extend($loader->load($globalConfig));
         $processor->extend($loader->load($projectConfig));
 
