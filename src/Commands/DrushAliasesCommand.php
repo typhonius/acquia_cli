@@ -3,6 +3,7 @@
 namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\Endpoints\Account;
+use AcquiaCli\Cli\Config;
 
 /**
  * Class DrushAliasesCommand
@@ -33,10 +34,7 @@ class DrushAliasesCommand extends AccountCommand
                     )
                 )
             ) {
-                $home = getenv('HOME');
-                if (Config::isWindows()) {
-                    $home = getenv('USERPROFILE');
-                }
+                $home = Config::getHome();
 
                 $drushDirectory = join(DIRECTORY_SEPARATOR, [$home, '.drush']);
                 if (!is_dir($drushDirectory)) {

@@ -21,13 +21,10 @@ class Config extends RoboConfig implements GlobalOptionDefaultValuesInterface
         $loader = new YamlConfigLoader();
         $processor = new ConfigProcessor();
 
-        $homeDir = getenv('HOME');
-        if (self::isWindows()) {
-            $homeDir = getenv('USERPROFILE');
-        }
+        $home = self::getHome();
 
         $defaultConfig = join(DIRECTORY_SEPARATOR, [dirname(dirname(__DIR__)), 'default.acquiacli.yml']);
-        $globalConfig = join(DIRECTORY_SEPARATOR, [$homeDir, '.acquiacli', 'acquiacli.yml']);
+        $globalConfig = join(DIRECTORY_SEPARATOR, [$home, '.acquiacli', 'acquiacli.yml']);
         $projectConfig = join(DIRECTORY_SEPARATOR, [$root, 'acquiacli.yml']);
 
         $environment = [];
@@ -62,8 +59,22 @@ class Config extends RoboConfig implements GlobalOptionDefaultValuesInterface
         $this->set('config.environment', $environment);
     }
 
-    private function isWindows()
+    public static function isWindows()
     {
         return stripos(PHP_OS, 'WIN') === 0;
+    }
+
+    public static function getHome()
+    {
+        $home = getenv('HOME');
+        if (self::isWindows()) {
+            $home = getenv('USERPROFILE');
+        }
+
+        if (!$home) {
+            throw new \Exception('Home directory not found.');
+        }
+
+        return $home;
     }
 }
