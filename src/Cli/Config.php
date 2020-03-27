@@ -22,6 +22,10 @@ class Config extends RoboConfig implements GlobalOptionDefaultValuesInterface
         $processor = new ConfigProcessor();
 
         $homeDir = getenv('HOME');
+        if (self::isWindows()) {
+            $homeDir = getenv('USERPROFILE');
+        }
+
         $defaultConfig = join(DIRECTORY_SEPARATOR, [dirname(dirname(__DIR__)), 'default.acquiacli.yml']);
         $globalConfig = join(DIRECTORY_SEPARATOR, [$homeDir, '.acquiacli', 'acquiacli.yml']);
         $projectConfig = join(DIRECTORY_SEPARATOR, [$root, 'acquiacli.yml']);
@@ -33,5 +37,10 @@ class Config extends RoboConfig implements GlobalOptionDefaultValuesInterface
         $this->import($processor->export());
         $this->set('config.project', $projectConfig);
         $this->set('config.global', $globalConfig);
+    }
+
+    private function isWindows()
+    {
+        return stripos(PHP_OS, 'WIN') === 0;
     }
 }

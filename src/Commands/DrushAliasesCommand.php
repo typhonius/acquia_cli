@@ -33,10 +33,12 @@ class DrushAliasesCommand extends AccountCommand
                     )
                 )
             ) {
-                if (!$home = getenv('HOME')) {
-                    throw new \Exception('Home directory not found.');
+                $home = getenv('HOME');
+                if (Config::isWindows()) {
+                    $home = getenv('USERPROFILE');
                 }
-                $drushDirectory = $home . '/.drush';
+
+                $drushDirectory = join(DIRECTORY_SEPARATOR, [$home, '.drush']);
                 if (!is_dir($drushDirectory)) {
                     mkdir($drushDirectory, 0700);
                 }
