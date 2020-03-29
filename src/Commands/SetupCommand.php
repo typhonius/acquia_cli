@@ -22,10 +22,12 @@ class SetupCommand extends Tasks
      */
     public function setup(Config $config)
     {
-        $configFiles = [
-            'global' => $config->get('config.global'),
-            'project' => $config->get('config.project'),
-        ];
+        $configFiles = ['global' => $config->get('config.global')];
+
+        // Do not include project configuration if this is running in a Phar.
+        if (!\Phar::running()) {
+            $configFiles['project'] = $config->get('config.project');
+        }
 
         foreach ($configFiles as $type => $location) {
             $this->say(sprintf('Checking %s configuration at %s', $type, $location));
