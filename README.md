@@ -7,6 +7,11 @@
 [![Latest Unstable Version](https://poser.pugx.org/typhonius/acquia_cli/v/unstable.png)](https://packagist.org/packages/typhonius/acquia_cli)
 
 # Acquia Cli
+The Acquia Cli tool provides developers, sysops, release managers and website administrators with a simple to use tool for obtaining information and running tasks on the Acquia Cloud.
+
+Acquia Cli is simple to install and aligns to the permissions constructs already built into Acquia. The tool can be used for any task that can be completed using the Acquia web interface, and contains in-built instructions for each task.
+
+If Acquia Cli doesn't have the task built in, simply create a ticket or a pull request for it to be included.
 
 ## Pre-installation
 
@@ -45,6 +50,8 @@ composer install
 ```
 
 ## Setup
+Choose one of the following methods to finish setting up your AcquiaCli installation.
+
 ### Automatic setup
 Once you have downloaded the application using one of the above steps, run the following commands to enter add your Acquia credentials.
 1. Run `acquiacli setup` (or `./vendor/bin/acquiacli setup` when used as a dependency in another project) which will ask for your credentials and automatically create this file.
@@ -60,20 +67,21 @@ Environmment variables can be used to store and provide the API key and secret, 
 * `ACQUIACLI_KEY` The environment variable for the API key
 * `ACQUIACLI_SECRET` The environment variable for the API secret
 
-If environment variables are to be used, these will need to be placed in the relevant bash file e.g. `$HOME/.bashrc` or `$HOME/.bash_profile` in the following format.
+If environment variables are to be used, these will need to be placed in the relevant bash file on Linux/Mac e.g. `$HOME/.bashrc` or `$HOME/.bash_profile` in the following format.
 ```
 export ACQUIACLI_KEY=15fd1cde-1e66-b113-8e98-5ff9d444d54f
 export ACQUIACLI_SECRET=Sdtg0o83TrZm5gVckpaZynCxpikMqcht9u3fexWIHm7
 ```
+Windows users will need to add the environment variables within their system settings.
 
 ## Configuration
 The Acquia Cli tool uses cascading configuration on the user's own machine to allow both global and per project credentials and overrides as needed.
 
 Acquia Cli will load configuration in the following order with each step overriding matching array keys in the step prior:
 
-1. Firstly, default configuration from `default.acquiacli.yml` in the project root is loaded.
+1. Firstly, default configuration from `default.acquiacli.yml` in the project root/packaged with the Phar is loaded.
 1. Next, if it exists, global configuration from `$HOME/.acquiacli/acquiacli.yml` is loaded.
-1. Finally, if it exists, an `acquiacli.yml` file in the project root will be loaded.
+1. Finally, if it exists, an `acquiacli.yml` file in the project root will be loaded. (Not applicable if using the Phar)
 1. Environment variables take overall precedence for the key and secret, however other config won't be overridden.
 
 The global and per project files may be deleted (manually) and recreated with `acquiacli setup` whenever a user wishes to do so.
@@ -152,7 +160,9 @@ If no hosting realm is provided, prod is used by default. This can be overridden
 Both the UUID and the hosting ID (with realm) for your applications may be discovered by running `acquiacli application:list`
 
 *Other parameters*
+
 Environment parameters take the label name of the environment e.g. dev
+
 Organization parameters take the label name of the organization e.g. mycompany
 
 All other parameters are currently provided in the UUID form, including but not limited to:
@@ -165,3 +175,6 @@ Commands using the following parameters will be automatically converted by the A
 Helper functions exist in `CloudApi.php` to convert user supplied parameters into more useful objects.
 * Environments may be converted into an EnvironmentResponse object by using the `getEnvironment` method.
 * Organizations may be converted into an OrganizationResponse object by using the `getOrganization` method.
+
+## Usage on Windows
+The Phar file has been tested minimally on Windows. It may be executed using PHP from a tool such as [Chocolatey](https://chocolatey.org/). You may run into cURL issues with SSL in some instances. The recommended approach to remediating SSL issues is to follow the [basic instructions here](https://stackoverflow.com/a/34883260). You may need to use alternate paths based on your PHP installation.
