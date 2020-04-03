@@ -8,9 +8,12 @@ use Symfony\Component\Console\Input\ArgvInput;
 use AcquiaCli\Cli\AcquiaCli;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Stopwatch\Stopwatch;
+use Symfony\Component\Console\Command\LockableTrait;
 
 class AcquiaCliApplicationTest extends AcquiaCliTestCase
 {
+    use LockableTrait;
+
     private $root;
 
     public function setUp()
@@ -47,6 +50,18 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
         $actualValue = $this->execute($command);
 
         $this->assertContains('AcquiaCli 2', $actualValue);
+    }
+
+    public function testLock()
+    {
+        // Obtain an identical lock and then attempt to run acquiacli.
+        $this->lock('acquia-cli-command');
+        $command = ['--version'];
+        $actualValue = $this->execute($command);
+        $this->assertContains('The command is already running in another process.', $actualValue);
+
+        // Unlock to ensure tests are able to continue.
+        $this->release();
     }
 
     public function testClientOptions()
