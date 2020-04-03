@@ -138,6 +138,50 @@ acquiacli team:invite d2693c6e-58e7-47e5-8867-e2db88c71b8c 'username@example.com
 
 ````
 
+### Additional parameters
+The `--limit`, `--sort`, and `--filter` parameters can be added to every single command used with the Acquia Cli tool for providing more relevant information to users who are working on sites.
+
+*Limiting*
+
+To limit the number of returned entries, use `--limit=x` with a command.
+```
+# Reduce the number of notifications passed back to 10.
+acquiacli notification:list myacquiasite --limit=10
+```
+
+*Sorting*
+
+A comma-delimited string with fields can be used for sorting. The order of the fields is significant. A leading - in the field indicates the field should be sorted in a descending order. Not all fields are sortable.
+```
+# Sort all applications first by organization name (alphabetically) and then by label (reverse-alphabetically).
+acquiacli application:list --sort='organization_name,-label'
+```
+
+*Filtering*
+
+The filters query string parameter restricts the data returned from your request. Filtered queries restrict the rows that do (or do not) get included in the result by testing each row in the result against the filters. Not all fields are filterable.
+
+There are eight filter operators that can be used and they must be URL encoded in order to be included. The operators are:
+
+* Equals: =
+* Does not equal: !=
+* Greater than: >
+* Less than: <
+* Greater than or equal to: >=
+* Less than or equal to: <=
+* Contains substring: =@
+* Does not contain substring: !@
+
+Filters can be combined using OR and AND boolean logic. The OR operator is defined using a comma (,) and the AND operator is defined using a semi-colon (;).
+
+```
+# Show all tasks with a label starting with Database after 1st April 2019 and before 1st Jan 2020.
+acquiacli notification:list myacquiasite --filter='label=@Database*;created_at>2019-04-01;created_at<2020-01-01'
+
+# Show all tasks with a label starting with Database OR a label exactly matching 'Code switched'
+acquiacli notification:list myacquiasite --filter='label=@Database*,label=Code switched'
+```
+
 ### See it in action
 [![asciicast](https://asciinema.org/a/178427.png)](https://asciinema.org/a/178427)
 
