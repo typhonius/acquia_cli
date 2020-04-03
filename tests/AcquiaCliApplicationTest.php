@@ -60,6 +60,11 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
         $actualValue = $this->execute($command);
         $this->assertContains('The command is already running in another process.', $actualValue);
 
+        // Use --no-lock to override the lock.
+        $command[] = '--no-lock';
+        $actualValue = $this->execute($command);
+        $this->assertContains('AcquiaCli', $actualValue);
+
         // Unlock to ensure tests are able to continue.
         $this->release();
     }

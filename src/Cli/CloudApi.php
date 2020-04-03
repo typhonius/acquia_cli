@@ -2,6 +2,7 @@
 
 namespace AcquiaCli\Cli;
 
+use Robo\Config\Config;
 use AcquiaCloudApi\Connector\Client;
 use AcquiaCloudApi\Connector\Connector;
 use AcquiaCloudApi\Endpoints\Applications;
@@ -9,7 +10,6 @@ use AcquiaCloudApi\Endpoints\Environments;
 use AcquiaCloudApi\Endpoints\Organizations;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use AcquiaCloudApi\Response\OrganizationResponse;
-use Robo\Config\Config;
 use Symfony\Component\Console\Input\InputInterface;
 
 /**
