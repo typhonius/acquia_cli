@@ -20,10 +20,6 @@ class NotificationsCommand extends AcquiaCommand
      * Gets all notifications associated with a site.
      *
      * @param string $uuid
-     * @param int    $limit  The maximum number of items to return.
-     * @param string $filter
-     * @param string $sort   Sortable by: 'name', 'title', 'created', 'completed', 'started'.
-     *                       A leading "~" in the field indicates the field should be sorted in a descending order.
      *
      * @command notification:list
      * @aliases n:l
@@ -32,19 +28,8 @@ class NotificationsCommand extends AcquiaCommand
         Config $config,
         Client $client,
         Notifications $notificationsAdapter,
-        $uuid,
-        $limit = 50,
-        $filter = null,
-        $sort = '~created_at'
+        $uuid
     ) {
-
-        // Allows for limits and sort criteria.
-        $sort = str_replace('~', '-', $sort);
-        $client->addQuery('limit', $limit);
-        $client->addQuery('sort', $sort);
-        if (null !== $filter) {
-            $client->addQuery('filter', "name=${filter}");
-        }
 
         $notifications = $notificationsAdapter->getAll($uuid);
         $client->clearQuery();
