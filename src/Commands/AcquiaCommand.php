@@ -124,7 +124,6 @@ abstract class AcquiaCommand extends Tasks
      */
     public function initUuidHook(InputInterface $input, AnnotationData $annotationData)
     {
-
         if ($input->hasArgument('uuid')) {
             $uuid = $input->getArgument('uuid');
 

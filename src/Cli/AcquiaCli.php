@@ -3,18 +3,18 @@
 namespace AcquiaCli\Cli;
 
 use Robo\Robo;
-use Robo\Common\ConfigAwareTrait;
-use Symfony\Component\Console\Command\LockableTrait;
-use Robo\Runner as RoboRunner;
 use Robo\Application;
-use Symfony\Component\Console\Input\InputInterface;
+use Robo\Runner as RoboRunner;
+use Robo\Common\ConfigAwareTrait;
+use AcquiaCloudApi\Connector\Client;
+use AcquiaLogstream\LogstreamManager;
+use AcquiaCli\Injector\AcquiaCliInjector;
+use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Command\LockableTrait;
 use Symfony\Component\Console\Output\OutputInterface;
 use Consolidation\AnnotatedCommand\CommandFileDiscovery;
-use AcquiaCloudApi\Connector\Client;
-use AcquiaCli\Injector\AcquiaCliInjector;
-use AcquiaCli\Cli\CloudApi;
-use AcquiaLogstream\LogstreamManager;
 
 /**
  * Class AcquiaCli
@@ -74,6 +74,12 @@ class AcquiaCli
                 '-y',
                 InputOption::VALUE_NONE,
                 'Automatically respond "yes" to all confirmation questions.'
+            ),
+            new InputOption(
+                '--no-lock',
+                null,
+                InputOption::VALUE_NONE,
+                'Run commands without locking. Allows multiple instances of commands to run concurrently.'
             ),
             new InputOption(
                 '--limit',
@@ -138,27 +144,27 @@ the field should be sorted in a descending order. Not all fields are sortable.'
         $parameterInjection = $container->get('parameterInjection');
         $parameterInjection->register('AcquiaCli\Cli\CloudApi', new AcquiaCliInjector());
         $parameterInjection->register('AcquiaCli\Cli\Config', new AcquiaCliInjector());
-        $parameterInjection->register('AcquiaCloudApi\Connector\Client', new AcquiaCliInjector());
         $parameterInjection->register('AcquiaLogstream\LogstreamManager', new AcquiaCliInjector());
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Applications', new AcquiaCliInjector());
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Environments', new AcquiaCliInjector());
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Databases', new AcquiaCliInjector());
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Servers', new AcquiaCliInjector());
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Domains', new AcquiaCliInjector());
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Code', new AcquiaCliInjector());
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\DatabaseBackups', new AcquiaCliInjector());
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Crons', new AcquiaCliInjector());
+        $parameterInjection->register('AcquiaCloudApi\Connector\Client', new AcquiaCliInjector());
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Account', new AcquiaCliInjector());
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Roles', new AcquiaCliInjector());
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Permissions', new AcquiaCliInjector());
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Teams', new AcquiaCliInjector());
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Variables', new AcquiaCliInjector());
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Logs', new AcquiaCliInjector());
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\Notifications', new AcquiaCliInjector());
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Applications', new AcquiaCliInjector());
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Code', new AcquiaCliInjector());
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Crons', new AcquiaCliInjector());
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\DatabaseBackups', new AcquiaCliInjector());
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Databases', new AcquiaCliInjector());
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Domains', new AcquiaCliInjector());
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Environments', new AcquiaCliInjector());
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Insights', new AcquiaCliInjector());
         $parameterInjection->register('AcquiaCloudApi\Endpoints\LogForwardingDestinations', new AcquiaCliInjector());
-        $parameterInjection->register('AcquiaCloudApi\Endpoints\SslCertificates', new AcquiaCliInjector());
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Logs', new AcquiaCliInjector());
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Notifications', new AcquiaCliInjector());
         $parameterInjection->register('AcquiaCloudApi\Endpoints\Organizations', new AcquiaCliInjector());
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Permissions', new AcquiaCliInjector());
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Roles', new AcquiaCliInjector());
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Servers', new AcquiaCliInjector());
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\SslCertificates', new AcquiaCliInjector());
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Teams', new AcquiaCliInjector());
+        $parameterInjection->register('AcquiaCloudApi\Endpoints\Variables', new AcquiaCliInjector());
     }
 
     /**
@@ -169,7 +175,7 @@ the field should be sorted in a descending order. Not all fields are sortable.'
     public function run(InputInterface $input, OutputInterface $output)
     {
         // Obtain a lock and exit if the command is already running.
-        if (!$this->lock('acquia-cli-command')) {
+        if (!$input->hasParameterOption('--no-lock') && !$this->lock('acquia-cli-command')) {
             $output->writeln('The command is already running in another process.');
 
             return 0;
