@@ -45,11 +45,29 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
 
     public function testVersion()
     {
-        $command = ['--version'];
+        $versionFile = sprintf('%s/VERSION', $this->root);
+        $version = file_get_contents($versionFile);
 
+        $command = ['--version'];
         $actualValue = $this->execute($command);
 
-        $this->assertContains('AcquiaCli 2', $actualValue);
+        $this->assertEquals(sprintf('AcquiaCli %s', $version), $actualValue);
+    }
+
+    public function testMissingVersion()
+    {
+        $versionFile = sprintf('%s/VERSION', $this->root);
+        $versionFileBak = sprintf('%s.bak', $versionFile);
+        $fileMoved = rename($versionFile, $versionFileBak);
+
+        try {
+            $command = ['--version'];
+            $this->execute($command);
+        } catch (\Exception $e) {
+            $this->assertEquals('Exception', get_class($e));
+            $this->assertEquals('No VERSION file', $e->getMessage());
+        }
+        rename($versionFileBak, $versionFile);
     }
 
     public function testLock()
