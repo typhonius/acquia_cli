@@ -23,7 +23,7 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
         parent::setUp();
     }
 
-    public function testConfig()
+    public function testDefaultConfig()
     {
         $config = new Config($this->root);
 
@@ -41,6 +41,42 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
 
         $this->assertEquals($defaultAcquiaConfig, $config->get('acquia'));
         $this->assertEquals($defaultExtraConfig, $config->get('extraconfig'));
+    }
+
+    public function testEnvironmentConfig()
+    {
+        // Set environment variables so we can test configuration overrides.
+        putenv('ACQUIACLI_KEY=16fd1cde-1e66-b113-8e98-5ff9d444d54f');
+        putenv('ACQUIACLI_SECRET=SDtg0o83TrZm5gVckpaZynCxpikMqcht9u3fexWIHm7');
+        putenv('ACQUIACLI_TIMEZONE=Australia/Hobart');
+        putenv('ACQUIACLI_FORMAT=Y-m-d H:i:s (U)');
+        putenv('ACQUIACLI_TASKWAIT=2');
+        putenv('ACQUIACLI_TIMEOUT=400');
+
+        $config = new Config($this->root);
+
+        $environmentAcquiaConfig = [
+            'key' => '16fd1cde-1e66-b113-8e98-5ff9d444d54f',
+            'secret' => 'SDtg0o83TrZm5gVckpaZynCxpikMqcht9u3fexWIHm7'
+        ];
+
+        $environmentExtraConfig = [
+            'timezone' => 'Australia/Hobart',
+            'format' => 'Y-m-d H:i:s (U)',
+            'taskwait' => 2,
+            'timeout' => 400
+        ];
+
+        $this->assertEquals($environmentAcquiaConfig, $config->get('acquia'));
+        $this->assertEquals($environmentExtraConfig, $config->get('extraconfig'));
+
+        // Remove them at the end of the test so they do not interfere with other tests.
+        putenv('ACQUIACLI_KEY=');
+        putenv('ACQUIACLI_SECRET=');
+        putenv('ACQUIACLI_TIMEZONE=');
+        putenv('ACQUIACLI_FORMAT=');
+        putenv('ACQUIACLI_TASKWAIT=');
+        putenv('ACQUIACLI_TIMEOUT=');
     }
 
     public function testVersion()

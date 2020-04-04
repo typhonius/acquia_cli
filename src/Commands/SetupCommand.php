@@ -30,25 +30,67 @@ class SetupCommand extends Tasks
         }
 
         foreach ($configFiles as $type => $location) {
-            $this->say(sprintf('Checking %s configuration at %s', $type, $location));
-            if (file_exists($location)) {
-                $this->yell(sprintf('%s configuration file found', $type));
-                if (!is_readable($location) && !@chmod($location, 0644)) {
-                    $this->yell(sprintf('%s configuration is not readable', $type), 40, 'red');
-                    continue;
-                }
-                if ($this->confirm('Would you like to view the contents of this file?')) {
-                    if ($contents = file_get_contents($location)) {
-                        $this->say($contents);
-                    }
-                }
-                if ($this->confirm("Would you like to delete and regenerate the acquiacli.yml file at ${location}?")) {
-                    $this->createConfigYaml($location);
-                }
-            } elseif ($this->confirm(sprintf('No file found. Would you like to add a file at %s?', $location))) {
+            $this->yell(sprintf('%s configuration (%s)', ucfirst($type), $location));
+
+            if (
+                file_exists($location) && $this->confirm(
+                    sprintf('Would you like to regenerate the %s configuration file', $type)
+                )
+            ) {
+                $this->createConfigYaml($location);
+            } elseif (
+                $this->confirm(
+                    sprintf('%s configuration file not found. Would you like to add one?', ucfirst($type))
+                )
+            ) {
                 $this->createConfigYaml($location);
             }
         }
+    }
+
+    /**
+     * Allows users to view the configuration that they have on their system.
+     *
+     * This provides a view of default, global, project, and environment variable based configuration.
+     *
+     * @command setup:config:view
+     */
+    public function configView(Config $config)
+    {
+        $configFiles = [
+            'default' => $config->get('config.default'),
+            'global' => $config->get('config.global'),
+            'environment' => $config->get('config.environment')
+        ];
+
+        // Do not include project configuration if this is running in a Phar.
+        if (!\Phar::running()) {
+            $configFiles['project'] = $config->get('config.project');
+        }
+
+        foreach ($configFiles as $type => $data) {
+            $contents = '';
+            if (is_array($data)) {
+                if (empty($data)) {
+                    continue;
+                }
+                $contents = Yaml::dump($data);
+            } elseif (file_exists($data) && is_readable($data)) {
+                $contents = file_get_contents($data);
+            } else {
+                continue;
+            }
+            $this->yell(sprintf('%s configuration', ucfirst($type)));
+            $this->writeln($contents);
+        }
+
+        $this->yell('Running configuration');
+        $running = [
+            'acquia' => $config->get('acquia'),
+            'extraconfig' => $config->get('extraconfig')
+        ];
+
+        $this->writeln(Yaml::dump($running));
     }
 
     /**
@@ -78,7 +120,10 @@ class SetupCommand extends Tasks
         if (!is_dir(dirname($location))) {
             mkdir(dirname($location), 700);
         }
-        if (file_put_contents($location, $yaml)) {
+
+        if (!is_writable($location) && !@chmod($location, 0644)) {
+            $this->yell(sprintf('%s is not writeable', ucfirst($location)), 40, 'red');
+        } elseif (file_put_contents($location, $yaml)) {
             $this->say(sprintf('Configuration file written to %s', $location));
         } else {
             $this->say('Unable to write configuration file.');
