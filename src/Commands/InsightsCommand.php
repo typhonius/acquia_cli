@@ -118,7 +118,7 @@ class InsightsCommand extends AcquiaCommand
     public function insightsModules(
         Insights $insightsAdapter,
         $siteId,
-        $options = ['enabled' => null, 'upgradeable' => null]
+        $options = ['enabled', 'upgradeable']
     ) {
         $modules = $insightsAdapter->getModules($siteId);
 

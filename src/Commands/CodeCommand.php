@@ -65,13 +65,15 @@ class CodeCommand extends AcquiaCommand
      * @param string $environmentTo
      *
      * @command code:deploy
+     * @option no-backup Do not backup the database(s) prior to deploying code.
      * @aliases c:d
      */
     public function codeDeploy(
         Code $codeAdapter,
         $uuid,
         $environmentFrom,
-        $environmentTo
+        $environmentTo,
+        $options = ['no-backup']
     ) {
         $environmentFrom = $this->cloudapiService->getEnvironment($uuid, $environmentFrom);
         $environmentTo = $this->cloudapiService->getEnvironment($uuid, $environmentTo);
@@ -88,7 +90,9 @@ class CodeCommand extends AcquiaCommand
             return;
         }
 
-        $this->backupAllEnvironmentDbs($uuid, $environmentTo);
+        if (!$options['no-backup']) {
+            $this->backupAllEnvironmentDbs($uuid, $environmentTo);
+        }
 
         $this->say(
             sprintf(
@@ -110,10 +114,17 @@ class CodeCommand extends AcquiaCommand
      * @param string $branch
      *
      * @command code:switch
+     * @option no-backup Do not backup the database(s) prior to switching code.
      * @aliases c:s
      */
-    public function codeSwitch(CloudApi $cloudapi, Code $codeAdapter, $uuid, $environment, $branch)
-    {
+    public function codeSwitch(
+        CloudApi $cloudapi,
+        Code $codeAdapter,
+        $uuid,
+        $environment,
+        $branch,
+        $options = ['no-backup']
+    ) {
         $environment = $cloudapi->getEnvironment($uuid, $environment);
 
         if (
@@ -128,7 +139,9 @@ class CodeCommand extends AcquiaCommand
             return;
         }
 
-        $this->backupAllEnvironmentDbs($uuid, $environment);
+        if (!$options['no-backup']) {
+            $this->backupAllEnvironmentDbs($uuid, $environment);
+        }
 
         $this->say(sprintf('Switching %s enviroment to %s branch', $environment->label, $branch));
 
