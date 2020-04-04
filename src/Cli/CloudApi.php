@@ -34,11 +34,6 @@ class CloudApi
     {
 
         $acquia = $config->get('acquia');
-
-        if (getenv('ACQUIACLI_KEY') && getenv('ACQUIACLI_SECRET')) {
-            $acquia['key'] = getenv('ACQUIACLI_KEY');
-            $acquia['secret'] = getenv('ACQUIACLI_SECRET');
-        }
         
         $connector = new Connector(
             [

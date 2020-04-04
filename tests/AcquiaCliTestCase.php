@@ -5,8 +5,6 @@ namespace AcquiaCli\Tests;
 use AcquiaCloudApi\Connector\Client;
 use Symfony\Component\Console\Input\ArgvInput;
 use AcquiaCli\Cli\Config;
-use Consolidation\Config\Loader\ConfigProcessor;
-use Consolidation\Config\Loader\YamlConfigLoader;
 use AcquiaCli\Cli\AcquiaCli;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Consolidation\AnnotatedCommand\CommandData;
@@ -150,10 +148,6 @@ abstract class AcquiaCliTestCase extends TestCase
         // Create an instance of the application and use some default parameters.
         $root = dirname(dirname(__DIR__));
         $config = new Config($root);
-        $loader = new YamlConfigLoader();
-        $processor = new ConfigProcessor();
-        $processor->extend($loader->load(dirname(__DIR__) . '/default.acquiacli.yml'));
-        $config->import($processor->export());
 
         array_unshift($command, 'acquiacli', '--no-wait', '--yes');
         $input = new ArgvInput($command);
