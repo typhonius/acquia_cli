@@ -58,7 +58,7 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
     {
         $versionFile = sprintf('%s/VERSION', $this->root);
         $versionFileBak = sprintf('%s.bak', $versionFile);
-        $fileMoved = rename($versionFile, $versionFileBak);
+        rename($versionFile, $versionFileBak);
 
         try {
             $command = ['--version'];
