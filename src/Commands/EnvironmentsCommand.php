@@ -50,7 +50,7 @@ class EnvironmentsCommand extends AcquiaCommand
                         $environment->uuid,
                         $environment->name,
                         $environment->label,
-                        implode($environment->domains, "\n"),
+                        implode("\n", $environment->domains),
                     ],
                 ]
             );

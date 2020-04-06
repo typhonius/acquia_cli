@@ -53,7 +53,7 @@ INFO;
                 $listResponse . PHP_EOL
             ],
             [
-                ['ssl:info', 'devcloud:devcloud2', 'dev', 1234],
+                ['ssl:info', 'devcloud:devcloud2', 'dev', '1234'],
                 $infoResponse . PHP_EOL,
             ]
         ];

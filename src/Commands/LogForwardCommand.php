@@ -86,7 +86,7 @@ class LogForwardCommand extends AcquiaCommand
         $this->say(sprintf('Expires at: %s', $logForward->credentials->certificate->expires_at));
         $this->say(sprintf('Token: %s', $logForward->credentials->token));
         $this->say(sprintf('Key: %s', $logForward->credentials->key));
-        $this->say(sprintf('Sources: %s%s', "\n", implode($logForward->sources, "\n")));
+        $this->say(sprintf('Sources: %s%s', "\n", implode("\n", $logForward->sources)));
         $this->say(sprintf('Health: %s', $logForward->health->summary));
     }
 }

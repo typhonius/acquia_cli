@@ -48,7 +48,7 @@ INFO;
                 $listResponse . PHP_EOL
             ],
             [
-                ['lf:info', 'devcloud:devcloud2', 'dev', 1234],
+                ['lf:info', 'devcloud:devcloud2', 'dev', '1234'],
                 $infoResponse . PHP_EOL,
             ]
         ];
