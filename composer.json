@@ -9,6 +9,7 @@
     ],
     "license": "MIT",
     "require": {
+        "php": ">=7.3",
         "typhonius/acquia-php-sdk-v2": "^2.0.0",
         "typhonius/acquia-logstream": "^0.5",
         "consolidation/robo": "^2",
