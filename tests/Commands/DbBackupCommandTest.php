@@ -97,7 +97,7 @@ TABLE;
 
         return [
             [
-                ['database:backup:restore', 'devcloud:devcloud2', 'dev', 'dbName', 1234],
+                ['database:backup:restore', 'devcloud:devcloud2', 'dev', 'dbName', '1234'],
                 '>  Restoring backup 1234 to dbName on Dev' . PHP_EOL
             ],
             [
@@ -117,7 +117,7 @@ TABLE;
                 $dbBackupList . PHP_EOL
             ],
             [
-                ['database:backup:link', 'devcloud:devcloud2', 'dev', 'dbName', 1234],
+                ['database:backup:link', 'devcloud:devcloud2', 'dev', 'dbName', '1234'],
                 $dbLink . PHP_EOL
             ],
         ];

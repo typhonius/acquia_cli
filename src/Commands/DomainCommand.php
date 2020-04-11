@@ -79,8 +79,8 @@ class DomainCommand extends AcquiaCommand
                     $domain->hostname,
                     $domain->flags->active ? '✓' : '',
                     $domain->flags->dns_resolves ? '✓' : '',
-                    implode($domain->ip_addresses, "\n"),
-                    implode($domain->cnames, "\n"),
+                    implode("\n", $domain->ip_addresses),
+                    implode("\n", $domain->cnames),
                 ],
                 ]
             );

@@ -49,7 +49,7 @@ class SslCertificateCommand extends AcquiaCommand
                     [
                         $certificate->id,
                         $certificate->label,
-                        implode($certificate->domains, "\n"),
+                        implode("\n", $certificate->domains),
                         $certificate->expires_at,
                         $certificate->flags->active ? '✓' : '',
                     ],
