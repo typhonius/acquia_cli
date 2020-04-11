@@ -18,7 +18,8 @@ class SetupCommand extends Tasks
      * Performs a check of the config files and provides a view of the parameters provided. Allows the user to create
      * new config files with correct parameters.
      *
-     * @command setup
+     * @command setup:config
+     * @aliases setup
      */
     public function setup(Config $config)
     {
