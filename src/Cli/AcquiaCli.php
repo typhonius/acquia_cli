@@ -28,7 +28,7 @@ class AcquiaCli
 
     private $runner;
 
-    const NAME = 'AcquiaCli';
+    public const NAME = 'AcquiaCli';
 
     /**
      * AcquiaCli constructor.

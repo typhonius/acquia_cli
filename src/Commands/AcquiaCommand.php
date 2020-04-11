@@ -40,27 +40,27 @@ abstract class AcquiaCommand extends Tasks
     /**
      * Regex for a valid UUID string.
      */
-    const UUIDV4 = '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i';
+    public const UUIDV4 = '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i';
 
     /**
      * Task response from API indicates failure.
      */
-    const TASKFAILED = 'failed';
+    protected const TASKFAILED = 'failed';
 
     /**
      * Task response from API indicates completion.
      */
-    const TASKCOMPLETED = 'completed';
+    protected const TASKCOMPLETED = 'completed';
 
     /**
      * Task response from API indicates started.
      */
-    const TASKSTARTED = 'started';
+    protected const TASKSTARTED = 'started';
 
     /**
      * Task response from API indicates in progress.
      */
-    const TASKINPROGRESS = 'in-progress';
+    protected const TASKINPROGRESS = 'in-progress';
 
     /**
      * AcquiaCommand constructor.
