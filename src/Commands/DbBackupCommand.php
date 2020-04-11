@@ -13,7 +13,7 @@ use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\ProgressBar;
 
 /**
- * Class DomainCommand
+ * Class DbBackupCommand
  *
  * @package AcquiaCli\Commands
  */

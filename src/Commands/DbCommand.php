@@ -12,7 +12,7 @@ use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Output\BufferedOutput;
 
 /**
- * Class DomainCommand
+ * Class DbCommand
  *
  * @package AcquiaCli\Commands
  */

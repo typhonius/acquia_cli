@@ -9,7 +9,7 @@ use AcquiaCloudApi\Endpoints\Organizations;
 use Symfony\Component\Console\Helper\Table;
 
 /**
- * Class TasksCommand
+ * Class NotificationsCommand
  *
  * @package AcquiaCli\Commands
  */
