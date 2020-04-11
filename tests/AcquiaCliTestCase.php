@@ -213,6 +213,10 @@ abstract class AcquiaCliTestCase extends TestCase
             '/applications/a47ac10b-58cc-4372-a567-0e02b2c3d470/notifications' => [
                 'get' => 'Notifications/getAllNotifications.json'
             ],
+            '/applications/a47ac10b-58cc-4372-a567-0e02b2c3d470/ides' => [
+                'get' => 'Ides/getAllIdes.json',
+                'post' => 'Ides/createIde.json'
+            ],
             '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470' => [
                 'delete' => 'Environments/deleteCDEnvironment.json'
             ],
@@ -346,6 +350,9 @@ abstract class AcquiaCliTestCase extends TestCase
             '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/logs/apache-access' => [
                 'get' => 'Logs/downloadLog.dat',
                 'post' => 'Logs/createLogSnapshot.json'
+            ],
+            '/ides/215824ff-272a-4a8c-9027-df32ed1d68a9' => [
+                'delete' => 'Ides/deleteIde.json'
             ],
             '/teams/teamUuid/invites' => [
                 'post' => 'Teams/invite.json'
