@@ -266,4 +266,30 @@ class DbBackupCommand extends AcquiaCommand
         $this->writeln(PHP_EOL);
         $this->say(sprintf('Database backup downloaded to %s', $location));
     }
+
+    /**
+     * Deletes a database backup.
+     *
+     * @param string $uuid
+     * @param string $environment
+     * @param string $dbName
+     * @param int    $backupId
+     *
+     * @command database:backup:delete
+     * @aliases db:backup:delete
+     */
+    public function dbBackupDelete(DatabaseBackups $databaseBackupsAdapter, $uuid, $environment, $dbName, $backupId)
+    {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+
+        if (
+            $this->confirm(
+                sprintf('Are you sure you want to delete backup id %s in %s?', $backupId, $environment->label)
+            )
+        ) {
+            $this->say(sprintf('Deleting backup %s to %s on %s', $backupId, $dbName, $environment->label));
+            $response = $databaseBackupsAdapter->delete($environment->uuid, $dbName, $backupId);
+            $this->waitForNotification($response);
+        }
+    }
 }

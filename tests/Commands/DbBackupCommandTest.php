@@ -120,6 +120,10 @@ TABLE;
                 ['database:backup:link', 'devcloud:devcloud2', 'dev', 'dbName', '1234'],
                 $dbLink . PHP_EOL
             ],
+            [
+                ['database:backup:delete', 'devcloud:devcloud2', 'dev', 'dbName', '1234'],
+                '>  Deleting backup 1234 to dbName on Dev' . PHP_EOL
+            ],
         ];
     }
 }

@@ -351,6 +351,9 @@ abstract class AcquiaCliTestCase extends TestCase
                 'get' => 'Logs/downloadLog.dat',
                 'post' => 'Logs/createLogSnapshot.json'
             ],
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/databases/dbName/backups/1234' => [
+                'delete' => 'DatabaseBackups/deleteDatabaseBackup.json'
+            ],
             '/ides/215824ff-272a-4a8c-9027-df32ed1d68a9' => [
                 'delete' => 'Ides/deleteIde.json'
             ],
