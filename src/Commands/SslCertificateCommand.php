@@ -70,6 +70,7 @@ class SslCertificateCommand extends AcquiaCommand
      * @command ssl:info
      */
     public function sslCertificateInfo(
+        OutputInterface $output,
         SslCertificates $certificatesAdapter,
         $uuid,
         $environment,
@@ -132,5 +133,38 @@ class SslCertificateCommand extends AcquiaCommand
             $response = $certificatesAdapter->disable($environment->uuid, $certificateId);
             $this->waitForNotification($response);
         }
+    }
+
+    /**
+     * Install an SSL certificate.
+     *
+     * @param string $uuid
+     * @param string $environment
+     * @param string $label
+     * @param string $cert
+     * @param string $key
+     * @param null|string $ca
+     *
+     * @command ssl:create
+     */
+    public function sslCertificateCreate(
+        OutputInterface $output,
+        SslCertificates $certificatesAdapter,
+        $uuid,
+        $environment,
+        $label,
+        $cert,
+        $key,
+        $ca = null
+    ) {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+        $this->say(sprintf('Installing new certificate (%s)', $label));
+        $certificatesAdapter->create(
+            $environment->uuid,
+            $label,
+            $cert,
+            $key,
+            $ca
+        );
     }
 }
