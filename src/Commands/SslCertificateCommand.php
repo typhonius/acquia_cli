@@ -133,4 +133,40 @@ class SslCertificateCommand extends AcquiaCommand
             $this->waitForNotification($response);
         }
     }
+
+    /**
+     * Install an SSL certificate.
+     *
+     * @param string $uuid
+     * @param string $environment
+     * @param string $label
+     * @param string $cert
+     * @param string $key
+     * @param null|string $ca
+     *
+     * @command ssl:create
+     */
+    public function sslCertificateCreate(
+        SslCertificates $certificatesAdapter,
+        $uuid,
+        $environment,
+        $label,
+        $cert,
+        $key,
+        $ca = null
+    ) {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+
+        if ($this->confirm('Are you sure you want to install this new SSL certificate?')) {
+            $this->say(sprintf('Installing new certificate %s on %s environment', $label, $environment->label));
+            $response = $certificatesAdapter->create(
+                $environment->uuid,
+                $label,
+                $cert,
+                $key,
+                $ca
+            );
+            $this->waitForNotification($response);
+        }
+    }
 }

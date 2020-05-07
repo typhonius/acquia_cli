@@ -63,6 +63,16 @@ INFO;
             [
                 ['ssl:disable', 'devcloud:devcloud2', 'dev', '1234'],
                 '>  Disabling certificate on Dev environment' . PHP_EOL,
+            ],
+            [
+                ['ssl:create',
+                    'devcloud:devcloud2',
+                    'dev',
+                    'My_Cert',
+                    '"-----BEGIN CERTIFICATE-----abc123....-----END CERTIFICATE-----"',
+                    '"-----BEGIN RSA PRIVATE KEY-----secret....-----END RSA PRIVATE KEY-----"',
+                    '"-----BEGIN CERTIFICATE-----123abc....-----END CERTIFICATE-----"'],
+                '>  Installing new certificate My_Cert on Dev environment' . PHP_EOL,
             ]
         ];
     }
