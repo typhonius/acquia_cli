@@ -55,6 +55,14 @@ INFO;
             [
                 ['ssl:info', 'devcloud:devcloud2', 'dev', '1234'],
                 $infoResponse . PHP_EOL,
+            ],
+            [
+                ['ssl:enable', 'devcloud:devcloud2', 'dev', '1234'],
+                '>  Enabling certificate on Dev environment' . PHP_EOL,
+            ],
+            [
+                ['ssl:disable', 'devcloud:devcloud2', 'dev', '1234'],
+                '>  Disabling certificate on Dev environment' . PHP_EOL,
             ]
         ];
     }

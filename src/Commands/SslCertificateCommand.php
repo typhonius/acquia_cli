@@ -70,7 +70,6 @@ class SslCertificateCommand extends AcquiaCommand
      * @command ssl:info
      */
     public function sslCertificateInfo(
-        OutputInterface $output,
         SslCertificates $certificatesAdapter,
         $uuid,
         $environment,
@@ -85,5 +84,53 @@ class SslCertificateCommand extends AcquiaCommand
         $this->writeln($certificate->ca);
         $this->yell('Private Key');
         $this->writeln($certificate->private_key);
+    }
+
+    /**
+     * Enables an SSL certificate.
+     *
+     * @param string $uuid
+     * @param string $environment
+     * @param int    $certificateId
+     *
+     * @command ssl:enable
+     */
+    public function sslCertificateEnable(
+        SslCertificates $certificatesAdapter,
+        $uuid,
+        $environment,
+        $certificateId
+    ) {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+
+        if ($this->confirm('Are you sure you want to enable this SSL certificate?')) {
+            $this->say(sprintf('Enabling certificate on %s environment', $environment->label));
+            $response = $certificatesAdapter->enable($environment->uuid, $certificateId);
+            $this->waitForNotification($response);
+        }
+    }
+
+    /**
+     * Disables an SSL certificate.
+     *
+     * @param string $uuid
+     * @param string $environment
+     * @param int    $certificateId
+     *
+     * @command ssl:disable
+     */
+    public function sslCertificateDisable(
+        SslCertificates $certificatesAdapter,
+        $uuid,
+        $environment,
+        $certificateId
+    ) {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+
+        if ($this->confirm('Are you sure you want to disable this SSL certificate?')) {
+            $this->say(sprintf('Disabling certificate on %s environment', $environment->label));
+            $response = $certificatesAdapter->disable($environment->uuid, $certificateId);
+            $this->waitForNotification($response);
+        }
     }
 }
