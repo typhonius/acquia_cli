@@ -88,54 +88,6 @@ class SslCertificateCommand extends AcquiaCommand
     }
 
     /**
-     * Enables an SSL certificate.
-     *
-     * @param string $uuid
-     * @param string $environment
-     * @param int    $certificateId
-     *
-     * @command ssl:enable
-     */
-    public function sslCertificateEnable(
-        SslCertificates $certificatesAdapter,
-        $uuid,
-        $environment,
-        $certificateId
-    ) {
-        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
-
-        if ($this->confirm('Are you sure you want to enable this SSL certificate?')) {
-            $this->say(sprintf('Enabling certificate on %s environment', $environment->label));
-            $response = $certificatesAdapter->enable($environment->uuid, $certificateId);
-            $this->waitForNotification($response);
-        }
-    }
-
-    /**
-     * Disables an SSL certificate.
-     *
-     * @param string $uuid
-     * @param string $environment
-     * @param int    $certificateId
-     *
-     * @command ssl:disable
-     */
-    public function sslCertificateDisable(
-        SslCertificates $certificatesAdapter,
-        $uuid,
-        $environment,
-        $certificateId
-    ) {
-        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
-
-        if ($this->confirm('Are you sure you want to disable this SSL certificate?')) {
-            $this->say(sprintf('Disabling certificate on %s environment', $environment->label));
-            $response = $certificatesAdapter->disable($environment->uuid, $certificateId);
-            $this->waitForNotification($response);
-        }
-    }
-
-    /**
      * Install an SSL certificate.
      *
      * @param string $uuid
@@ -167,4 +119,74 @@ class SslCertificateCommand extends AcquiaCommand
             $ca
         );
     }
+
+    /**
+     * Enables an SSL certificate.
+     *
+     * @param string $uuid
+     * @param string $environment
+     * @param int    $certificateId
+     *
+     * @command ssl:enable
+     */
+    public function sslCertificateEnable(
+        SslCertificates $certificatesAdapter,
+        $uuid,
+        $environment,
+        $certificateId
+    ) {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+
+        if ($this->confirm('Are you sure you want to enable this SSL certificate?')) {
+            $this->say(sprintf('Enabling certificate on %s environment', $environment->label));
+            $response = $certificatesAdapter->enable($environment->uuid, $certificateId);
+            $this->waitForNotification($response);
+        }
+    }
+
+    /**
+     * Desactivates an active SSL certificate.
+     *
+     * @param string $uuid
+     * @param string $environment
+     * @param int    $certificateId
+     *
+     * @command ssl:disable
+     */
+    public function disable(
+        OutputInterface $output,
+        SslCertificates $certificatesAdapter,
+        $uuid,
+        $environment,
+        $certificateId
+    ) {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+        $certificate = $certificatesAdapter->get($environment->uuid, $certificateId);
+        $this->say(sprintf('Disabling certificate (%s)', $certificate->label));
+        $certificatesAdapter->disable($environment->uuid, $certificateId);
+    }
+
+    /**
+     * Activates an active SSL certificate.
+     *
+     * @param string $uuid
+     * @param string $environment
+     * @param int    $certificateId
+     *
+     * @command ssl:enable
+     */
+    public function enable(
+        OutputInterface $output,
+        SslCertificates $certificatesAdapter,
+        $uuid,
+        $environment,
+        $certificateId
+    ) {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+        $certificate = $certificatesAdapter->get($environment->uuid, $certificateId);
+        $this->say(sprintf('Enabling certificate (%s)', $certificate->label));
+        $certificatesAdapter->enable($environment->uuid, $certificateId);
+    }
+
+
 }
