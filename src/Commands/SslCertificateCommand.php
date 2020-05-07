@@ -46,13 +46,13 @@ class SslCertificateCommand extends AcquiaCommand
             $table
                 ->addRows(
                     [
-                    [
-                        $certificate->id,
-                        $certificate->label,
-                        implode("\n", $certificate->domains),
-                        $certificate->expires_at,
-                        $certificate->flags->active ? '✓' : '',
-                    ],
+                        [
+                            $certificate->id,
+                            $certificate->label,
+                            implode("\n", $certificate->domains),
+                            $certificate->expires_at,
+                            $certificate->flags->active ? '✓' : '',
+                        ],
                     ]
                 );
         }
