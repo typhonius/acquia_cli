@@ -425,6 +425,12 @@ abstract class AcquiaCliTestCase extends TestCase
             ],
             '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/ssl/certificates/1234' => [
                 'get' => 'SslCertificates/getSslCertificate.json'
+            ],
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/ssl/certificates/1234/actions/activate' => [
+                'post' => 'SslCertificates/activateSslCertificate.json'
+            ],
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/ssl/certificates/1234/actions/deactivate' => [
+                'post' => 'SslCertificates/deactivateSslCertificate.json'
             ]
         ];
     }
