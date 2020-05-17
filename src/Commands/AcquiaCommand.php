@@ -186,7 +186,7 @@ abstract class AcquiaCommand extends Tasks
 
             $notification = $notificationAdapter->get($notificationUuid);
 
-            $progress->setMessage('Notification ' . $notification->status);
+            $progress->setMessage(sprintf('Notification %s: %s', $notification->uuid, $notification->status));
             switch ($notification->status) {
                 case self::TASKFAILED:
                     // If there's one failure we should throw an exception
