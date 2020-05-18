@@ -68,11 +68,13 @@ INFO;
                 ['ssl:create',
                     'devcloud:devcloud2',
                     'dev',
-                    'My_Cert',
+                    'Test Certificate 2',
                     '"-----BEGIN CERTIFICATE-----abc123....-----END CERTIFICATE-----"',
                     '"-----BEGIN RSA PRIVATE KEY-----secret....-----END RSA PRIVATE KEY-----"',
-                    '"-----BEGIN CERTIFICATE-----123abc....-----END CERTIFICATE-----"'],
-                '>  Installing new certificate My_Cert on Dev environment' . PHP_EOL,
+                    '"-----BEGIN CERTIFICATE-----123abc....-----END CERTIFICATE-----"',
+                    '--enable'],
+                '>  Installing new certificate Test Certificate 2 on Dev environment' . PHP_EOL .
+                '>  Enabling certificate on Dev environment' . PHP_EOL,
             ]
         ];
     }

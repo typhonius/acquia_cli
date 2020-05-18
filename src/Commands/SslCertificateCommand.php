@@ -2,8 +2,8 @@
 
 namespace AcquiaCli\Commands;
 
-use AcquiaCloudApi\Response\EnvironmentResponse;
 use AcquiaCloudApi\Endpoints\SslCertificates;
+use AcquiaCloudApi\Response\SslCertificateResponse;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -12,8 +12,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package AcquiaCli\Commands
  */
-class SslCertificateCommand extends AcquiaCommand
-{
+class SslCertificateCommand extends AcquiaCommand {
 
     /**
      * Lists SSL Certificates.
@@ -65,7 +64,7 @@ class SslCertificateCommand extends AcquiaCommand
      *
      * @param string $uuid
      * @param string $environment
-     * @param int    $certificateId
+     * @param int $certificateId
      *
      * @command ssl:info
      */
@@ -91,7 +90,7 @@ class SslCertificateCommand extends AcquiaCommand
      *
      * @param string $uuid
      * @param string $environment
-     * @param int    $certificateId
+     * @param int $certificateId
      *
      * @command ssl:enable
      */
@@ -115,7 +114,7 @@ class SslCertificateCommand extends AcquiaCommand
      *
      * @param string $uuid
      * @param string $environment
-     * @param int    $certificateId
+     * @param int $certificateId
      *
      * @command ssl:disable
      */
@@ -143,7 +142,7 @@ class SslCertificateCommand extends AcquiaCommand
      * @param string $cert
      * @param string $key
      * @param null|string $ca
-     *
+     * @option enable Enable certification after creation.
      * @command ssl:create
      */
     public function sslCertificateCreate(
@@ -153,7 +152,8 @@ class SslCertificateCommand extends AcquiaCommand
         $label,
         $cert,
         $key,
-        $ca = null
+        $ca = null,
+        $options = ['enable']
     ) {
         $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
 
@@ -166,7 +166,22 @@ class SslCertificateCommand extends AcquiaCommand
                 $key,
                 $ca
             );
+
             $this->waitForNotification($response);
+
+            if ($options['enable']) {
+                $certificates = $certificatesAdapter->getAll($environment->uuid);
+                foreach ($certificates as $certificate) {
+                    /**
+                     * @var SslCertificateResponse $certificate
+                     */
+                    if ($certificate->label == $label && !$certificate->flags->active) {
+                        $this->say(sprintf('Enabling certificate on %s environment', $environment->label));
+                        $response = $certificatesAdapter->enable($environment->uuid, $certificate->id);
+                        $this->waitForNotification($response);
+                    }
+                }
+            }
         }
     }
 }
