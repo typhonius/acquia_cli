@@ -86,18 +86,22 @@ class NotificationsCommand extends AcquiaCommand
             $createdDate = new \DateTime($notification->created_at);
             $createdDate->setTimezone($timezone);
 
-            $author = $notification->context->author->uuid;
+            $rows = [
+                    $notification->uuid,
+                    $createdDate->format($format),
+                    $notification->label,
+                    $notification->status,
+            ];
+
+            if ($options['full']) {
+                $author = $notification->context->author->uuid;
+                array_splice($rows, 1, 0, $uuids[$author]);
+            }
 
             $table
                 ->addRows(
                     [
-                    [
-                        $notification->uuid,
-                        $uuids[$author],
-                        $createdDate->format($format),
-                        $notification->label,
-                        $notification->status,
-                    ],
+                        $rows
                     ]
                 );
         }
