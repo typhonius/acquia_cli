@@ -5,8 +5,10 @@ namespace AcquiaCli\Commands;
 use AcquiaCli\Cli\Config;
 use AcquiaCloudApi\Connector\Client;
 use AcquiaCloudApi\Endpoints\Notifications;
+use AcquiaCloudApi\Endpoints\Applications;
 use AcquiaCloudApi\Endpoints\Organizations;
 use Symfony\Component\Console\Helper\Table;
+use AcquiaCloudApi\Exception\ApiErrorException;
 
 /**
  * Class NotificationsCommand
@@ -26,16 +28,20 @@ class NotificationsCommand extends AcquiaCommand
      *                       A leading "~" in the field indicates the field should be sorted in a descending order.
      *
      * @command notification:list
+     * @option full Whether to show more details in the notication list (slower).
      * @aliases n:l
      */
     public function notificationList(
         Config $config,
         Client $client,
+        Applications $applicationsAdapter,
+        Organizations $organizationsAdapter,
         Notifications $notificationsAdapter,
         $uuid,
         $limit = 50,
         $filter = null,
-        $sort = '~created_at'
+        $sort = '~created_at',
+        $options = ['full']
     ) {
 
         // Allows for limits and sort criteria.
@@ -58,15 +64,36 @@ class NotificationsCommand extends AcquiaCommand
         $format = $extraConfig['format'];
         $timezone = new \DateTimeZone($tz);
 
+
+        if ($options['full']) {
+            $table->setHeaders(['UUID', 'User', 'Created', 'Name', 'Status']);
+
+            $application = $applicationsAdapter->get($uuid);
+            $orgUuid = $application->organization->uuid;
+    
+            $admins = $organizationsAdapter->getAdmins($orgUuid);
+            $members = $organizationsAdapter->getMembers($orgUuid);
+    
+            $users = $admins->getArrayCopy() + $members->getArrayCopy();
+
+            $uuids = array_reduce($users, function ($result, $member) {
+                $result[$member->uuid] = $member->mail;
+                return $result;
+            }, []);
+        }
+
         foreach ($notifications as $notification) {
             $createdDate = new \DateTime($notification->created_at);
             $createdDate->setTimezone($timezone);
+
+            $author = $notification->context->author->uuid;
 
             $table
                 ->addRows(
                     [
                     [
                         $notification->uuid,
+                        $uuids[$author],
                         $createdDate->format($format),
                         $notification->label,
                         $notification->status,
