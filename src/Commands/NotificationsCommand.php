@@ -28,7 +28,7 @@ class NotificationsCommand extends AcquiaCommand
      *                       A leading "~" in the field indicates the field should be sorted in a descending order.
      *
      * @command notification:list
-     * @option full Whether to show more details in the notication list (slower).
+     * @option details Whether to show more details in the notication list (slower).
      * @aliases n:l
      */
     public function notificationList(
@@ -41,7 +41,7 @@ class NotificationsCommand extends AcquiaCommand
         $limit = 50,
         $filter = null,
         $sort = '~created_at',
-        $options = ['full']
+        $options = ['details']
     ) {
 
         // Allows for limits and sort criteria.
@@ -64,8 +64,24 @@ class NotificationsCommand extends AcquiaCommand
         $format = $extraConfig['format'];
         $timezone = new \DateTimeZone($tz);
 
-
-        if ($options['full']) {
+        /**
+         * If we are using the details option, override the headers as we will
+         * be using a different number of columns.
+         *
+         * We will also be making THREE additional API calls which is why details
+         * nestled in as an option rather than the default, with a warning that
+         * it will be slower.
+         *
+         * We have to get both admins and members as separate API calls as there
+         * is no single call to source all users in an organisation.
+         *
+         * The array_reduce() allows us to go from an ArrayObject of MemberResponses
+         * to a simple associative array keyed on user UUID with a value of their email.
+         *
+         * @TODO find a way to store the application object further up the chain
+         * as we can call on that where needed.
+         */
+        if ($options['details']) {
             $table->setHeaders(['UUID', 'User', 'Created', 'Name', 'Status']);
 
             $application = $applicationsAdapter->get($uuid);
@@ -75,7 +91,6 @@ class NotificationsCommand extends AcquiaCommand
             $members = $organizationsAdapter->getMembers($orgUuid);
     
             $users = $admins->getArrayCopy() + $members->getArrayCopy();
-
             $uuids = array_reduce($users, function ($result, $member) {
                 $result[$member->uuid] = $member->mail;
                 return $result;
@@ -93,9 +108,16 @@ class NotificationsCommand extends AcquiaCommand
                     $notification->status,
             ];
 
-            if ($options['full']) {
+            /**
+             * Again only fires if we've used the details option.
+             * There is a chance that an operation will occur without a user attached.
+             * This could happen if an automated task/Acquia support person does something.
+             * The code here finds the user by UUID and presents their email.
+             */
+            if ($options['details']) {
                 $author = $notification->context->author->uuid;
-                array_splice($rows, 1, 0, $uuids[$author]);
+                $mail = isset($uuids[$author]) ? $uuids[$author] : 'N/A';
+                array_splice($rows, 1, 0, $mail);
             }
 
             $table
@@ -119,8 +141,14 @@ class NotificationsCommand extends AcquiaCommand
      * @aliases n:i
      * @throws  \Exception
      */
-    public function notificationInfo(Config $config, Notifications $notificationsAdapter, $uuid, $notificationUuid)
-    {
+    public function notificationInfo(
+        Config $config,
+        Applications $applicationsAdapter,
+        Organizations $organizationsAdapter,
+        Notifications $notificationsAdapter,
+        $uuid,
+        $notificationUuid
+    ) {
 
         $extraConfig = $config->get('extraconfig');
         $tz = $extraConfig['timezone'];
@@ -134,7 +162,21 @@ class NotificationsCommand extends AcquiaCommand
         $completedDate = new \DateTime($notification->completed_at);
         $completedDate->setTimezone($timezone);
 
+        // @TODO Find a way to store the application object earlier to remove this call.
+        $application = $applicationsAdapter->get($uuid);
+        $orgUuid = $application->organization->uuid;
+        $admins = $organizationsAdapter->getAdmins($orgUuid);
+        $members = $organizationsAdapter->getMembers($orgUuid);
+        $users = $admins->getArrayCopy() + $members->getArrayCopy();
+        $uuids = array_reduce($users, function ($result, $member) {
+            $result[$member->uuid] = $member->mail;
+            return $result;
+        }, []);
+        $author = $notification->context->author->uuid;
+        $mail = isset($uuids[$author]) ? $uuids[$author] : 'N/A';
+
         $this->say(sprintf('ID: %s', $notification->uuid));
+        $this->say(sprintf('User: %s', $mail));
         $this->say(sprintf('Event: %s', $notification->event));
         $this->say(sprintf('Description: %s', htmlspecialchars_decode($notification->description)));
         $this->say(sprintf('Status: %s', $notification->status));
