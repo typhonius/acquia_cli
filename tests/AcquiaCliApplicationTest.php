@@ -139,6 +139,14 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
         $this->assertSame($expectedQuery, $actualQuery);
     }
 
+    public function testRealm()
+    {
+        $command = ['application:info', 'devcloud2', '--realm=devcloud'];
+        $response = $this->execute($command);
+        // We're not looking to test the complete output here, just that we get one.
+        $this->assertStringContainsString('24-a47ac10b-58cc-4372-a567-0e02b2c3d470', $response);
+    }
+
     public function testCloudApi()
     {
 
