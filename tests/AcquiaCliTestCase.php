@@ -218,7 +218,8 @@ abstract class AcquiaCliTestCase extends TestCase
                 'post' => 'Ides/createIde.json'
             ],
             '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470' => [
-                'delete' => 'Environments/deleteCDEnvironment.json'
+                'delete' => 'Environments/deleteCDEnvironment.json',
+                'put' => 'Environments/updateEnvironment.json'
             ],
             '/environments/32-a47ac10b-58cc-4372-a567-0e02b2c3d470/databases/database1/backups' => [
                 'get' => 'DatabaseBackups/getAllDatabaseBackups.json',

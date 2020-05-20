@@ -231,4 +231,33 @@ class EnvironmentsCommand extends AcquiaCommand
             $this->waitForNotification($response);
         }
     }
+
+    /**
+     * Configures an environment.
+     *
+     * Allowed values for configuration update are:
+     * version: The PHP version.
+     * max_execution_time: The maximum execution time for PHP scripts.
+     * memory_limit: The PHP memory limit.
+     * apcu: The APCu memory limit.
+     * max_input_vars: The maximum number of input variables.
+     * max_post_size: The maximum POST size.
+     * sendmail_path: The path and any options required for sendmail.
+     *
+     * @param string $uuid
+     * @param string $environment
+     * @param string $key
+     * @param string $value
+     *
+     * @command environment:configure
+     * @aliases env:config,e:c,environment:config
+     */
+    public function environmentConfigure(Environments $environmentsAdapter, $uuid, $environment, $key, $value)
+    {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+        if ($this->confirm(sprintf('Are you sure you want to update the %s environment with [%s => %s]?', $environment->label, $key, $value))) {
+            $this->say(sprintf('Configuring %s with [%s => %s]', $environment->label, $key, $value));
+            $environmentsAdapter->update($environment->uuid, [$key => $value]);
+        }
+    }
 }

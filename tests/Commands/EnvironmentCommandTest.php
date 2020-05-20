@@ -99,6 +99,10 @@ TABLE;
             [
                 ['environment:delete', 'devcloud:devcloud2', 'dev'],
                 '>  Deleting Dev environment' . PHP_EOL
+            ],
+            [
+                ['environment:configure', 'devcloud:devcloud2', 'dev', 'version', '7.4'],
+                '>  Configuring Dev with [version => 7.4]' . PHP_EOL
             ]
         ];
     }
