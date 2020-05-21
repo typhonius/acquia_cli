@@ -63,9 +63,14 @@ Alternatively, follow the below steps for a manual installation.
 1. Add your Acquia key and secret to the `acquiacli.yml` file.
 
 ### Environment Variables
-Environmment variables can be used to store and provide the API key and secret, removing the need for configuration files.
+Environmment variables can be used to store and provide the API key and secret, removing the need for configuration files. Refer to the values in `default.acquiacli.yml` for examples of how to configure these environment variables.
 * `ACQUIACLI_KEY` The environment variable for the API key
 * `ACQUIACLI_SECRET` The environment variable for the API secret
+* `ACQUIACLI_TIMEZONE` Use [a supported PHP timezone](https://secure.php.net/manual/en/timezones.php) to see times in your locale.
+* `ACQUIACLI_FORMAT` Use [a supported PHP date string](https://secure.php.net/manual/en/function.date.php) to show times in an alternate format.
+* `ACQUIACLI_TASKWAIT` A number in seconds to wait before hitting the API to check the status of a task.
+* `ACQUIACLI_TIMEOUT` A number in seconds before a task is considered to have timed out.
+
 
 If environment variables are to be used, these will need to be placed in the relevant bash file on Linux/Mac e.g. `$HOME/.bashrc` or `$HOME/.bash_profile` in the following format.
 ```
