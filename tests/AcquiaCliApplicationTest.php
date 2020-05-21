@@ -147,6 +147,20 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
         $this->assertStringContainsString('24-a47ac10b-58cc-4372-a567-0e02b2c3d470', $response);
     }
 
+    public function testVerbosity()
+    {
+        $command = ['domain:delete', 'devcloud:devcloud2', 'test', 'domain', '-v'];
+        $response = $this->execute($command);
+
+        $expected = <<< EXPECTED
+>  Ignoring confirmation question as --yes option passed.
+>  Removing domain from environment Stage
+>  Skipping wait for notification.
+EXPECTED;
+
+        $this->assertSame($expected . PHP_EOL, $response);
+    }
+
     public function testCloudApi()
     {
 
