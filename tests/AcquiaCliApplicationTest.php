@@ -9,6 +9,7 @@ use AcquiaCli\Cli\AcquiaCli;
 use Symfony\Component\Console\Output\BufferedOutput;
 use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\Component\Console\Command\LockableTrait;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class AcquiaCliApplicationTest extends AcquiaCliTestCase
 {
@@ -149,9 +150,19 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
 
     public function testVerbosity()
     {
-        $command = ['domain:delete', 'devcloud:devcloud2', 'test', 'domain', '-v'];
-        $response = $this->execute($command);
+        $config = new Config($this->root);
+        $command = ['acquiacli', '--yes', '--no-wait', 'domain:delete', 'devcloud:devcloud2', 'test', 'domain'];
+        $input = new ArgvInput($command);
+        $output = new BufferedOutput();
 
+        // Spoof the use of the -v flag here by directly setting the output verbosity.
+        // If we do not do this, all subsequent tests run with -v which is weird.
+        $output->setVerbosity(OutputInterface::VERBOSITY_VERBOSE);
+        $app = new AcquiaCli($config, $this->client, $input, $output);
+        $app->run($input, $output);
+        $output->setVerbosity(OutputInterface::VERBOSITY_NORMAL);
+
+        $response = $output->fetch();
         $expected = <<< EXPECTED
 >  Ignoring confirmation question as --yes option passed.
 >  Removing domain from environment Stage
@@ -159,6 +170,8 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
 EXPECTED;
 
         $this->assertSame($expected . PHP_EOL, $response);
+
+        \Robo\Robo::unsetContainer();
     }
 
     public function testCloudApi()
