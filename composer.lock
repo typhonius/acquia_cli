@@ -1901,16 +1901,16 @@
         },
         {
             "name": "symfony/lock",
-            "version": "v4.4.7",
+            "version": "v4.4.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/lock.git",
-                "reference": "103cb1fe294d484f2e6972da66558c405a97cda8"
+                "reference": "751b1e06abf561a95db96841d1434f632c6e3013"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/lock/zipball/103cb1fe294d484f2e6972da66558c405a97cda8",
-                "reference": "103cb1fe294d484f2e6972da66558c405a97cda8",
+                "url": "https://api.github.com/repos/symfony/lock/zipball/751b1e06abf561a95db96841d1434f632c6e3013",
+                "reference": "751b1e06abf561a95db96841d1434f632c6e3013",
                 "shasum": ""
             },
             "require": {
@@ -1922,7 +1922,6 @@
             },
             "require-dev": {
                 "doctrine/dbal": "~2.5",
-                "mongodb/mongodb": "~1.1",
                 "predis/predis": "~1.0"
             },
             "type": "library",
@@ -1963,7 +1962,21 @@
                 "redlock",
                 "semaphore"
             ],
-            "time": "2020-03-27T16:54:36+00:00"
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2020-04-12T11:06:58+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
