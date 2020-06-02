@@ -12,7 +12,8 @@ use Symfony\Component\Console\Output\OutputInterface;
  *
  * @package AcquiaCli\Commands
  */
-class SslCertificateCommand extends AcquiaCommand {
+class SslCertificateCommand extends AcquiaCommand
+{
 
     /**
      * Lists SSL Certificates.
@@ -134,14 +135,14 @@ class SslCertificateCommand extends AcquiaCommand {
     }
 
     /**
-     * Install an SSL certificate.
+     * Install an SSL certificate
      *
      * @param string $uuid
      * @param string $environment
      * @param string $label
-     * @param string $cert
-     * @param string $key
-     * @param null|string $ca
+     * @param string $cert The Certificate file path
+     * @param string $key The Key file path
+     * @param null|string $ca The Chain file path
      * @option enable Enable certification after creation.
      * @command ssl:create
      */
@@ -159,6 +160,24 @@ class SslCertificateCommand extends AcquiaCommand {
 
         if ($this->confirm('Are you sure you want to install this new SSL certificate?')) {
             $this->say(sprintf('Installing new certificate %s on %s environment', $label, $environment->label));
+
+            if (!file_exists($cert) or !is_readable($cert)) {
+                throw new \Exception(sprintf('Cannot open %s file', $cert));
+            }
+            $cert = file_get_contents($cert);
+
+            if (!file_exists($key) or !is_readable($key)) {
+                throw new \Exception(sprintf('Cannot open %s file', $key));
+            }
+            $key = file_get_contents($key);
+
+            if ($ca != null) {
+                if (!file_exists($ca) or !is_readable($ca)) {
+                    throw new \Exception(sprintf('Cannot open %s ca file', $ca));
+                }
+                $ca = file_get_contents($ca);
+            }
+
             $response = $certificatesAdapter->create(
                 $environment->uuid,
                 $label,
