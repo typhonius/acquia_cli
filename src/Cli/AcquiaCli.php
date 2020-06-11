@@ -52,13 +52,11 @@ class AcquiaCli
         // Configure global client options to set user agent.
         $client->addOption('headers', [
             'User-Agent' => sprintf("%s/%s (https://github.com/typhonius/acquia_cli)", self::NAME, $version)
-            ]);
+        ]);
 
         // Create application.
         $this->setConfig($config);
-
         $application = new Application(self::NAME, $version);
-
 
         $application->getDefinition()->addOptions(
             [
