@@ -147,7 +147,11 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
         $this->execute($command);
 
         $versionFile = sprintf('%s/VERSION', $this->root);
-        $version = trim(file_get_contents($versionFile));
+        if ($file = @file_get_contents($versionFile)) {
+            $version = trim($file);
+        } else {
+            throw new \Exception('No VERSION file');
+        }
         $expectedUserAgent = sprintf("%s/%s (https://github.com/typhonius/acquia_cli)", 'AcquiaCli', $version);
 
         $actualOptions = $this->client->getOptions();
