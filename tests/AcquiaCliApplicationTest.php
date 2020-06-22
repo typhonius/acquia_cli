@@ -140,6 +140,25 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
         $this->assertSame($expectedQuery, $actualQuery);
     }
 
+    public function testClientUserAgent()
+    {
+        $command = ['application:list'];
+
+        $this->execute($command);
+
+        $versionFile = sprintf('%s/VERSION', $this->root);
+        if ($file = @file_get_contents($versionFile)) {
+            $version = trim($file);
+        } else {
+            throw new \Exception('No VERSION file');
+        }
+        $expectedUserAgent = sprintf("%s/%s (https://github.com/typhonius/acquia_cli)", 'AcquiaCli', $version);
+
+        $actualOptions = $this->client->getOptions();
+        $actualUserAgent = $actualOptions['headers']['User-Agent'][0];
+        $this->assertSame($expectedUserAgent, $actualUserAgent);
+    }
+
     public function testRealm()
     {
         $command = ['application:info', 'devcloud2', '--realm=devcloud'];
