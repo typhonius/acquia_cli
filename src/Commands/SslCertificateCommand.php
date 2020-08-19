@@ -195,12 +195,12 @@ class SslCertificateCommand extends AcquiaCommand
                      * @var SslCertificateResponse $certificate
                      */
                     if ($certificate->label == $label && !$certificate->flags->active) {
-                        $this->say(sprintf('Enabling certificate on %s environment', $environment->label));
+                        $this->say(sprintf('Enabling certificate %s on %s environment', $certificate->label, $environment->label));
                         $response = $certificatesAdapter->enable($environment->uuid, $certificate->id);
                         $this->waitForNotification($response);
                     }elseif ($certificate->flags->active){
                         // Make sure all the others certificates are disabled
-                        $this->say(sprintf('Disabling certificate on %s environment', $environment->label));
+                        $this->say(sprintf('Disabling certificate %s on %s environment', $certificate->label, $environment->label));
                         $response = $certificatesAdapter->disable($environment->uuid, $certificate->id);
                         $this->waitForNotification($response);
                     }

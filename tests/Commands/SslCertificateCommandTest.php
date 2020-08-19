@@ -75,7 +75,9 @@ INFO;
                     $sslCertificatesPath . '/ca.pem',
                     '--enable'],
                 '>  Installing new certificate Test Certificate 2 on Dev environment' . PHP_EOL .
-                '>  Enabling certificate on Dev environment' . PHP_EOL,
+                '>  Disabling certificate  on Dev environment' . PHP_EOL .
+                '>  Disabling certificate Test Certificate 1 on Dev environment' . PHP_EOL .
+                '>  Enabling certificate Test Certificate 2 on Dev environment' . PHP_EOL
             ],
             [
                 ['ssl:create',
