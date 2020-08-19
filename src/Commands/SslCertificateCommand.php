@@ -198,6 +198,11 @@ class SslCertificateCommand extends AcquiaCommand
                         $this->say(sprintf('Enabling certificate on %s environment', $environment->label));
                         $response = $certificatesAdapter->enable($environment->uuid, $certificate->id);
                         $this->waitForNotification($response);
+                    }elseif ($certificate->flags->active){
+                        // Make sure all the others certificates are disabled
+                        $this->say(sprintf('Disabling certificate on %s environment', $environment->label));
+                        $response = $certificatesAdapter->disable($environment->uuid, $certificate->id);
+                        $this->waitForNotification($response);
                     }
                 }
             }
