@@ -87,7 +87,6 @@ class DbBackupCommand extends AcquiaCommand
             $client->addQuery('filter', "name=${dbName}");
         }
         $databases = $databaseAdapter->getAll($uuid);
-        $client->clearQuery();
 
         $table = new Table($this->output());
         $table->setHeaders(['ID', 'Type', 'Timestamp']);
