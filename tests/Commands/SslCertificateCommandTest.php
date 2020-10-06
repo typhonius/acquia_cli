@@ -18,6 +18,7 @@ class SslCertificateCommandTest extends AcquiaCliTestCase
 
     public function sslCertificateProvider()
     {
+        $sslCertificatesPath = dirname(__DIR__) . "/Fixtures/SslCertificates";
 
         $listResponse = <<<LIST
 +----+--------------------+-----------------+--------------------------+--------+
@@ -63,6 +64,29 @@ INFO;
             [
                 ['ssl:disable', 'devcloud:devcloud2', 'dev', '1234'],
                 '>  Disabling certificate on Dev environment' . PHP_EOL,
+            ],
+            [
+                ['ssl:create',
+                    'devcloud:devcloud2',
+                    'dev',
+                    'Test Certificate 2',
+                    $sslCertificatesPath . '/cert.pem',
+                    $sslCertificatesPath . '/key.pem',
+                    $sslCertificatesPath . '/ca.pem',
+                    '--enable'],
+                '>  Installing new certificate Test Certificate 2 on Dev environment' . PHP_EOL .
+                '>  Disabling certificate  on Dev environment' . PHP_EOL .
+                '>  Disabling certificate Test Certificate 1 on Dev environment' . PHP_EOL .
+                '>  Enabling certificate Test Certificate 2 on Dev environment' . PHP_EOL
+            ],
+            [
+                ['ssl:create',
+                    'devcloud:devcloud2',
+                    'dev',
+                    'Test Certificate 2',
+                    $sslCertificatesPath . '/cert.pem',
+                    $sslCertificatesPath . '/key.pem'],
+                '>  Installing new certificate Test Certificate 2 on Dev environment' . PHP_EOL,
             ]
         ];
     }
