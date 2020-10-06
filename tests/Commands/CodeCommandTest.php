@@ -56,10 +56,6 @@ LIST;
                 $codeList . PHP_EOL
             ],
             [
-                ['code:list', 'devcloud:devcloud2', 'master'],
-                $codeList . PHP_EOL
-            ],
-            [
                 ['code:switch', 'devcloud:devcloud2', 'prod', 'master'],
                 $codeSwitch . PHP_EOL
             ],
