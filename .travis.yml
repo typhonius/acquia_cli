@@ -12,7 +12,7 @@ before_install:
 - composer self-update
 - composer validate --no-check-all --ansi
 install:
-- travis_retry composer install --no-interaction --prefer-source
+- travis_retry composer install --prefer-dist --no-dev --no-interaction
 script:
 - cd ${TRAVIS_BUILD_DIR}
 - composer test
