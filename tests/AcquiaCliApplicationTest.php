@@ -155,7 +155,7 @@ class AcquiaCliApplicationTest extends AcquiaCliTestCase
         $expectedUserAgent = sprintf("%s/%s (https://github.com/typhonius/acquia_cli)", 'AcquiaCli', $version);
 
         $actualOptions = $this->client->getOptions();
-        $actualUserAgent = $actualOptions['headers']['User-Agent'][0];
+        $actualUserAgent = $actualOptions['headers']['User-Agent'];
         $this->assertSame($expectedUserAgent, $actualUserAgent);
     }
 
