@@ -103,8 +103,8 @@ class SslCertificateCommand extends AcquiaCommand
     ) {
         $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
 
-        if ($this->confirm('Are you sure you want to enable this SSL certificate?')) {
-            $this->say(sprintf('Enabling certificate on %s environment', $environment->label));
+        if ($this->confirm('Are you sure you want to activate this SSL certificate? Activating this certificate will deactivate all other non-legacy certificates.')) {
+            $this->say(sprintf('Activating certificate on %s environment.', $environment->label));
             $response = $certificatesAdapter->enable($environment->uuid, $certificateId);
             $this->waitForNotification($response);
         }
@@ -128,7 +128,7 @@ class SslCertificateCommand extends AcquiaCommand
         $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
 
         if ($this->confirm('Are you sure you want to disable this SSL certificate?')) {
-            $this->say(sprintf('Disabling certificate on %s environment', $environment->label));
+            $this->say(sprintf('Disabling certificate on %s environment.', $environment->label));
             $response = $certificatesAdapter->disable($environment->uuid, $certificateId);
             $this->waitForNotification($response);
         }
@@ -140,10 +140,10 @@ class SslCertificateCommand extends AcquiaCommand
      * @param string $uuid
      * @param string $environment
      * @param string $label
-     * @param string $cert The Certificate file path
-     * @param string $key The Key file path
-     * @param null|string $ca The Chain file path
-     * @option enable Enable certification after creation.
+     * @param string $certificate The path to the certificate file.
+     * @param string $key The path to the private key file.
+     * @param null|string $ca The path to the certificate authority file.
+     * @option activate Enable certification after creation.
      * @command ssl:create
      */
     public function sslCertificateCreate(
@@ -151,57 +151,56 @@ class SslCertificateCommand extends AcquiaCommand
         $uuid,
         $environment,
         $label,
-        $cert,
+        $certificate,
         $key,
         $ca = null,
-        $options = ['enable']
+        $options = ['activate']
     ) {
         $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
 
-        if ($this->confirm('Are you sure you want to install this new SSL certificate?')) {
-            $this->say(sprintf('Installing new certificate %s on %s environment', $label, $environment->label));
-
-            if (!file_exists($cert) || !is_readable($cert)) {
-                throw new \Exception(sprintf('Cannot open %s file', $cert));
+        $confirmMessage = 'Are you sure you want to install this new SSL certificate? (It will not be activated unless the --activate option is passed).';
+        if ($options['activate']) {
+            $confirmMessage = 'Are you sure you want to install and activate this new SSL certificate? Activating this certificate will deactivate all other non-legacy certificates.';
+        }
+        if ($this->confirm($confirmMessage)) {
+            if (!file_exists($certificate) || !is_readable($certificate)) {
+                throw new \Exception(sprintf('Cannot open certificate file at %s.', $certificate));
             }
-            $cert = strval(file_get_contents($cert));
+            $certificate = strval(file_get_contents($certificate));
 
             if (!file_exists($key) || !is_readable($key)) {
-                throw new \Exception(sprintf('Cannot open %s file', $key));
+                throw new \Exception(sprintf('Cannot open key file at %s.', $key));
             }
             $key = strval(file_get_contents($key));
 
             if ($ca !== null) {
                 if (!file_exists($ca) || !is_readable($ca)) {
-                    throw new \Exception(sprintf('Cannot open %s ca file', $ca));
+                    throw new \Exception(sprintf('Cannot open ca file at %s.', $ca));
                 }
                 $ca = strval(file_get_contents($ca));
             }
 
+            $this->say(sprintf('Installing new certificate %s on %s environment.', $label, $environment->label));
+
             $response = $certificatesAdapter->create(
                 $environment->uuid,
                 $label,
-                $cert,
+                $certificate,
                 $key,
                 $ca
             );
 
             $this->waitForNotification($response);
 
-            if ($options['enable']) {
+            if ($options['activate']) {
                 $certificates = $certificatesAdapter->getAll($environment->uuid);
-                foreach ($certificates as $certificate) {
+                foreach ($certificates as $installedCertificate) {
                     /**
                      * @var SslCertificateResponse $certificate
                      */
-                    if ($certificate->label === $label && !$certificate->flags->active) {
-                        $this->say(sprintf('Enabling certificate %s on %s environment', $certificate->label, $environment->label));
-                        $response = $certificatesAdapter->enable($environment->uuid, $certificate->id);
-                        $this->waitForNotification($response);
-                    }elseif ($certificate->flags->active){
-                        // Make sure all the others certificates are disabled
-                        $this->say(sprintf('Disabling certificate %s on %s environment', $certificate->label, $environment->label));
-                        $response = $certificatesAdapter->disable($environment->uuid, $certificate->id);
+                    if ($installedCertificate->label === $label && !$installedCertificate->flags->active) {
+                        $this->say(sprintf('Activating certificate %s on %s environment.', $installedCertificate->label, $environment->label));
+                        $response = $certificatesAdapter->enable($environment->uuid, $installedCertificate->id);
                         $this->waitForNotification($response);
                     }
                 }
