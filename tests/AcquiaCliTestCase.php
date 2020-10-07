@@ -423,15 +423,25 @@ abstract class AcquiaCliTestCase extends TestCase
                 'get' => 'LogForwarding/getLogForwarding.json'
             ],
             '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/ssl/certificates' => [
-                'get' => 'SslCertificates/getAllSslCertificates.json'
+                'get' => 'SslCertificates/getAllSslCertificates.json',
+                'post' => 'SslCertificates/createSslCertificate.json'
             ],
             '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/ssl/certificates/1234' => [
                 'get' => 'SslCertificates/getSslCertificate.json'
+            ],
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/ssl/certificates/4/actions/activate' => [
+                'post' => 'SslCertificates/activateSslCertificate.json'
             ],
             '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/ssl/certificates/1234/actions/activate' => [
                 'post' => 'SslCertificates/activateSslCertificate.json'
             ],
             '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/ssl/certificates/1234/actions/deactivate' => [
+                'post' => 'SslCertificates/deactivateSslCertificate.json'
+            ],
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/ssl/certificates/7/actions/deactivate' => [
+                'post' => 'SslCertificates/deactivateSslCertificate.json'
+            ],
+            '/environments/24-a47ac10b-58cc-4372-a567-0e02b2c3d470/ssl/certificates/3/actions/deactivate' => [
                 'post' => 'SslCertificates/deactivateSslCertificate.json'
             ]
         ];
