@@ -5,7 +5,8 @@
     ],
     "files": [
         "default.acquiacli.yml",
-        "VERSION"
+        "VERSION",
+        "vendor/typhonius/acquia-php-sdk-v2/VERSION"
     ],
     "finder": [
         {
