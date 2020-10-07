@@ -65,7 +65,7 @@ class SslCertificateCommand extends AcquiaCommand
      *
      * @param string $uuid
      * @param string $environment
-     * @param int $certificateId
+     * @param int    $certificateId
      *
      * @command ssl:info
      */
@@ -91,7 +91,7 @@ class SslCertificateCommand extends AcquiaCommand
      *
      * @param string $uuid
      * @param string $environment
-     * @param int $certificateId
+     * @param int    $certificateId
      *
      * @command ssl:enable
      */
@@ -115,7 +115,7 @@ class SslCertificateCommand extends AcquiaCommand
      *
      * @param string $uuid
      * @param string $environment
-     * @param int $certificateId
+     * @param int    $certificateId
      *
      * @command ssl:disable
      */
@@ -161,18 +161,18 @@ class SslCertificateCommand extends AcquiaCommand
         if ($this->confirm('Are you sure you want to install this new SSL certificate?')) {
             $this->say(sprintf('Installing new certificate %s on %s environment', $label, $environment->label));
 
-            if (!file_exists($cert) or !is_readable($cert)) {
+            if (!file_exists($cert) || !is_readable($cert)) {
                 throw new \Exception(sprintf('Cannot open %s file', $cert));
             }
             $cert = strval(file_get_contents($cert));
 
-            if (!file_exists($key) or !is_readable($key)) {
+            if (!file_exists($key) || !is_readable($key)) {
                 throw new \Exception(sprintf('Cannot open %s file', $key));
             }
             $key = strval(file_get_contents($key));
 
-            if ($ca != null) {
-                if (!file_exists($ca) or !is_readable($ca)) {
+            if ($ca !== null) {
+                if (!file_exists($ca) || !is_readable($ca)) {
                     throw new \Exception(sprintf('Cannot open %s ca file', $ca));
                 }
                 $ca = strval(file_get_contents($ca));
@@ -194,7 +194,7 @@ class SslCertificateCommand extends AcquiaCommand
                     /**
                      * @var SslCertificateResponse $certificate
                      */
-                    if ($certificate->label == $label && !$certificate->flags->active) {
+                    if ($certificate->label === $label && !$certificate->flags->active) {
                         $this->say(sprintf('Enabling certificate %s on %s environment', $certificate->label, $environment->label));
                         $response = $certificatesAdapter->enable($environment->uuid, $certificate->id);
                         $this->waitForNotification($response);
