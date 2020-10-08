@@ -63,3 +63,6 @@ jobs:
         rm -rf vendor/*
         composer install --prefer-dist --no-dev --no-interaction
         composer phar:build
+
+    - name: Run the phar
+      run: php acquiacli.phar
