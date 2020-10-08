@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit bootstrap="vendor/autoload.php">
+<phpunit
+    bootstrap="vendor/autoload.php"
+    colors="true"
+    convertErrorsToExceptions="true"
+    convertNoticesToExceptions="true"
+    convertWarningsToExceptions="true"
+    verbose="true"
+    >
     <testsuites>
         <testsuite name="Acquia CLI">
             <directory suffix=".php">./tests/</directory>
@@ -11,7 +18,9 @@
         </whitelist>
     </filter>
     <logging>
-        <log type="coverage-clover" target="tests/logs/clover.xml"/>
+        <log type="coverage-text" target="php://stdout" showUncoveredFiles="true"/>
+        <log type="coverage-clover" target="tests/logs/clover.xml" showUncoveredFiles="true"/>
+        <log type="coverage-html" target="tests/logs/phpunit.html" lowUpperBound="35" highLowerBound="70"/>
     </logging>
     <php>
         <const name="PHPUNIT_ACQUIACLI_TESTSUITE" value="true"/>
