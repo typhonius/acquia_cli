@@ -72,9 +72,11 @@ jobs:
       with:
         name: ${{ runner.os }}-php-${{ matrix.php-versions }}-acquiacli.phar
         path: acquiacli.phar
+        if-no-files-found: error
 
     - name: Upload code coverage
       uses: actions/upload-artifact@v2
       with:
         name: ${{ runner.os }}-php-${{ matrix.php-versions }}-phpunit.html
         path: ./tests/logs/phpunit.html
+        if-no-files-found: error
