@@ -135,9 +135,10 @@ class DbCommand extends AcquiaCommand
      * @param string $environmentTo
      *
      * @command database:copy:all
+     * @option no-backup Do not backup the databases on production.
      * @aliases db:copy:all
      */
-    public function dbCopyAll($uuid, $environmentFrom, $environmentTo)
+    public function dbCopyAll($uuid, $environmentFrom, $environmentTo, $options = [])
     {
         $environmentFrom = $this->cloudapiService->getEnvironment($uuid, $environmentFrom);
         $environmentTo = $this->cloudapiService->getEnvironment($uuid, $environmentTo);
@@ -151,7 +152,13 @@ class DbCommand extends AcquiaCommand
                 )
             )
         ) {
-            $this->backupAndMoveDbs($uuid, $environmentFrom, $environmentTo);
+
+            if (isset($options['no-backup']) && $options['no-backup']) {
+                $this->moveDbs($uuid, $environmentFrom, $environmentTo);
+            }
+            else {
+                $this->backupAndMoveDbs($uuid, $environmentFrom, $environmentTo);
+            }
         }
     }
 }
