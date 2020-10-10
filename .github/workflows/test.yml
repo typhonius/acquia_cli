@@ -1,4 +1,4 @@
-name: PHP Composer
+name: Acquia Cli Test
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
       matrix:
         operating-system: [ubuntu-latest, macos-latest]
         php-versions: ['7.3', '7.4']
-    name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
+    name: PHP ${{ matrix.php-versions }} build and test on ${{ matrix.operating-system }}
     steps:
     - name: Checkout
       uses: actions/checkout@v2
