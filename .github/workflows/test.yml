@@ -66,6 +66,9 @@ jobs:
     - name: Run the phar
       run: php acquiacli.phar
 
+    - name: Remove requirement for pcov/clobber
+      run: composer remove pcov/clobber
+
     - name: Upload artefact
       uses: actions/upload-artifact@v2
       with:
