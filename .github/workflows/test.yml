@@ -61,7 +61,7 @@ jobs:
       run: |
         composer phar:install-tools
         composer install --prefer-dist --no-dev --no-interaction
-        php tools/box compile
+        composer phar:build
 
     - name: Run the phar
       run: php acquiacli.phar
@@ -78,4 +78,3 @@ jobs:
       with:
         name: ${{ runner.os }}-php-${{ matrix.php-versions }}-phpunit.html
         path: ./tests/logs/phpunit.html
-        if-no-files-found: error
