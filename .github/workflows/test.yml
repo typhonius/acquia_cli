@@ -11,7 +11,7 @@ jobs:
     runs-on: ${{ matrix.operating-system }}
     strategy:
       matrix:
-        operating-system: [ubuntu-latest, macos-latest]
+        operating-system: [ubuntu-latest, macos-latest, windows-latest]
         php-versions: ['7.3', '7.4']
     name: PHP ${{ matrix.php-versions }} build and test on ${{ matrix.operating-system }}
     steps:
