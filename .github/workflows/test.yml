@@ -61,7 +61,7 @@ jobs:
       run: |
         composer phar:install-tools
         composer install --prefer-dist --no-dev --no-interaction
-        composer phar:build
+        php tools/box compile
 
     - name: Run the phar
       run: php acquiacli.phar
