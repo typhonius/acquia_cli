@@ -60,7 +60,6 @@ jobs:
     - name: Install Phar tools and build deployment artefact.
       run: |
         composer phar:install-tools
-        rm -rf vendor/*
         composer install --prefer-dist --no-dev --no-interaction
         composer phar:build
 
