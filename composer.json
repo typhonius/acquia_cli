@@ -14,7 +14,8 @@
         "typhonius/acquia-logstream": "^0.0.7",
         "consolidation/robo": "^2",
         "symfony/lock": "^3|^4",
-        "symfony/yaml": "^3|^4"
+        "symfony/yaml": "^3|^4",
+        "symfony/cache": "^4|^5"
     },
     "bin": ["bin/acquiacli"],
     "autoload":{
