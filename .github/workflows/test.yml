@@ -1,0 +1,90 @@
+name: Acquia Cli Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  run:
+    runs-on: ${{ matrix.operating-system }}
+    strategy:
+      matrix:
+        operating-system: [ubuntu-latest, macos-latest, windows-latest]
+        php-versions: ['7.3', '7.4']
+    name: PHP ${{ matrix.php-versions }} build and test on ${{ matrix.operating-system }}
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+        extensions: mbstring, intl
+        ini-values: post_max_size=256M, short_open_tag=On
+
+
+    - name: Setup PHP with pecl extension
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php-versions }}
+        tools: pecl
+        extensions: pcov
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v2
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ matrix.php-versions }}-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-${{ matrix.php-versions }}-
+
+    - name: Install dependencies
+      if: steps.composer-cache.outputs.cache-hit != 'true'
+      run: composer install --prefer-source --no-progress --no-suggest --no-interaction
+
+    - name: Setup PCOV
+      run: |
+        composer require pcov/clobber
+        vendor/bin/pcov clobber
+
+    - name: Run test suite
+      run: composer run-script test
+
+    - name: Remove requirement for pcov/clobber
+      run: composer remove pcov/clobber
+
+    - name: Install Phar tools and build deployment artefact.
+      run: |
+        composer phar:install-tools
+        composer install --prefer-dist --no-dev --no-interaction
+        composer phar:build
+
+    - name: Run the phar
+      run: php acquiacli.phar
+
+    - name: Upload artefact
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ runner.os }}-php-${{ matrix.php-versions }}-acquiacli.phar
+        path: acquiacli.phar
+        if-no-files-found: error
+
+    - name: Upload code coverage
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ runner.os }}-php-${{ matrix.php-versions }}-phpunit.html
+        path: ./tests/logs/phpunit.html
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        file: ./tests/logs/clover.xml
+        name: acquia-cli-codecov
+        fail_ci_if_error: true%

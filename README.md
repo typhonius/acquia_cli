@@ -1,6 +1,6 @@
-[![Build Status](https://travis-ci.org/typhonius/acquia_cli.svg?branch=master)](https://travis-ci.org/typhonius/acquia_cli)
+![Acquia Cli Test](https://github.com/typhonius/acquia_cli/workflows/Acquia%20Cli%20Test/badge.svg)
 [![Total Downloads](https://poser.pugx.org/typhonius/acquia_cli/downloads.png)](https://packagist.org/packages/typhonius/acquia_cli)
-[![Coverage Status](https://coveralls.io/repos/github/typhonius/acquia_cli/badge.svg?branch=master)](https://coveralls.io/github/typhonius/acquia_cli?branch=master)
+[![Coverage Status](https://codecov.io/gh/typhonius/acquia_cli/branch/master/graph/badge.svg)](https://codecov.io/gh/typhonius/acquia_cli)
 
 [![License](https://poser.pugx.org/typhonius/acquia_cli/license.png)]()
 [![Latest Stable Version](https://poser.pugx.org/typhonius/acquia_cli/v/stable.png)](https://packagist.org/packages/typhonius/acquia_cli)
