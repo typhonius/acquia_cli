@@ -109,8 +109,13 @@ class DbCommand extends AcquiaCommand
      * @option no-backup Do not backup the databases on production.
      * @aliases db:copy
      */
-    public function dbCopy($uuid, $environmentFrom, $environmentTo, $dbName, $options = [])
-    {
+    public function dbCopy(
+        $uuid,
+        $environmentFrom,
+        $environmentTo,
+        $dbName,
+        $options = ['no-backup']
+    ) {
         $environmentFrom = $this->cloudapiService->getEnvironment($uuid, $environmentFrom);
         $environmentTo = $this->cloudapiService->getEnvironment($uuid, $environmentTo);
 
@@ -124,11 +129,10 @@ class DbCommand extends AcquiaCommand
                 )
             )
         ) {
-            if (isset($options['no-backup']) && $options['no-backup']) {
+            if (!$options['no-backup']) {
                 $this->moveDbs($uuid, $environmentFrom, $environmentTo, $dbName);
-            }
-            else {
-                $this->backupAndMoveDbs($uuid, $environmentFrom, $environmentTo, $dbName);
+            } else {
+                $this->moveDbs($uuid, $environmentFrom, $environmentTo, $dbName, $backup = false);
             }
         }
     }
@@ -144,8 +148,12 @@ class DbCommand extends AcquiaCommand
      * @option no-backup Do not backup the databases on production.
      * @aliases db:copy:all
      */
-    public function dbCopyAll($uuid, $environmentFrom, $environmentTo, $options = [])
-    {
+    public function dbCopyAll(
+        $uuid,
+        $environmentFrom,
+        $environmentTo,
+        $options = ['no-backup']
+    ) {
         $environmentFrom = $this->cloudapiService->getEnvironment($uuid, $environmentFrom);
         $environmentTo = $this->cloudapiService->getEnvironment($uuid, $environmentTo);
 
@@ -158,11 +166,10 @@ class DbCommand extends AcquiaCommand
                 )
             )
         ) {
-            if (isset($options['no-backup']) && $options['no-backup']) {
+            if (!$options['no-backup']) {
                 $this->moveDbs($uuid, $environmentFrom, $environmentTo);
-            }
-            else {
-                $this->backupAndMoveDbs($uuid, $environmentFrom, $environmentTo);
+            } else {
+                $this->moveDbs($uuid, $environmentFrom, $environmentTo, null, $backup = false);
             }
         }
     }

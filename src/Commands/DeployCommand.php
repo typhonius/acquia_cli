@@ -35,7 +35,7 @@ class DeployCommand extends AcquiaCommand
 
         $environmentTo = $this->cloudapiService->getEnvironment($uuid, $environmentTo);
 
-        $this->backupAndMoveDbs($uuid, $environmentFrom, $environmentTo);
+        $this->moveDbs($uuid, $environmentFrom, $environmentTo);
         $this->copyFiles($uuid, $environmentFrom, $environmentTo);
     }
 }
