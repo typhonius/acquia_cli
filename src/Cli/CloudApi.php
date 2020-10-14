@@ -92,9 +92,9 @@ class CloudApi
 
         $cache = new FilesystemAdapter('acquiacli');
         $return = $cache->get($cacheId, function (ItemInterface $item) {
-            $splitId = preg_split('/\./', $item->getKey());
-            $uuid = $splitId[1];
-            $environment = $splitId[2];
+            $split = explode('.', $item->getKey());
+            $uuid = $split[1];
+            $environment = $split[2];
             $item->expiresAfter(300);
 
             $environmentsAdapter = new Environments($this->client);
