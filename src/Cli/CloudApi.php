@@ -60,7 +60,7 @@ class CloudApi
     {
         $cacheId = str_replace(':', '-', $name);
 
-        $cache = new FilesystemAdapter();
+        $cache = new FilesystemAdapter('acquiacli');
         $return = $cache->get('application.' . $cacheId, function (ItemInterface $item) {
             $count = 1;
             $name = str_replace('application.', '', str_replace('-', ':', $item->getKey()), $count);
@@ -90,12 +90,12 @@ class CloudApi
     {
         $cacheId = sprintf('environment.%s.%s', $uuid, $environment);
 
-        $cache = new FilesystemAdapter();
+        $cache = new FilesystemAdapter('acquiacli');
         $return = $cache->get($cacheId, function (ItemInterface $item) {
             $splitId = preg_split('/\./', $item->getKey());
             $uuid = $splitId[1];
             $environment = $splitId[2];
-            $item->expiresAfter(3600);
+            $item->expiresAfter(300);
 
             $environmentsAdapter = new Environments($this->client);
             $environments = $environmentsAdapter->getAll($uuid);

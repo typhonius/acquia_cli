@@ -32,6 +32,9 @@ abstract class AcquiaCliTestCase extends TestCase
 
     protected function getPsr7StreamForFixture($fixture): StreamInterface
     {
+        // Clear json_last_error().
+        json_decode('[]');
+
         $path = sprintf(
             '%s/vendor/typhonius/acquia-php-sdk-v2/tests/Fixtures/Endpoints/%s',
             dirname(__DIR__),
