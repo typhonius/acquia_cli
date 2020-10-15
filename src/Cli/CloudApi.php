@@ -11,6 +11,8 @@ use AcquiaCloudApi\Endpoints\Organizations;
 use AcquiaCloudApi\Response\EnvironmentResponse;
 use AcquiaCloudApi\Response\OrganizationResponse;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
+use Symfony\Contracts\Cache\ItemInterface;
 
 /**
  * Class CloudApi
@@ -56,15 +58,26 @@ class CloudApi
      */
     public function getApplicationUuid($name)
     {
-        $app = new Applications($this->client);
-        $applications = $app->getAll();
+        $cacheId = sprintf('application.%s', str_replace(':', '.', $name));
 
-        foreach ($applications as $application) {
-            if ($name === $application->hosting->id) {
-                return $application->uuid;
+        $cache = new FilesystemAdapter('acquiacli');
+        $cache->deleteItem($cacheId);
+        $return = $cache->get($cacheId, function (ItemInterface $item) {
+            $count = -1;
+            $name = str_replace('application:', '', str_replace('.', ':', $item->getKey()));
+
+            $app = new Applications($this->client);
+            $applications = $app->getAll();
+
+            foreach ($applications as $application) {
+                if ($name === $application->hosting->id) {
+                    return $application->uuid;
+                }
             }
-        }
-        throw new \Exception('Unable to find UUID for application');
+            throw new \Exception('Unable to find UUID for application');
+        });
+
+        return $return;
     }
 
     /**
@@ -75,16 +88,27 @@ class CloudApi
      */
     public function getEnvironment($uuid, $environment)
     {
-        $environmentsAdapter = new Environments($this->client);
-        $environments = $environmentsAdapter->getAll($uuid);
+        $cacheId = sprintf('environment.%s.%s', $uuid, $environment);
 
-        foreach ($environments as $e) {
-            if ($environment === $e->name) {
-                return $e;
+        $cache = new FilesystemAdapter('acquiacli');
+        $return = $cache->get($cacheId, function (ItemInterface $item) {
+            $split = explode('.', $item->getKey());
+            $uuid = $split[1];
+            $environment = $split[2];
+
+            $environmentsAdapter = new Environments($this->client);
+            $environments = $environmentsAdapter->getAll($uuid);
+
+            foreach ($environments as $e) {
+                if ($environment === $e->name) {
+                    return $e;
+                }
             }
-        }
 
-        throw new \Exception('Unable to find environment from environment name');
+            throw new \Exception('Unable to find environment from environment name');
+        });
+
+        return $return;
     }
 
     /**
