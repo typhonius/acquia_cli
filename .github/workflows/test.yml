@@ -65,7 +65,7 @@ jobs:
         COMPOSER_DISCARD_CHANGES: true      
       run: |
         composer phar:install-tools
-        COMPOSER_DISCARD_CHANGES=true composer install --prefer-dist --no-dev --no-interaction
+        composer install --prefer-dist --no-dev --no-interaction
         composer phar:build
 
     - name: Run the phar
