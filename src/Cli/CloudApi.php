@@ -58,13 +58,13 @@ class CloudApi
      */
     public function getApplicationUuid($name)
     {
-        $cacheId = str_replace(':', '-', $name);
+        $cacheId = sprintf('application.%s', str_replace(':', '.', $name));
 
         $cache = new FilesystemAdapter('acquiacli');
-        $return = $cache->get('application.' . $cacheId, function (ItemInterface $item) {
-            $count = 1;
-            $name = str_replace('application.', '', str_replace('-', ':', $item->getKey()), $count);
-            $item->expiresAfter(3600);
+        $cache->deleteItem($cacheId);
+        $return = $cache->get($cacheId, function (ItemInterface $item) {
+            $count = -1;
+            $name = str_replace('application:', '', str_replace('.', ':', $item->getKey()));
 
             $app = new Applications($this->client);
             $applications = $app->getAll();
@@ -95,7 +95,6 @@ class CloudApi
             $split = explode('.', $item->getKey());
             $uuid = $split[1];
             $environment = $split[2];
-            $item->expiresAfter(300);
 
             $environmentsAdapter = new Environments($this->client);
             $environments = $environmentsAdapter->getAll($uuid);
