@@ -132,7 +132,7 @@ class DbCommand extends AcquiaCommand
             if (!$options['no-backup']) {
                 $this->moveDbs($uuid, $environmentFrom, $environmentTo, $dbName);
             } else {
-                $this->moveDbs($uuid, $environmentFrom, $environmentTo, $dbName, $backup = false);
+                $this->moveDbs($uuid, $environmentFrom, $environmentTo, $dbName, false);
             }
         }
     }
@@ -169,7 +169,7 @@ class DbCommand extends AcquiaCommand
             if (!$options['no-backup']) {
                 $this->moveDbs($uuid, $environmentFrom, $environmentTo);
             } else {
-                $this->moveDbs($uuid, $environmentFrom, $environmentTo, null, $backup = false);
+                $this->moveDbs($uuid, $environmentFrom, $environmentTo, null, false);
             }
         }
     }
