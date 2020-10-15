@@ -12,13 +12,13 @@ use Exception;
  * @package AcquiaCli\Commands
  * @throws Exception
  */
-class ClearCacheCommand extends Tasks
+class CacheClearCommand extends Tasks
 {
 
     /**
      * Clears the application and environment caches that are stored on disk. This command can be used if other commands
      * are returning cached information that does not accurately reflect the data from Acquia Cloud.
-     * 
+     *
      * Data is cached indefinitely so the cache must be cleared if fundamental data about the application or environment
      * changes on the cloud.
      *

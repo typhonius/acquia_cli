@@ -2,15 +2,10 @@
 
 namespace AcquiaCli\Tests\Commands;
 
-
 use AcquiaCli\Tests\AcquiaCliTestCase;
-
-
-
 use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
-
-class ClearCacheCommandTest extends AcquiaCliTestCase
+class CacheClearCommandTest extends AcquiaCliTestCase
 {
  
     public function testClearCache()
