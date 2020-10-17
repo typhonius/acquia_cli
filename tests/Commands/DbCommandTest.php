@@ -35,6 +35,11 @@ TABLE;
 >  Moving DB (database2) from Stage to Dev
 TEXT;
 
+        $dbCopyNoBackup = <<<TEXT
+>  Moving DB (database1) from Stage to Dev
+>  Moving DB (database2) from Stage to Dev
+TEXT;
+
         return [
             [
                 ['database:create', 'devcloud:devcloud2', 'dbName'],
@@ -59,6 +64,14 @@ TEXT;
             [
                 ['database:copy:all', 'devcloud:devcloud2', 'test', 'dev'],
                 $dbCopy . PHP_EOL
+            ],
+            [
+                ['database:copy', 'devcloud:devcloud2', 'test', 'dev', 'dbName', '--no-backup'],
+                $dbCopyNoBackup . PHP_EOL
+            ],
+            [
+                ['database:copy:all', 'devcloud:devcloud2', 'test', 'dev', '--no-backup'],
+                $dbCopyNoBackup . PHP_EOL
             ]
         ];
     }

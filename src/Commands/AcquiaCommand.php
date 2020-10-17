@@ -221,11 +221,15 @@ abstract class AcquiaCommand extends Tasks
     }
 
     /**
+     * Copy all DBs from one environment to another.
+     *
      * @param string              $uuid
      * @param EnvironmentResponse $environmentFrom
      * @param EnvironmentResponse $environmentTo
+     * @param null|string         $dbName The DB to move, if null move all DBs.
+     * @param boolean             $backup Whether to backup DBs first.
      */
-    protected function backupAndMoveDbs($uuid, $environmentFrom, $environmentTo, $dbName = null)
+    protected function moveDbs($uuid, $environmentFrom, $environmentTo, $dbName = null, $backup = true)
     {
         if (null !== $dbName) {
             $this->cloudapi->addQuery('filter', "name=${dbName}");
@@ -236,7 +240,9 @@ abstract class AcquiaCommand extends Tasks
         $this->cloudapi->clearQuery();
 
         foreach ($databases as $database) {
-            $this->backupDb($uuid, $environmentTo, $database);
+            if ($backup) {
+                $this->backupDb($uuid, $environmentTo, $database);
+            }
 
             // Copy DB from prod to non-prod.
             $this->say(
