@@ -197,6 +197,21 @@ class EnvironmentsCommand extends AcquiaCommand
     }
 
     /**
+     * Shows the branch an environment is currently on.
+     *
+     * @param string $uuid
+     * @param string $environment
+     *
+     * @command environment:branch
+     * @aliases env:branch,e:b
+     */
+    public function environmentBranch(Environments $environmentsAdapter, $uuid, $environment)
+    {
+        $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
+        $this->say($environment->vcs->path);
+    }
+
+    /**
      * Renames an environment.
      *
      * @param string $uuid

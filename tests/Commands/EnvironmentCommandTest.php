@@ -93,6 +93,10 @@ TABLE;
                 $getEnvironmentInfo . PHP_EOL
             ],
             [
+                ['environment:branch', 'devcloud:devcloud2', 'dev'],
+                '>  master' . PHP_EOL
+            ],
+            [
                 ['environment:rename', 'devcloud:devcloud2', 'dev', 'name'],
                 '>  Renaming Dev to name' . PHP_EOL
             ],
