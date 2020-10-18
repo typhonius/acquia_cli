@@ -20,13 +20,16 @@ class AccountCommand extends AcquiaCommand
      */
     public function account(Config $config, Account $accountAdapter)
     {
+        $account = $accountAdapter->get();
+
+        if ($this->input()->getOption('format') === 'json') {
+            return $this->writeln(json_encode($account));
+        }
 
         $extraConfig = $config->get('extraconfig');
         $tz = $extraConfig['timezone'];
         $format = $extraConfig['format'];
         $timezone = new \DateTimeZone($tz);
-
-        $account = $accountAdapter->get();
 
         $lastLogin = new \DateTime($account->last_login_at);
         $lastLogin->setTimezone($timezone);
