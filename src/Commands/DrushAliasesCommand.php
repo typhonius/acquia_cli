@@ -3,6 +3,7 @@
 namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\Endpoints\Account;
+use Webmozart\PathUtil\Path;
 
 /**
  * Class DrushAliasesCommand
@@ -36,7 +37,7 @@ class DrushAliasesCommand extends AccountCommand
                 if (!$home = getenv('HOME')) {
                     throw new \Exception('Home directory not found.');
                 }
-                $drushDirectory = $home . '/.drush';
+                $drushDirectory = join(\DIRECTORY_SEPARATOR, [Path::getHomeDirectory(), '.drush']);
                 if (!is_dir($drushDirectory)) {
                     mkdir($drushDirectory, 0700);
                 }

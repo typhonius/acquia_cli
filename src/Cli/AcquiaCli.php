@@ -118,7 +118,10 @@ the field should be sorted in a descending order. Not all fields are sortable.'
 
         $discovery = new CommandFileDiscovery();
         $discovery->setSearchPattern('*Command.php');
-        $commandClasses = $discovery->discover(dirname(__DIR__) . '/Commands', '\AcquiaCli\Commands');
+        $commandClasses = $discovery->discover(
+            dirname(__DIR__) . \DIRECTORY_SEPARATOR . 'Commands',
+            '\AcquiaCli\Commands'
+        );
 
         // Instantiate Robo Runner.
         $this->runner = new RoboRunner();
