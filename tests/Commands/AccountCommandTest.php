@@ -24,7 +24,9 @@ class AccountCommandTest extends AcquiaCliTestCase
         $this->assertEquals(
             preg_match(
                 '@>  Acquia Cloud Drush Aliases archive downloaded to ((\S+)AcquiaDrushAliases\w+\.tar\.gz).*@',
-              $actualResponse, $matches),
+                $actualResponse,
+                $matches
+            ),
             1
         );
 
