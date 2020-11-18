@@ -36,7 +36,7 @@ class CloudApi
     {
 
         $acquia = $config->get('acquia');
-        
+
         $connector = new Connector(
             [
             'key' => $acquia['key'],

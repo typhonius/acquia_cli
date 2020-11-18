@@ -13,7 +13,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 class SetupCommandTest extends AcquiaCliTestCase
 {
- 
+
     public function testSetupConfigViewDefault()
     {
         $command = ['setup:config:view'];

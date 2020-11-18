@@ -7,7 +7,7 @@ use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 class CacheClearCommandTest extends AcquiaCliTestCase
 {
- 
+
     public function testClearCache()
     {
         // Run a basic command to fill the cache.
