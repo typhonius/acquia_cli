@@ -33,18 +33,14 @@ class SetupCommand extends Tasks
         foreach ($configFiles as $type => $location) {
             $this->yell(sprintf('%s configuration (%s)', ucfirst($type), $location));
 
-            if (
-                file_exists($location) && $this->confirm(
-                    sprintf('Would you like to regenerate the %s configuration file', $type)
-                )
-            ) {
-                $this->createConfigYaml($location);
-            } elseif (
-                $this->confirm(
-                    sprintf('%s configuration file not found. Would you like to add one?', ucfirst($type))
-                )
-            ) {
-                $this->createConfigYaml($location);
+            if (file_exists($location)) {
+                if ($this->confirm(sprintf('Would you like to regenerate the %s configuration file', $type))) {
+                    $this->createConfigYaml($location);
+                }
+            } else {
+                if ($this->confirm(sprintf('%s configuration file not found. Would you like to add one?', ucfirst($type)))) {
+                    $this->createConfigYaml($location);
+                }
             }
         }
     }
@@ -112,7 +108,6 @@ class SetupCommand extends Tasks
                 'format' => 'Y-m-d H:i:s',
                 'taskwait' => 5,
                 'timeout' => 300,
-                'configsyncdir' => 'sync',
             ],
         ];
 
