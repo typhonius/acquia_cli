@@ -119,12 +119,12 @@ class SetupCommand extends Tasks
         $yaml = Yaml::dump($config, 3, 2);
 
         if (!is_dir(dirname($location))) {
-            mkdir(dirname($location), 700);
+            mkdir(dirname($location), 0700);
         }
 
-        if (!is_writable($location) && !@chmod($location, 0644)) {
-            $this->yell(sprintf('%s is not writeable', ucfirst($location)), 40, 'red');
-        } elseif (file_put_contents($location, $yaml)) {
+        if (!is_writable(dirname($location)) && !@chmod(dirname($location), 0700)) {
+            $this->yell(sprintf('%s is not writeable', dirname($location)), 40, 'red');
+        } elseif (file_put_contents($location, $yaml) && @chmod($location, 0644)) {
             $this->say(sprintf('Configuration file written to %s', $location));
         } else {
             $this->say('Unable to write configuration file.');
