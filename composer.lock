@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "387d8601bac37b934e38bb2990431d76",
+    "content-hash": "23d5a20425aa2d8b65ea8fe13a36bc8d",
     "packages": [
         {
             "name": "consolidation/annotated-command",
@@ -2234,27 +2234,29 @@
         },
         {
             "name": "symfony/lock",
-            "version": "v4.4.16",
+            "version": "v5.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/lock.git",
-                "reference": "160e5989a2d275190f4d904ae893c018e36b18f3"
+                "reference": "30232c763dc1eb5c6c7f52f73468aa06aeb511f8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/lock/zipball/160e5989a2d275190f4d904ae893c018e36b18f3",
-                "reference": "160e5989a2d275190f4d904ae893c018e36b18f3",
+                "url": "https://api.github.com/repos/symfony/lock/zipball/30232c763dc1eb5c6c7f52f73468aa06aeb511f8",
+                "reference": "30232c763dc1eb5c6c7f52f73468aa06aeb511f8",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.1.3",
-                "psr/log": "~1.0"
+                "php": ">=7.2.5",
+                "psr/log": "~1.0",
+                "symfony/polyfill-php80": "^1.15"
             },
             "conflict": {
-                "doctrine/dbal": "<2.5"
+                "doctrine/dbal": "<2.10"
             },
             "require-dev": {
-                "doctrine/dbal": "^2.5|^3.0",
+                "doctrine/dbal": "^2.10|^3.0",
+                "mongodb/mongodb": "~1.1",
                 "predis/predis": "~1.0"
             },
             "type": "library",
@@ -2304,7 +2306,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-10-24T11:50:19+00:00"
+            "time": "2020-10-28T21:46:03+00:00"
         },
         {
             "name": "symfony/polyfill-ctype",
