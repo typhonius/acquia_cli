@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5a9bb253a02518bed31402fb765d2b96",
+    "content-hash": "af462b6f4ce79cbc206a2043456e8d56",
     "packages": [
         {
             "name": "consolidation/annotated-command",
@@ -1875,16 +1875,16 @@
         },
         {
             "name": "symfony/console",
-            "version": "v4.4.16",
+            "version": "v4.4.17",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/console.git",
-                "reference": "20f73dd143a5815d475e0838ff867bce1eebd9d5"
+                "reference": "c8e37f6928c19816437a4dd7bf16e3bd79941470"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/console/zipball/20f73dd143a5815d475e0838ff867bce1eebd9d5",
-                "reference": "20f73dd143a5815d475e0838ff867bce1eebd9d5",
+                "url": "https://api.github.com/repos/symfony/console/zipball/c8e37f6928c19816437a4dd7bf16e3bd79941470",
+                "reference": "c8e37f6928c19816437a4dd7bf16e3bd79941470",
                 "shasum": ""
             },
             "require": {
@@ -1957,7 +1957,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-10-24T11:50:19+00:00"
+            "time": "2020-11-28T10:15:42+00:00"
         },
         {
             "name": "symfony/deprecation-contracts",
@@ -2181,16 +2181,16 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v5.1.8",
+            "version": "v5.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "df08650ea7aee2d925380069c131a66124d79177"
+                "reference": "bb92ba7f38b037e531908590a858a04d85c0e238"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/df08650ea7aee2d925380069c131a66124d79177",
-                "reference": "df08650ea7aee2d925380069c131a66124d79177",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/bb92ba7f38b037e531908590a858a04d85c0e238",
+                "reference": "bb92ba7f38b037e531908590a858a04d85c0e238",
                 "shasum": ""
             },
             "require": {
@@ -2236,7 +2236,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2020-10-24T12:01:57+00:00"
+            "time": "2020-11-12T09:58:18+00:00"
         },
         {
             "name": "symfony/finder",
@@ -3198,28 +3198,28 @@
         },
         {
             "name": "typhonius/acquia-logstream",
-            "version": "0.0.7",
+            "version": "0.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/typhonius/acquia-logstream.git",
-                "reference": "eec1b2f47ee92ebd566f3861ead710e85bfe604a"
+                "reference": "856dff4609553af6d652d8f8a23b2de5f1fa9160"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/typhonius/acquia-logstream/zipball/eec1b2f47ee92ebd566f3861ead710e85bfe604a",
-                "reference": "eec1b2f47ee92ebd566f3861ead710e85bfe604a",
+                "url": "https://api.github.com/repos/typhonius/acquia-logstream/zipball/856dff4609553af6d652d8f8a23b2de5f1fa9160",
+                "reference": "856dff4609553af6d652d8f8a23b2de5f1fa9160",
                 "shasum": ""
             },
             "require": {
                 "consolidation/self-update": "^1.1",
                 "php": ">=7.1",
                 "ratchet/pawl": "^0.3",
-                "symfony/console": "^4 || ^5",
+                "symfony/console": "^4",
                 "typhonius/acquia-php-sdk-v2": "^2.0.0"
             },
             "require-dev": {
                 "php-coveralls/php-coveralls": "^2.0.0",
-                "phpstan/phpstan": "^0.12.0",
+                "phpstan/phpstan": "^0.11.19",
                 "phpunit/phpunit": "^7.0",
                 "squizlabs/php_codesniffer": "^3.1"
             },
@@ -3240,7 +3240,7 @@
                 }
             ],
             "description": "PHP library to connect to Acquia Logstream service",
-            "time": "2020-10-07T03:18:41+00:00"
+            "time": "2020-03-22T05:27:57+00:00"
         },
         {
             "name": "typhonius/acquia-php-sdk-v2",
