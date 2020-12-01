@@ -24,7 +24,7 @@ abstract class AcquiaCliTestCase extends TestCase
     public $client;
     public $logstream;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->client = $this->getMockClient();
         $this->logstream = $this->getMockLogstream();
