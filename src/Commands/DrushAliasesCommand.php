@@ -3,6 +3,7 @@
 namespace AcquiaCli\Commands;
 
 use AcquiaCloudApi\Endpoints\Account;
+use Webmozart\PathUtil\Path;
 
 /**
  * Class DrushAliasesCommand
@@ -24,19 +25,17 @@ class DrushAliasesCommand extends AccountCommand
         $aliases = $accountAdapter->getDrushAliases();
         $drushArchive = tempnam(sys_get_temp_dir(), 'AcquiaDrushAliases') . '.tar.gz';
         $this->say(sprintf('Acquia Cloud Drush Aliases archive downloaded to %s', $drushArchive));
+        $home = Path::getHomeDirectory();
         if (file_put_contents($drushArchive, $aliases, LOCK_EX)) {
             if (
                 $options['install'] || $this->confirm(
                     sprintf(
                         'Do you want to automatically unpack Acquia Cloud Drush aliases to %s',
-                        getenv('HOME')
+                        $home
                     )
                 )
             ) {
-                if (!$home = getenv('HOME')) {
-                    throw new \Exception('Home directory not found.');
-                }
-                $drushDirectory = $home . '/.drush';
+                $drushDirectory = join(\DIRECTORY_SEPARATOR, [$home, '.drush']);
                 if (!is_dir($drushDirectory)) {
                     mkdir($drushDirectory, 0700);
                 }
@@ -53,7 +52,7 @@ class DrushAliasesCommand extends AccountCommand
                 $this->say(sprintf('Acquia Cloud Drush aliases installed into %s', $drushDirectory));
                 unlink($drushArchive);
             } else {
-                $this->say('Run the following command to install Drush aliases:');
+                $this->say('Run the following command to install Drush aliases on Linux/Mac:');
                 $this->writeln(sprintf('$ tar -C $HOME -xf %s', $drushArchive));
                 $this->yell(
                     'This command will unpack into ~/.acquia and ~/.drush potentially overwriting existing files!',

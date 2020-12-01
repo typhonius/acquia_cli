@@ -225,7 +225,7 @@ class DbBackupCommand extends AcquiaCommand
                 throw new \Exception('Unable to make temporary file.');
             }
         } else {
-            $location = sprintf("%s/%s.sql.gz", $opts['path'], $backupName);
+            $location = sprintf("%s%s%s.sql.gz", $opts['path'], \DIRECTORY_SEPARATOR, $backupName);
         }
 
         $this->say(sprintf('Downloading database backup to %s', $location));

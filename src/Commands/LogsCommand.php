@@ -141,7 +141,7 @@ class LogsCommand extends AcquiaCommand
                 throw new \Exception('Unable to make temporary file.');
             }
         } else {
-            $location = sprintf("%s/%s.tar.gz", $opts['path'], $backupName);
+            $location = sprintf("%s%s%s.tar.gz", $opts['path'], \DIRECTORY_SEPARATOR, $backupName);
         }
 
         if (file_put_contents($location, $log, LOCK_EX)) {

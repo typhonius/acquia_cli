@@ -6,6 +6,7 @@ use Robo\Config\Config as RoboConfig;
 use Consolidation\Config\Loader\ConfigProcessor;
 use Consolidation\Config\Loader\YamlConfigLoader;
 use Robo\Config\GlobalOptionDefaultValuesInterface;
+use Webmozart\PathUtil\Path;
 
 /**
  * Class Config
@@ -21,10 +22,9 @@ class Config extends RoboConfig implements GlobalOptionDefaultValuesInterface
         $loader = new YamlConfigLoader();
         $processor = new ConfigProcessor();
 
-        $homeDir = getenv('HOME');
-        $defaultConfig = join(DIRECTORY_SEPARATOR, [dirname(dirname(__DIR__)), 'default.acquiacli.yml']);
-        $globalConfig = join(DIRECTORY_SEPARATOR, [$homeDir, '.acquiacli', 'acquiacli.yml']);
-        $projectConfig = join(DIRECTORY_SEPARATOR, [$root, 'acquiacli.yml']);
+        $defaultConfig = join(\DIRECTORY_SEPARATOR, [dirname(dirname(__DIR__)), 'default.acquiacli.yml']);
+        $globalConfig = join(\DIRECTORY_SEPARATOR, [Path::getHomeDirectory(), '.acquiacli', 'acquiacli.yml']);
+        $projectConfig = join(\DIRECTORY_SEPARATOR, [$root, 'acquiacli.yml']);
 
         $environment = [];
         if (getenv('ACQUIACLI_KEY')) {

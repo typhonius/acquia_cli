@@ -15,7 +15,8 @@
         "consolidation/robo": "^2",
         "symfony/lock": "^5.2.0",
         "symfony/yaml": "^5.2.0",
-        "symfony/cache": "^4|^5"
+        "symfony/cache": "^4|^5",
+        "webmozart/path-util": "^2.3"
     },
     "bin": ["bin/acquiacli"],
     "autoload":{
