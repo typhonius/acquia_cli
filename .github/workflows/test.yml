@@ -49,11 +49,6 @@ jobs:
       if: steps.composer-cache.outputs.cache-hit != 'true'
       run: composer install --prefer-source --no-progress --no-suggest --no-interaction
 
-    - name: Setup PCOV
-      run: |
-        composer require pcov/clobber
-        vendor/bin/pcov clobber
-
     - name: Run test suite
       run: composer run-script test
 
