@@ -11,7 +11,7 @@ class AccountCommandTest extends AcquiaCliTestCase
 {
     use CommandTesterTrait;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->setupCommandTester(AccountCommand::class);
     }

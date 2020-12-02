@@ -66,11 +66,11 @@ trait CommandTesterTrait
         // Create an instance of the application and use some default parameters.
         $root = dirname(dirname(dirname(__DIR__)));
         $config = new Config($root);
-        
+
         $input = new ArgvInput();
         $output = new BufferedOutput();
         $acquiaCli = new AcquiaCli($config, $this->getMockClient(), $input, $output);
-        
+
         // Override the LogstreamManager with a mock in the container.
         $container = Robo::getContainer();
         $container->add('logstream', $this->logstream);
