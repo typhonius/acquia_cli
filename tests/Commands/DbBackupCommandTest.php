@@ -19,7 +19,7 @@ class DbBackupCommandTest extends AcquiaCliTestCase
     {
         $command = 'database:backup:download';
         $arguments = ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'dbName' => 'database2'];
-        list($actualResponse, $statusCode) = $this->executeCommand($command, [], $arguments);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
 
         $this->assertEquals(
             preg_match(
@@ -45,7 +45,7 @@ class DbBackupCommandTest extends AcquiaCliTestCase
             '--filename' => 'foo',
             '--path' => '/tmp'
         ];
-        list($actualResponse, $statusCode) = $this->executeCommand($command, [], $arguments);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
 
         $this->assertEquals(
             preg_match(

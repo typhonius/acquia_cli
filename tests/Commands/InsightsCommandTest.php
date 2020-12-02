@@ -83,8 +83,7 @@ Example local development (local.example.com:8443) Score: 62
 INFO;
 
         $insightApplicationInfo = <<<INFO
-                                                                 
-    Example local development (local.example.com:8443) Score: 62 
+Example local development (local.example.com:8443) Score: 62
                                                                  
 >  Site ID: 1bc0b462-2665-11e9-ab14-d663bd873d93
 >  Status: ok
