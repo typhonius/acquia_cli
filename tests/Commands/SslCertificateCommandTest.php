@@ -3,16 +3,24 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\SslCertificateCommand;
 
 class SslCertificateCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
+
+    public function setUp(): void
+    {
+        $this->setupCommandTester(SslCertificateCommand::class);
+    }
 
     /**
      * @dataProvider sslCertificateProvider
      */
-    public function testSslCertificateInfo($command, $expected)
+    public function testSslCertificateInfo($command, $arguments, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -34,8 +42,7 @@ class SslCertificateCommandTest extends AcquiaCliTestCase
 LIST;
 
         $infoResponse = <<<INFO
-                                             
-                  Certificate                
+Certificate                
                                              
 -----BEGIN CERTIFICATE-----...-----END CERTIFICATE-----
                                              
@@ -50,69 +57,83 @@ INFO;
 
         return [
             [
-                ['ssl:list', 'devcloud:devcloud2', 'dev'],
-                $listResponse . PHP_EOL
+                'ssl:list',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev'],
+                $listResponse
             ],
             [
-                ['ssl:info', 'devcloud:devcloud2', 'dev', '1234'],
-                $infoResponse . PHP_EOL,
+                'ssl:info',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'certificateId' => '1234'],
+                $infoResponse,
             ],
             [
-                ['ssl:enable', 'devcloud:devcloud2', 'dev', '1234'],
-                '>  Activating certificate on Dev environment.' . PHP_EOL,
+                'ssl:enable',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'certificateId' => '1234'],
+                '>  Activating certificate on Dev environment.',
             ],
             [
-                ['ssl:disable', 'devcloud:devcloud2', 'dev', '1234'],
-                '>  Disabling certificate on Dev environment.' . PHP_EOL,
+                'ssl:disable',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'certificateId' => '1234'],
+                '>  Disabling certificate on Dev environment.',
             ],
             [
-                ['ssl:create',
-                    'devcloud:devcloud2',
-                    'dev',
-                    'Test Certificate 2',
-                    $sslCertificatesPath . '/cert.pem',
-                    $sslCertificatesPath . '/key.pem',
-                    $sslCertificatesPath . '/ca.pem',
-                    '--activate'],
+                'ssl:create',
+                [
+                    'uuid' => 'devcloud:devcloud2',
+                    'environment' => 'dev',
+                    'label' => 'Test Certificate 2',
+                    'certificate' => $sslCertificatesPath . '/cert.pem',
+                    'key' => $sslCertificatesPath . '/key.pem',
+                    'ca' => $sslCertificatesPath . '/ca.pem',
+                    '--activate' => true
+                ],
                 '>  Installing new certificate Test Certificate 2 on Dev environment.' . PHP_EOL .
-                '>  Activating certificate Test Certificate 2 on Dev environment.' . PHP_EOL
+                '>  Activating certificate Test Certificate 2 on Dev environment.'
             ],
             [
-                ['ssl:create',
-                    'devcloud:devcloud2',
-                    'dev',
-                    'Test Certificate 2',
-                    $sslCertificatesPath . '/cert.pem',
-                    $sslCertificatesPath . '/key.pem'],
-                '>  Installing new certificate Test Certificate 2 on Dev environment.' . PHP_EOL,
+                'ssl:create',
+                [
+                    'uuid' => 'devcloud:devcloud2',
+                    'environment' => 'dev',
+                    'label' => 'Test Certificate 2',
+                    'certificate' => $sslCertificatesPath . '/cert.pem',
+                    'key' => $sslCertificatesPath . '/key.pem'
+                ],
+                '>  Installing new certificate Test Certificate 2 on Dev environment.',
             ],
             [
-                ['ssl:create',
-                    'devcloud:devcloud2',
-                    'dev',
-                    'Test Certificate 2',
-                    '/nopath/cert.pem',
-                    $sslCertificatesPath . '/key.pem'],
-                ' [error]  Cannot open certificate file at /nopath/cert.pem. ' . PHP_EOL,
+                'ssl:create',
+                [
+                    'uuid' => 'devcloud:devcloud2',
+                    'environment' => 'dev',
+                    'label' => 'Test Certificate 2',
+                    'certificate' => '/nopath/cert.pem',
+                    'key' => $sslCertificatesPath . '/key.pem'
+                ],
+                ' [error]  Cannot open certificate file at /nopath/cert.pem. ',
             ],
             [
-                ['ssl:create',
-                    'devcloud:devcloud2',
-                    'dev',
-                    'Test Certificate 2',
-                    $sslCertificatesPath . '/cert.pem',
-                    '/nopath/key.pem'],
-                ' [error]  Cannot open key file at /nopath/key.pem. ' . PHP_EOL,
+                'ssl:create',
+                [
+                    'uuid' => 'devcloud:devcloud2',
+                    'environment' => 'dev',
+                    'label' => 'Test Certificate 2',
+                    'certificate' => $sslCertificatesPath . '/cert.pem',
+                    'key' => '/nopath/key.pem'
+                ],
+                ' [error]  Cannot open key file at /nopath/key.pem. ',
             ],
             [
-                ['ssl:create',
-                    'devcloud:devcloud2',
-                    'dev',
-                    'Test Certificate 2',
-                    $sslCertificatesPath . '/cert.pem',
-                    $sslCertificatesPath . '/key.pem',
-                    '/nopath/ca.pem'],
-                ' [error]  Cannot open ca file at /nopath/ca.pem. ' . PHP_EOL,
+                'ssl:create',
+                [
+                    'uuid' => 'devcloud:devcloud2',
+                    'environment' => 'dev',
+                    'label' => 'Test Certificate 2',
+                    'certificate' => $sslCertificatesPath . '/cert.pem',
+                    'key' => $sslCertificatesPath . '/key.pem',
+                    'ca' => '/nopath/ca.pem'
+                ],
+                ' [error]  Cannot open ca file at /nopath/ca.pem. ',
             ]
         ];
     }

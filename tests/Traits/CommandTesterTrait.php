@@ -43,12 +43,12 @@ trait CommandTesterTrait
 
     /**
      * @param string $commandString
-     * @param array $inputs
      * @param array $command_extra
+     * @param array $inputs
      * @param string|array|null $commandClasses
      * @return array
      */
-    protected function executeCommand($commandString, $inputs = [], $command_extra = [], $commandClasses = null)
+    protected function executeCommand($commandString, $command_extra = [], $inputs = [], $commandClasses = null)
     {
         $commandClasses = $commandClasses ?? $this->commandClasses;
 
@@ -56,7 +56,10 @@ trait CommandTesterTrait
         $command = $app->get($commandString);
         $tester = new CommandTester($command);
         $tester->setInputs($inputs);
-        $status_code = $tester->execute(array_merge(['command' => $commandString], $command_extra));
+        $command_extra['--no-wait'] = true;
+        $command_extra['--yes'] = true;
+        $options = ['capture_stderr_separately' => false];
+        $status_code = $tester->execute(array_merge(['command' => $commandString], $command_extra), $options);
         Robo::unsetContainer();
         return [trim($tester->getDisplay()), $status_code];
     }
@@ -73,7 +76,7 @@ trait CommandTesterTrait
 
         // Override the LogstreamManager with a mock in the container.
         $container = Robo::getContainer();
-        $container->add('logstream', $this->logstream);
+        $container->add('logstream', $this->getMockLogstream());
         $parameterInjection = $container->get('parameterInjection');
         $parameterInjection->register('AcquiaLogstream\LogstreamManager', new AcquiaCliInjector());
         Robo::setContainer($container);

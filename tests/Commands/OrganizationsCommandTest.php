@@ -3,16 +3,24 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\OrganizationsCommand;
 
 class OrganizationsCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
+
+    public function setUp(): void
+    {
+        $this->setupCommandTester(OrganizationsCommand::class);
+    }
 
     /**
      * @dataProvider organizationsProvider
      */
-    public function testOrganizationsCommands($command, $expected)
+    public function testOrganizationsCommands($command, $arguments, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -69,20 +77,24 @@ TABLE;
 
         return [
             [
-                ['organization:applications', 'Sample organization'],
-                $organizationApplications . PHP_EOL
+                'organization:applications',
+                ['organization' => 'Sample organization'],
+                $organizationApplications
             ],
             [
-                ['organization:list'],
-                $getOrganizations . PHP_EOL
+                'organization:list',
+                [],
+                $getOrganizations
             ],
             [
-                ['organization:members', 'Sample organization'],
-                $organizationMembers . PHP_EOL
+                'organization:members',
+                ['organization' => 'Sample organization'],
+                $organizationMembers
             ],
             [
-                ['organization:teams', 'Sample organization'],
-                $organizationTeams . PHP_EOL
+                'organization:teams',
+                ['organization' => 'Sample organization'],
+                $organizationTeams
             ]
         ];
     }

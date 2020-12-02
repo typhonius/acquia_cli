@@ -3,16 +3,24 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\DbCommand;
 
 class DbCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
+
+    public function setUp(): void
+    {
+        $this->setupCommandTester(DbCommand::class);
+    }
 
     /**
      * @dataProvider dbProvider
      */
-    public function testDbCommands($command, $expected)
+    public function testDbCommands($command, $arguments, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -42,36 +50,44 @@ TEXT;
 
         return [
             [
-                ['database:create', 'devcloud:devcloud2', 'dbName'],
-                '>  Creating database (dbName)' . PHP_EOL
+                'database:create',
+                ['uuid' => 'devcloud:devcloud2', 'dbName' => 'dbName'],
+                '>  Creating database (dbName)'
             ],
             [
-                ['database:delete', 'devcloud:devcloud2', 'dbName'],
-                '>  Deleting database (dbName)' . PHP_EOL
+                'database:delete',
+                ['uuid' => 'devcloud:devcloud2', 'dbName' => 'dbName'],
+                '>  Deleting database (dbName)'
             ],
             [
-                ['database:list', 'devcloud:devcloud2'],
-                $dbTable . PHP_EOL
+                'database:list',
+                ['uuid' => 'devcloud:devcloud2'],
+                $dbTable
             ],
             [
-                ['database:truncate', 'devcloud:devcloud2', 'dbName'],
-                '>  Truncate database (dbName)' . PHP_EOL
+                'database:truncate',
+                ['uuid' => 'devcloud:devcloud2', 'dbName' => 'dbName'],
+                '>  Truncate database (dbName)'
             ],
             [
-                ['database:copy', 'devcloud:devcloud2', 'test', 'dev', 'dbName'],
-                $dbCopy . PHP_EOL
+                'database:copy',
+                ['uuid' => 'devcloud:devcloud2', 'environmentFrom' => 'test', 'environmentTo' => 'dev', 'dbName' => 'dbName'],
+                $dbCopy
             ],
             [
-                ['database:copy:all', 'devcloud:devcloud2', 'test', 'dev'],
-                $dbCopy . PHP_EOL
+                'database:copy:all',
+                ['uuid' => 'devcloud:devcloud2', 'environmentFrom' => 'test', 'environmentTo' => 'dev'],
+                $dbCopy
             ],
             [
-                ['database:copy', 'devcloud:devcloud2', 'test', 'dev', 'dbName', '--no-backup'],
-                $dbCopyNoBackup . PHP_EOL
+                'database:copy',
+                ['uuid' => 'devcloud:devcloud2', 'environmentFrom' => 'test', 'environmentTo' => 'dev', 'dbName' => 'dbName', '--no-backup' => true],
+                $dbCopyNoBackup
             ],
             [
-                ['database:copy:all', 'devcloud:devcloud2', 'test', 'dev', '--no-backup'],
-                $dbCopyNoBackup . PHP_EOL
+                'database:copy:all',
+                ['uuid' => 'devcloud:devcloud2', 'environmentFrom' => 'test', 'environmentTo' => 'dev', '--no-backup' => true],
+                $dbCopyNoBackup
             ]
         ];
     }

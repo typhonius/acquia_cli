@@ -3,16 +3,24 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\FilesCommand;
 
 class FilesCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
+
+    public function setUp(): void
+    {
+        $this->setupCommandTester(FilesCommand::class);
+    }
 
     /**
      * @dataProvider filesProvider
      */
-    public function testFilesCommands($command, $expected)
+    public function testFilesCommands($command, $arguments, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -21,8 +29,9 @@ class FilesCommandTest extends AcquiaCliTestCase
 
         return [
             [
-                ['files:copy', 'devcloud:devcloud2', 'dev', 'test'],
-                '>  Copying files from Dev to Stage' . PHP_EOL
+                'files:copy',
+                ['uuid' => 'devcloud:devcloud2', 'environmentFrom' => 'dev', 'environmentTo' => 'test'],
+                '>  Copying files from Dev to Stage'
             ]
         ];
     }

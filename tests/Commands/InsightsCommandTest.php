@@ -3,16 +3,24 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\InsightsCommand;
 
 class InsightsCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
+
+    public function setUp(): void
+    {
+        $this->setupCommandTester(InsightsCommand::class);
+    }
 
     /**
      * @dataProvider insightsProvider
      */
-    public function testInsightsCommands($command, $expected)
+    public function testInsightsCommands($command, $arguments, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -49,8 +57,7 @@ TABLE;
 ALERTS;
 
         $insightEnvironmentInfo = <<<INFO
-                                                                 
-    Example local development (local.example.com:8443) Score: 62 
+Example local development (local.example.com:8443) Score: 62 
                                                                  
 >  Site ID: 50227ff0-2a53-11e9-b210-d663bd873d93
 >  Status: ok
@@ -105,24 +112,29 @@ INFO;
 
         return [
             [
-                ['insights:alerts:get', 'siteId', 'alertUuid'],
-                $insightAlert . PHP_EOL
+                'insights:alerts:get',
+                ['siteId' => 'siteId', 'alertUuid' => 'alertUuid'],
+                $insightAlert
             ],
             [
-                ['insights:alerts:list', 'siteId'],
-                $insightAlerts . PHP_EOL
+                'insights:alerts:list',
+                ['siteId' => 'siteId'],
+                $insightAlerts
             ],
             [
-                ['insights:info', 'devcloud:devcloud2', 'dev'],
-                $insightEnvironmentInfo . PHP_EOL
+                'insights:info',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev'],
+                $insightEnvironmentInfo
             ],
             [
-                ['insights:info', 'devcloud:devcloud2'],
-                $insightApplicationInfo . PHP_EOL
+                'insights:info',
+                ['uuid' => 'devcloud:devcloud2'],
+                $insightApplicationInfo
             ],
             [
-                ['insights:modules', 'siteId'],
-                $insightModules . PHP_EOL
+                'insights:modules',
+                ['siteId' => 'siteId'],
+                $insightModules
             ]
         ];
     }

@@ -3,16 +3,24 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\TeamsCommand;
 
 class PermissionsCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
+
+    public function setUp(): void
+    {
+        $this->setupCommandTester(TeamsCommand::class);
+    }
 
     /**
      * @dataProvider permissionsProvider
      */
-    public function testPermissionsCommands($command, $expected)
+    public function testPermissionsCommands($command, $arguments, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -79,8 +87,9 @@ LIST;
 
         return [
             [
-                ['permissions:list'],
-                $permissions . PHP_EOL
+                'permissions:list',
+                [],
+                $permissions
             ]
         ];
     }

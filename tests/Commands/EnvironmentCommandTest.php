@@ -3,16 +3,24 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\EnvironmentsCommand;
 
 class EnvironmentCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
+
+    public function setUp(): void
+    {
+        $this->setupCommandTester(EnvironmentsCommand::class);
+    }
 
     /**
      * @dataProvider environmentProvider
      */
-    public function testEnvironmentCommands($command, $expected)
+    public function testEnvironmentCommands($command, $arguments, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -32,8 +40,7 @@ class EnvironmentCommandTest extends AcquiaCliTestCase
 TABLE;
 
         $getEnvironmentInfo = <<<TABLE
-                                             
-                Dev environment              
+Dev environment              
                                              
 >  Environment ID: 24-a47ac10b-58cc-4372-a567-0e02b2c3d470
 +---------+-------+--------------------------+-----------+-----------+----------+----------+--------+---------+-----+
@@ -85,28 +92,34 @@ TABLE;
 
         return [
             [
-                ['environment:list', 'devcloud:devcloud2'],
-                $getAllEnvironments . PHP_EOL
+                'environment:list',
+                ['uuid' => 'devcloud:devcloud2'],
+                $getAllEnvironments
             ],
             [
-                ['environment:info', 'devcloud:devcloud2', 'dev'],
-                $getEnvironmentInfo . PHP_EOL
+                'environment:info',
+                ['uuid' => 'devcloud:devcloud2', 'env' => 'dev'],
+                $getEnvironmentInfo
             ],
             [
-                ['environment:branch', 'devcloud:devcloud2', 'dev'],
-                '>  master' . PHP_EOL
+                'environment:branch',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev'],
+                '>  master'
             ],
             [
-                ['environment:rename', 'devcloud:devcloud2', 'dev', 'name'],
-                '>  Renaming Dev to name' . PHP_EOL
+                'environment:rename',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'name' => 'name'],
+                '>  Renaming Dev to name'
             ],
             [
-                ['environment:delete', 'devcloud:devcloud2', 'dev'],
-                '>  Deleting Dev environment' . PHP_EOL
+                'environment:delete',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev'],
+                '>  Deleting Dev environment'
             ],
             [
-                ['environment:configure', 'devcloud:devcloud2', 'dev', 'version', '7.4'],
-                '>  Configuring Dev with [version => 7.4]' . PHP_EOL
+                'environment:configure',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'key' => 'version', 'value' => '7.4'],
+                '>  Configuring Dev with [version => 7.4]'
             ]
         ];
     }

@@ -3,16 +3,24 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\NotificationsCommand;
 
 class NotificationCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
+
+    public function setUp(): void
+    {
+        $this->setupCommandTester(NotificationsCommand::class);
+    }
 
     /**
      * @dataProvider notificationProvider
      */
-    public function testNotificationCommands($command, $expected)
+    public function testNotificationCommands($command, $arguments, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -46,16 +54,19 @@ INFO;
 
         return [
             [
-                ['notification:list', 'devcloud:devcloud2'],
-                $getAllNotifictions . PHP_EOL
+                'notification:list',
+                ['uuid' => 'devcloud:devcloud2'],
+                $getAllNotifictions
             ],
             [
-                ['notification:list', 'devcloud:devcloud2', '--details'],
-                $getAllNotifictionsDetails . PHP_EOL
+                'notification:list',
+                ['uuid' => 'devcloud:devcloud2', '--details' => true],
+                $getAllNotifictionsDetails
             ],
             [
-                ['notification:info', 'devcloud:devcloud2', 'f4b37e3c-1g96-4ed4-ad20-3081fe0f9545'],
-                $getNotification . PHP_EOL
+                'notification:info',
+                ['uuid' => 'devcloud:devcloud2', 'notificationUuid' => 'f4b37e3c-1g96-4ed4-ad20-3081fe0f9545'],
+                $getNotification
             ]
         ];
     }

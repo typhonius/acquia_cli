@@ -3,16 +3,24 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\ProductionModeCommand;
 
 class ProductionModeCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
+
+    public function setUp(): void
+    {
+        $this->setupCommandTester(ProductionModeCommand::class);
+    }
 
     /**
      * @dataProvider productionModeProvider
      */
-    public function testProductionModeCommands($command, $expected)
+    public function testProductionModeCommands($command, $arguments, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -26,20 +34,24 @@ class ProductionModeCommandTest extends AcquiaCliTestCase
 INFO;
         return [
             [
-                ['productionmode:enable', 'devcloud:devcloud2', 'dev'],
-                ' [error]  Production mode may only be enabled/disabled on the prod environment. ' . PHP_EOL
+                'productionmode:enable',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev'],
+                ' [error]  Production mode may only be enabled/disabled on the prod environment. '
             ],
             [
-                ['productionmode:disable', 'devcloud:devcloud2', 'dev'],
-                ' [error]  Production mode may only be enabled/disabled on the prod environment. ' . PHP_EOL
+                'productionmode:disable',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev'],
+                ' [error]  Production mode may only be enabled/disabled on the prod environment. '
             ],
             [
-                ['productionmode:enable', 'devcloud:devcloud2', 'prod'],
-                '>  Enabling production mode for Production environment' . PHP_EOL
+                'productionmode:enable',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'prod'],
+                '>  Enabling production mode for Production environment'
             ],
             [
-                ['productionmode:disable', 'devcloud:devcloud2', 'prod'],
-                '>  Disabling production mode for Production environment' . PHP_EOL
+                'productionmode:disable',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'prod'],
+                '>  Disabling production mode for Production environment'
             ]
         ];
     }

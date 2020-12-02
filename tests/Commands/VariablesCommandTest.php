@@ -3,16 +3,24 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\VariablesCommand;
 
 class VariablesCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
+
+    public function setUp(): void
+    {
+        $this->setupCommandTester(VariablesCommand::class);
+    }
 
     /**
      * @dataProvider variablesProvider
      */
-    public function testVariablesCommands($command, $expected)
+    public function testVariablesCommands($command, $arguments, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -31,24 +39,29 @@ TABLE;
 
         return [
             [
-                ['variable:create', 'devcloud:devcloud2', 'dev', 'variable_one', 'Sample Value One'],
-                '>  Adding variable variable_one:Sample Value One to Dev environment' . PHP_EOL
+                'variable:create',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'name' => 'variable_one', 'value' => 'Sample Value One'],
+                '>  Adding variable variable_one:Sample Value One to Dev environment'
             ],
             [
-                ['variable:delete', 'devcloud:devcloud2', 'dev', 'variable_one'],
-                '>  Removing variable variable_one from Dev environment' . PHP_EOL
+                'variable:delete',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'name' => 'variable_one'],
+                '>  Removing variable variable_one from Dev environment'
             ],
             [
-                ['variable:info', 'devcloud:devcloud2', 'dev', 'variable_one'],
-                '>  Sample Value One' . PHP_EOL
+                'variable:info',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'name' => 'variable_one'],
+                '>  Sample Value One'
             ],
             [
-                ['variable:list', 'devcloud:devcloud2', 'dev'],
-                $variablesList . PHP_EOL
+                'variable:list',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev'],
+                $variablesList
             ],
             [
-                ['variable:update', 'devcloud:devcloud2', 'dev', 'variable_one', 'Sample Value One'],
-                '>  Updating variable variable_one:Sample Value One on Dev environment' . PHP_EOL
+                'variable:update',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'name' => 'variable_one', 'value' => 'Sample Value One'],
+                '>  Updating variable variable_one:Sample Value One on Dev environment'
             ]
         ];
     }
