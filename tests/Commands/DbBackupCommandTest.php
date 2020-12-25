@@ -3,14 +3,23 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\DbBackupCommand;
 
 class DbBackupCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
+
+    public function setUp(): void
+    {
+        $this->setupCommandTester(DbBackupCommand::class);
+    }
 
     public function testDownloadDatabaseBackupsCommands()
     {
-        $command = ['database:backup:download', 'devcloud:devcloud2', 'dev', 'database2'];
-        $actualResponse = $this->execute($command);
+        $command = 'database:backup:download';
+        $arguments = ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'dbName' => 'database2'];
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
 
         $this->assertEquals(
             preg_match(
@@ -27,16 +36,16 @@ class DbBackupCommandTest extends AcquiaCliTestCase
 
     public function testDownloadDatabaseBackupsCommandsWithOptions()
     {
-        $command = [
-            'database:backup:download',
-            'devcloud:devcloud2',
-            'dev',
-            'database2',
-            '--backup=1',
-            '--filename=foo',
-            '--path=/tmp'
+        $command = 'database:backup:download';
+        $arguments = [
+            'uuid' => 'devcloud:devcloud2',
+            'environment' => 'dev',
+            'dbName' => 'database2',
+            '--backup' => '1',
+            '--filename' => 'foo',
+            '--path' => '/tmp'
         ];
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
 
         $this->assertEquals(
             preg_match(
@@ -54,9 +63,9 @@ class DbBackupCommandTest extends AcquiaCliTestCase
     /**
      * @dataProvider dbBackupProvider
      */
-    public function testDbBackupCommands($command, $expected)
+    public function testDbBackupCommands($command, $arguments, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -97,32 +106,39 @@ TABLE;
 
         return [
             [
-                ['database:backup:restore', 'devcloud:devcloud2', 'dev', 'dbName', '1234'],
-                '>  Restoring backup 1234 to dbName on Dev' . PHP_EOL
+                'database:backup:restore',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'dbName' => 'dbName', 'backupId' => '1234'],
+                '>  Restoring backup 1234 to dbName on Dev'
             ],
             [
-                ['database:backup:all', 'devcloud:devcloud2', 'dev'],
-                $createBackupAllText . PHP_EOL
+                'database:backup:all',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev'],
+                $createBackupAllText
             ],
             [
-                ['database:backup', 'devcloud:devcloud2', 'dev', 'database1'],
-                $createBackupText . PHP_EOL
+                'database:backup',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'dbName' => 'database1'],
+                $createBackupText
             ],
             [
-                ['database:backup:list', 'devcloud:devcloud2', 'dev'],
-                $dbBackupList . PHP_EOL
+                'database:backup:list',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev'],
+                $dbBackupList
             ],
             [
-                ['database:backup:list', 'devcloud:devcloud2', 'dev', 'dbName'],
-                $dbBackupList . PHP_EOL
+                'database:backup:list',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'dbName' => 'dbName'],
+                $dbBackupList
             ],
             [
-                ['database:backup:link', 'devcloud:devcloud2', 'dev', 'dbName', '1234'],
-                $dbLink . PHP_EOL
+                'database:backup:link',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'dbName' => 'dbName', 'backupId' => '1234'],
+                $dbLink
             ],
             [
-                ['database:backup:delete', 'devcloud:devcloud2', 'dev', 'dbName', '1234'],
-                '>  Deleting backup 1234 to dbName on Dev' . PHP_EOL
+                'database:backup:delete',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'dbName' => 'dbName', 'backupId' => '1234'],
+                '>  Deleting backup 1234 to dbName on Dev'
             ],
         ];
     }

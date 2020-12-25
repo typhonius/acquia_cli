@@ -3,16 +3,24 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\CronCommand;
 
 class CronCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
+
+    public function setUp(): void
+    {
+        $this->setupCommandTester(CronCommand::class);
+    }
 
     /**
      * @dataProvider cronProvider
      */
-    public function testCronCommands($command, $expected)
+    public function testCronCommands($command, $arguments, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -42,28 +50,34 @@ INFO;
 
         return [
             [
-                ['cron:create', 'devcloud:devcloud2', 'dev', 'commandString', 'frequency', 'label'],
-                '>  Adding new cron task on dev environment' . PHP_EOL
+                'cron:create',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'commandString' => 'commandString', 'frequency' => 'frequency', 'label' => 'label'],
+                '>  Adding new cron task on dev environment'
             ],
             [
-                ['cron:delete', 'devcloud:devcloud2', 'dev', 'cronId'],
-                '>  Deleting cron task cronId from Dev' . PHP_EOL
+                'cron:delete',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'cronId' => 'cronId'],
+                '>  Deleting cron task cronId from Dev'
             ],
             [
-                ['cron:disable', 'devcloud:devcloud2', 'dev', 'cronId'],
-                '>  Disabling cron task cronId on dev environment' . PHP_EOL
+                'cron:disable',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'cronId' => 'cronId'],
+                '>  Disabling cron task cronId on dev environment'
             ],
             [
-                ['cron:enable', 'devcloud:devcloud2', 'dev', 'cronId'],
-                '>  Enabling cron task cronId on dev environment' . PHP_EOL
+                'cron:enable',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'cronId' => 'cronId'],
+                '>  Enabling cron task cronId on dev environment'
             ],
             [
-                ['cron:info', 'devcloud:devcloud2', 'dev', 'cronId'],
-                $cronInfo . PHP_EOL
+                'cron:info',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'cronId' => 'cronId'],
+                $cronInfo
             ],
             [
-                ['cron:list', 'devcloud:devcloud2', 'dev'],
-                $cronList . PHP_EOL
+                'cron:list',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev'],
+                $cronList
             ]
         ];
     }

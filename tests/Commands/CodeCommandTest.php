@@ -3,16 +3,24 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\CodeCommand;
 
 class CodeCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
+
+    public function setUp(): void
+    {
+        $this->setupCommandTester(CodeCommand::class);
+    }
 
     /**
      * @dataProvider codeProvider
      */
-    public function testCodeCommands($command, $expected)
+    public function testCodeCommands($command, $arguments, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -44,24 +52,29 @@ LIST;
 
         return [
             [
-                ['code:deploy', 'devcloud:devcloud2', 'dev', 'test'],
-                $codeDeploy . PHP_EOL
+                'code:deploy',
+                ['uuid' => 'devcloud:devcloud2', 'environmentFrom' => 'dev', 'environmentTo' => 'test'],
+                $codeDeploy
             ],
             [
-                ['code:deploy', 'devcloud:devcloud2', 'dev', 'test', '--no-backup'],
-                $codeDeployNoBackup . PHP_EOL
+                'code:deploy',
+                ['uuid' => 'devcloud:devcloud2', 'environmentFrom' => 'dev', 'environmentTo' => 'test', '--no-backup' => true],
+                $codeDeployNoBackup
             ],
             [
-                ['code:list', 'devcloud:devcloud2'],
-                $codeList . PHP_EOL
+                'code:list',
+                ['uuid' => 'devcloud:devcloud2'],
+                $codeList
             ],
             [
-                ['code:switch', 'devcloud:devcloud2', 'prod', 'master'],
-                $codeSwitch . PHP_EOL
+                'code:switch',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'prod', 'branch' => 'master'],
+                $codeSwitch
             ],
             [
-                ['code:switch', 'devcloud:devcloud2', 'prod', 'master', '--no-backup'],
-                $codeSwitchNoBackup . PHP_EOL
+                'code:switch',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'prod', 'branch' => 'master', '--no-backup' => true],
+                $codeSwitchNoBackup
             ]
         ];
     }

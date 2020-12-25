@@ -3,16 +3,24 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\TeamsCommand;
 
 class RolesCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
+
+    public function setUp(): void
+    {
+        $this->setupCommandTester(TeamsCommand::class);
+    }
 
     /**
      * @dataProvider roleProvider
      */
-    public function testRoleCommands($command, $expected)
+    public function testRoleCommands($command, $arguments, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -82,20 +90,24 @@ TABLE;
 
         return [
             [
-                ['role:add', 'Sample organization', 'name', 'permissions'],
-                '>  Creating new role (name) and adding it to organisation.' . PHP_EOL
+                'role:add',
+                ['organization' => 'Sample organization', 'name' => 'name', 'permissions' => 'permissions'],
+                '>  Creating new role (name) and adding it to organisation.'
             ],
             [
-                ['role:delete', 'roleUuid'],
-                '>  Deleting role' . PHP_EOL
+                'role:delete',
+                ['roleUuid' => 'roleUuid'],
+                '>  Deleting role'
             ],
             [
-                ['role:list', 'Sample organization'],
-                $roleList . PHP_EOL
+                'role:list',
+                ['organization' => 'Sample organization'],
+                $roleList
             ],
             [
-                ['role:update:permissions', 'roleUuid', 'permissions'],
-                '>  Updating role permissions' . PHP_EOL
+                'role:update:permissions',
+                ['roleUuid' => 'roleUuid', 'permissions' => 'permissions'],
+                '>  Updating role permissions'
             ]
         ];
     }

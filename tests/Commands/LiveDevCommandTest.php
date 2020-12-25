@@ -3,16 +3,24 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\LivedevCommand;
 
 class LiveDevCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
+
+    public function setUp(): void
+    {
+        $this->setupCommandTester(LivedevCommand::class);
+    }
 
     /**
      * @dataProvider liveDevProvider
      */
-    public function testLiveDevInfo($command, $expected)
+    public function testLiveDevInfo($command, $arguments, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -21,12 +29,14 @@ class LiveDevCommandTest extends AcquiaCliTestCase
 
         return [
             [
-                ['livedev:enable', 'devcloud:devcloud2', 'dev'],
-                '>  Enabling livedev for Dev environment' . PHP_EOL
+                'livedev:enable',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev'],
+                '>  Enabling livedev for Dev environment'
             ],
             [
-                ['livedev:disable', 'devcloud:devcloud2', 'dev'],
-                '>  Disabling livedev for Dev environment' . PHP_EOL
+                'livedev:disable',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev'],
+                '>  Disabling livedev for Dev environment'
             ]
         ];
     }

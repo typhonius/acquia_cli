@@ -3,16 +3,24 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\DeployCommand;
 
 class DeployCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
+
+    public function setUp(): void
+    {
+        $this->setupCommandTester(DeployCommand::class);
+    }
 
     /**
      * @dataProvider deployProvider
      */
-    public function testDeployInfo($command, $expected)
+    public function testDeployInfo($command, $arguments, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -41,16 +49,19 @@ INFO;
 
         return [
             [
-                ['deploy:prepare', 'devcloud:devcloud2', 'dev', 'prod'],
-                $deployResponseDev . PHP_EOL
+                'deploy:prepare',
+                ['uuid' => 'devcloud:devcloud2', 'environmentTo' => 'dev', 'environmentFrom' => 'prod'],
+                $deployResponseDev
             ],
             [
-                ['deploy:prepare', 'devcloud:devcloud2', 'test'],
-                $deployResponseTest . PHP_EOL
+                'deploy:prepare',
+                ['uuid' => 'devcloud:devcloud2', 'environmentTo' => 'test'],
+                $deployResponseTest
             ],
             [
-                ['deploy:prepare', 'devcloud:devcloud2', 'prod'],
-                $deployResponseProd . PHP_EOL
+                'deploy:prepare',
+                ['uuid' => 'devcloud:devcloud2', 'environmentTo' => 'prod'],
+                $deployResponseProd
             ]
         ];
     }

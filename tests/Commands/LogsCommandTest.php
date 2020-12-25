@@ -3,14 +3,23 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\LogsCommand;
 
 class LogsCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
+
+    public function setUp(): void
+    {
+        $this->setupCommandTester(LogsCommand::class);
+    }
 
     public function testDownloadLogsCommands()
     {
-        $command = ['log:download', 'devcloud:devcloud2', 'dev', 'apache-access'];
-        $actualResponse = $this->execute($command);
+        $command = 'log:download';
+        $arguments = ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'logType' => 'apache-access'];
+        list($actualResponse, $statusCode) = $this->executeCommand($command, [], $arguments);
 
         $this->assertEquals(
             preg_match('@>  Log downloaded to ((\S+)dev-apache-access(\w+).tar.gz)@', $actualResponse, $matches),
@@ -34,16 +43,16 @@ class LogsCommandTest extends AcquiaCliTestCase
 
     public function testDownloadLogsCommandsWithOptions()
     {
-        $command = [
-            'log:download',
-            'devcloud:devcloud2',
-            'dev',
-            'apache-access',
-            '--filename=bar',
-            '--path=/tmp'
+        $command = 'log:download';
+        $arguments = [
+            'uuid' => 'devcloud:devcloud2',
+            'environment' => 'dev',
+            'logType' => 'apache-access',
+            '--filename' => 'bar',
+            '--path' => '/tmp'
         ];
 
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, [], $arguments);
 
         $this->assertEquals(
             preg_match(
@@ -61,16 +70,16 @@ class LogsCommandTest extends AcquiaCliTestCase
     public function testLogstream()
     {
 
-        $command = [
-            'log:stream',
-            'devcloud:devcloud2',
-            'dev',
-            '--colourise',
-            '--logtypes=apache-access',
-            '--servers=web-1234'
+        $command = 'log:stream';
+        $arguments = [
+            'uuid' => 'devcloud:devcloud2',
+            'environment' => 'dev',
+            '--colourise' => true,
+            '--logtypes' => ['apache-access'],
+            '--servers' => ['web-1234']
         ];
 
-        $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, [], $arguments);
 
         $authArray = [
             'site' => 'clouduidev:qa4',
@@ -96,9 +105,9 @@ class LogsCommandTest extends AcquiaCliTestCase
     /**
      * @dataProvider logsProvider
      */
-    public function testLogsCommands($command, $expected)
+    public function testLogsCommands($command, $arguments, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -120,12 +129,14 @@ TABLE;
 
         return [
             [
-                ['log:list', 'devcloud:devcloud2', 'dev'],
-                $logsList . PHP_EOL
+                'log:list',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev'],
+                $logsList
             ],
             [
-                ['log:snapshot', 'devcloud:devcloud2', 'dev', 'apache-access'],
-                '>  Creating snapshot for apache-access in Dev environment' . PHP_EOL
+                'log:snapshot',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'logType' => 'apache-access'],
+                '>  Creating snapshot for apache-access in Dev environment'
             ],
         ];
     }

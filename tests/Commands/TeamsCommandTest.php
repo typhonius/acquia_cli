@@ -3,16 +3,24 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\TeamsCommand;
 
 class TeamsCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
+
+    public function setUp(): void
+    {
+        $this->setupCommandTester(TeamsCommand::class);
+    }
 
     /**
      * @dataProvider teamsProvider
      */
-    public function testTeamsCommands($command, $expected)
+    public function testTeamsCommands($command, $arguments, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -21,16 +29,19 @@ class TeamsCommandTest extends AcquiaCliTestCase
 
         return [
             [
-                ['team:addapplication', 'devcloud:devcloud2', 'teamUuid'],
-                '>  Adding application to team.' . PHP_EOL
+                'team:addapplication',
+                ['uuid' => 'devcloud:devcloud2', 'teamUuid' => 'teamUuid'],
+                '>  Adding application to team.'
             ],
             [
-                ['team:create', 'Sample organization', 'name'],
-                '>  Creating new team.' . PHP_EOL
+                'team:create',
+                ['organization' => 'Sample organization', 'name' => 'name'],
+                '>  Creating new team.'
             ],
             [
-                ['team:invite', 'teamUuid', 'email', 'roles'],
-                '>  Inviting email to team.' . PHP_EOL
+                'team:invite',
+                ['teamUuid' => 'teamUuid', 'email' => 'email', 'roleUuids' => 'roles'],
+                '>  Inviting email to team.'
             ]
         ];
     }

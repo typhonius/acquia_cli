@@ -3,16 +3,24 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\ApplicationsCommand;
 
 class ApplicationCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
+
+    public function setUp(): void
+    {
+        $this->setupCommandTester(ApplicationsCommand::class);
+    }
 
     /**
      * @dataProvider applicationProvider
      */
-    public function testApplicationCommands($command, $expected)
+    public function testApplicationCommands($command, $arguments, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -55,28 +63,34 @@ TABLE;
 
         return [
             [
-                ['application:list'],
-                $getAllApplications . PHP_EOL
+                'application:list',
+                [],
+                $getAllApplications
             ],
             [
-                ['application:info', 'devcloud:devcloud2'],
-                $applicationInfo . PHP_EOL
+                'application:info',
+                ['uuid' => 'devcloud:devcloud2'],
+                $applicationInfo
             ],
             [
-                ['application:tags', 'devcloud:devcloud2'],
-                $getTags . PHP_EOL
+                'application:tags',
+                ['uuid' => 'devcloud:devcloud2'],
+                $getTags
             ],
             [
-                ['application:tag:create', 'devcloud:devcloud2', 'name', 'color'],
-                '>  Creating application tag name:color' . PHP_EOL
+                'application:tag:create',
+                ['uuid' => 'devcloud:devcloud2', 'name' => 'name', 'color' => 'color'],
+                '>  Creating application tag name:color'
             ],
             [
-                ['application:tag:delete', 'devcloud:devcloud2', 'name'],
-                '>  Deleting application tag name' . PHP_EOL
+                'application:tag:delete',
+                ['uuid' => 'devcloud:devcloud2', 'name' => 'name'],
+                '>  Deleting application tag name'
             ],
             [
-                ['application:rename', 'devcloud:devcloud2', 'foobar'],
-                '>  Renaming application to foobar' . PHP_EOL
+                'application:rename',
+                ['uuid' => 'devcloud:devcloud2', 'name' => 'foobar'],
+                '>  Renaming application to foobar'
             ]
         ];
     }

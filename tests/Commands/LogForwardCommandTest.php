@@ -3,16 +3,24 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\LogForwardCommand;
 
 class LogForwardCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
+
+    public function setUp(): void
+    {
+        $this->setupCommandTester(LogForwardCommand::class);
+    }
 
     /**
      * @dataProvider logForwardProvider
      */
-    public function testLogForwardInfo($command, $expected)
+    public function testLogForwardInfo($command, $arguments, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -29,8 +37,7 @@ class LogForwardCommandTest extends AcquiaCliTestCase
 LIST;
 
         $infoResponse = <<<INFO
-                                             
-      Log server address: example.com:1234   
+Log server address: example.com:1234   
                                              
 >  Certificate: -----BEGIN CERTIFICATE-----...-----END CERTIFICATE-----
 >  Expires at: 2018-07-16T16:15:33+00:00
@@ -44,12 +51,14 @@ INFO;
 
         return [
             [
-                ['lf:list', 'devcloud:devcloud2', 'dev'],
-                $listResponse . PHP_EOL
+                'lf:list',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev'],
+                $listResponse
             ],
             [
-                ['lf:info', 'devcloud:devcloud2', 'dev', '1234'],
-                $infoResponse . PHP_EOL,
+                'lf:info',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'destinationId' => '1234'],
+                $infoResponse,
             ]
         ];
     }

@@ -3,40 +3,54 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use Symfony\Component\Console\Tester\CommandTester;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\AccountCommand;
 
 class AccountCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
 
-    // public function testDownloadDrushCommands()
-    // {
-    //     $command = ['drush:aliases'];
-    //     $actualResponse = $this->execute($command);
+    public function setUp(): void
+    {
+        $this->setupCommandTester(AccountCommand::class);
+    }
 
-    //     $this->assertEquals(
-    //         preg_match(
-    //             '@>  Acquia Cloud Drush Aliases archive downloaded to ((\S+)AcquiaDrushAliases(\w+).sql.gz)@',
-    //           $actualResponse, $matches),
-    //         1
-    //     );
+    public function testDownloadDrushCommands()
+    {
 
-    //     $this->assertStringStartsWith('>  Acquia Cloud Drush Aliases archive downloaded to ', $actualResponse);
-    //     $this->assertStringContainsString(sys_get_temp_dir(), $matches[2]);
+        list($actualResponse, $statusCode) = $this->executeCommand('drush:aliases');
 
-    //     $path = sprintf(
-    //         '%s/vendor/typhonius/acquia-php-sdk-v2/tests/Fixtures/Endpoints/%s',
-    //         dirname(dirname(__DIR__)),
-    //         'Account/getDrushAliases.dat'
-    //     );
-    //     $this->assertFileExists($path);
-    //     $contents = file_get_contents($path);
-    // }
+        $this->assertEquals(
+            preg_match(
+                '@>  Acquia Cloud Drush Aliases archive downloaded to ((\S+)AcquiaDrushAliases\w+\.tar\.gz).*@',
+                $actualResponse,
+                $matches
+            ),
+            1
+        );
+
+        $this->assertStringStartsWith('>  Acquia Cloud Drush Aliases archive downloaded to ', $actualResponse);
+        $this->assertStringContainsString(sys_get_temp_dir(), $matches[2]);
+
+        $testFilePath = sprintf(
+            '%s/vendor/typhonius/acquia-php-sdk-v2/tests/Fixtures/Endpoints/%s',
+            dirname(dirname(__DIR__)),
+            'Account/getDrushAliases.dat'
+        );
+        $this->assertFileExists($testFilePath);
+        $testFileContents = file_get_contents($testFilePath);
+        $downloadedFile = $matches[1];
+        $downloadedFileContents = file_get_contents($downloadedFile);
+        $this->assertEquals($testFileContents, $downloadedFileContents);
+    }
 
     /**
      * @dataProvider accountProvider
      */
     public function testAccountInfo($command, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -53,8 +67,8 @@ INFO;
 
         return [
             [
-                ['account'],
-                $infoResponse . PHP_EOL
+                'account',
+                $infoResponse
             ]
         ];
     }

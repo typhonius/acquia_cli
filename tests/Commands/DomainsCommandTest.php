@@ -3,16 +3,24 @@
 namespace AcquiaCli\Tests\Commands;
 
 use AcquiaCli\Tests\AcquiaCliTestCase;
+use AcquiaCli\Tests\Traits\CommandTesterTrait;
+use AcquiaCli\Commands\DomainCommand;
 
 class DomainsCommandTest extends AcquiaCliTestCase
 {
+    use CommandTesterTrait;
+
+    public function setUp(): void
+    {
+        $this->setupCommandTester(DomainCommand::class);
+    }
 
     /**
      * @dataProvider domainsProvider
      */
-    public function testDomainsCommands($command, $expected)
+    public function testDomainsCommands($command, $arguments, $expected)
     {
-        $actualResponse = $this->execute($command);
+        list($actualResponse, $statusCode) = $this->executeCommand($command, $arguments);
         $this->assertSame($expected, $actualResponse);
     }
 
@@ -45,32 +53,39 @@ PURGE;
 
         return [
             [
-                ['domain:create', 'devcloud:devcloud2', 'dev', 'domain'],
-                '>  Adding domain to environment Dev' . PHP_EOL
+                'domain:create',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'domain' => 'domain'],
+                '>  Adding domain to environment Dev'
             ],
             [
-                ['domain:delete', 'devcloud:devcloud2', 'test', 'domain'],
-                '>  Removing domain from environment Stage' . PHP_EOL
+                'domain:delete',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'test', 'domain' => 'domain'],
+                '>  Removing domain from environment Stage'
             ],
             [
-                ['domain:info', 'devcloud:devcloud2', 'prod', 'domain'],
-                $domainInfo . PHP_EOL
+                'domain:info',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'prod', 'domain' => 'domain'],
+                $domainInfo
             ],
             [
-                ['domain:list', 'devcloud:devcloud2', 'dev'],
-                $domainsList . PHP_EOL
+                'domain:list',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev'],
+                $domainsList
             ],
             [
-                ['domain:move', 'devcloud:devcloud2', 'domain', 'dev', 'test'],
-                '>  Moving domain from Dev to Stage' . PHP_EOL
+                'domain:move',
+                ['uuid' => 'devcloud:devcloud2', 'domain' => 'domain', 'environmentFrom' => 'dev', 'environmentTo' => 'test'],
+                '>  Moving domain from Dev to Stage'
             ],
             [
-                ['domain:purge', 'devcloud:devcloud2', 'dev'],
-                $domainPurge . PHP_EOL
+                'domain:purge',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev'],
+                $domainPurge
             ],
             [
-                ['domain:purge', 'devcloud:devcloud2', 'dev', 'www.domain1.com'],
-                '>  Purging domain: www.domain1.com' . PHP_EOL
+                'domain:purge',
+                ['uuid' => 'devcloud:devcloud2', 'environment' => 'dev', 'domain' => 'www.domain1.com'],
+                '>  Purging domain: www.domain1.com'
             ]
         ];
     }
