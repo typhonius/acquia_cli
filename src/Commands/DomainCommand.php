@@ -27,6 +27,9 @@ class DomainCommand extends AcquiaCommand
     {
         $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
         $domains = $domainAdapter->getAll($environment->uuid);
+        if ($this->input()->getOption('format') === 'json') {
+            return $this->writeln(json_encode($domains));
+        }
 
         $table = new Table($output);
         $table->setHeaders(['Hostname', 'Default', 'Active', 'Uptime']);
@@ -67,6 +70,10 @@ class DomainCommand extends AcquiaCommand
     {
         $environment = $this->cloudapiService->getEnvironment($uuid, $environment);
         $domain = $domainAdapter->status($environment->uuid, $domain);
+
+        if ($this->input()->getOption('format') === 'json') {
+            return $this->writeln(json_encode($domain));
+        }
 
         $table = new Table($output);
         $table->setHeaders(['Hostname', 'Active', 'DNS Resolves', 'IP Addresses', 'CNAMES']);

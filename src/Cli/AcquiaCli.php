@@ -108,6 +108,13 @@ against the filters. Not all fields are filterable.'
 The order of the fields is significant. A leading - in the field indicates
 the field should be sorted in a descending order. Not all fields are sortable.'
             ),
+            new InputOption(
+                'format',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'The output format (txt or json)',
+                'txt'
+            ),
             ]
         );
 
