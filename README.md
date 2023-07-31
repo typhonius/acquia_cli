@@ -9,9 +9,9 @@
 # Acquia Cli
 The Acquia Cli tool provides developers, sysops, release managers and website administrators with a simple to use tool for obtaining information and running tasks on the Acquia Cloud.
 
-Acquia Cli is simple to install and aligns to the permissions constructs already built into Acquia. The tool can be used for any task that can be completed using the Acquia web interface, and contains in-built instructions for each task.
+Acquia Cli is simple to install and aligns to the permissions constructs already built into Acquia. The tool can be used for any task that can be completed using the Acquia web interface, and contains in-built instructions for each task. If Acquia Cli doesn't have the task built in, simply create a ticket or a pull request for it to be included.
 
-If Acquia Cli doesn't have the task built in, simply create a ticket or a pull request for it to be included.
+This tool is not affiliated with the similarly-named [Acquia CLI](https://github.com/acquia/cli) provided by Acquia itself, which extends integration to products and services beyond Acquia Cloud.
 
 ## Pre-installation
 
